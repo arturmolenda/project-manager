@@ -1,0 +1,34 @@
+{
+  "name": "project-manager",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.9",
+    "nodemailer": "^6.4.17",
+    "nodemon": "^2.0.6"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon backend/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arturmolenda/project-manager.git"
+  },
+  "author": "Artur Molenda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arturmolenda/project-manager/issues"
+  },
+  "homepage": "https://github.com/arturmolenda/project-manager#readme"
+}
