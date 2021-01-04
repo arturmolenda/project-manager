@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     profilePicture: { type: String, required: false },
     password: { type: String, required: true, minlength: 6 },
     emailConfirmed: { type: Boolean, required: true, default: false },
-    emailDeadline: { type: Date, required: false },
+    emailCode: { type: mongoose.Types.ObjectId, required: true },
     projectsJoined: [
       { type: mongoose.Types.ObjectId, required: false, ref: 'Project' },
     ],
