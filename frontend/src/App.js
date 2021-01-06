@@ -13,6 +13,7 @@ import Register from './components/pages/Register';
 import Layout from './components/layout/Layout';
 import ParticlesBackground from './components/ParticlesBackground';
 import themeFile from './util/theme';
+import Confirm from './components/pages/Confirm';
 
 const theme = createMuiTheme(themeFile);
 
@@ -34,6 +35,10 @@ const App = () => {
             <Route exact path='/register'>
               <ParticlesBackground />
               <Register />
+            </Route>
+            <Route exact path='/confirm/:id'>
+              <ParticlesBackground />
+              <Confirm />
             </Route>
           </Switch>
         </Layout>
