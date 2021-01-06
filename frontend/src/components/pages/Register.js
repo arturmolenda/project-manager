@@ -183,9 +183,7 @@ const Register = () => {
           className={classes.gridContainer}
         >
           <div className={classes.mainContainer}>
-            <Typography variant='h1' align='start'>
-              Register
-            </Typography>
+            <Typography variant='h1'>Register</Typography>
             <form className={classes.formContainer} onSubmit={handleSubmit}>
               <TextField
                 name='username'
