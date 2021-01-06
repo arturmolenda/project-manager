@@ -35,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   try {
     const emailSecretCode = new mongoose.Types.ObjectId();
-    const user = await User.create({
+    await User.create({
       username,
       email,
       password,
@@ -61,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
     res.status(200).json({
       message:
-        'Confirmation email has been send to your email. It may take up to a few minutes',
+        'Confirmation email has been send to you. You can now sign in with your newly created account',
     });
   } catch (err) {
     console.log(err);
@@ -75,18 +75,28 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Public
 const confirmEmail = asyncHandler(async (req, res) => {
   const { emailCode } = req.body;
+  if (!emailCode.match(/^[0-9a-fA-F]{24}$/)) {
+    throw new Error(
+      "Your link is broken, make sure that it's entered correctly"
+    );
+  }
   const user = await User.findOne({ emailCode });
   const emailSecret = await EmailSecret.findOne({ code: emailCode });
   if (user && user.emailConfirmed) {
     res.status(200).json({ message: 'Email Confirmed!' });
-  }
-  if (emailSecret && user) {
+  } else if (emailSecret && user) {
     user.emailConfirmed = true;
     await user.save();
     res.status(200).json({ message: 'Email Confirmed!' });
   } else if (user && !user.emailConfirmed && !emailSecret) {
     res.status(410);
-    throw new Error('Confirmation link is expired');
+    throw new Error(
+      'Looks like your link is expired, click the button below in order to get new one'
+    );
+  } else if (!user && !emailSecret) {
+    throw new Error(
+      "Your link is broken, make sure that it's entered correctly"
+    );
   }
 });
 
@@ -108,11 +118,11 @@ const resendEmail = asyncHandler(async (req, res) => {
     try {
       const mailOptions = {
         from: process.env.EMAIL,
-        to: email,
+        to: user.email,
         subject:
           'Welcome to Project Manager, confirm your email to get started!',
         text: 'Welcome to the Project Manager!',
-        html: `<h1>Thank you for registering!</h1></br><p>To finish registration just click this link</p><span><a href='${process.env.URL}/confirm/${emailSecretCode}'> ${process.env.URL}/confirm/${emailSecretCode}</a></span>`,
+        html: `<h1>Thank you for registering!</h1></br><p>To finish registration just click this link</p><span><a href='${process.env.URL}/confirm/${newSecretCode}'> ${process.env.URL}/confirm/${newSecretCode}</a></span>`,
       };
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
