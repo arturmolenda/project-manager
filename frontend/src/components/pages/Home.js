@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-import { makeStyles } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -36,24 +36,6 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  customButton: {
-    marginTop: 20,
-    padding: '4px 60px',
-    fontWeight: 600,
-    backgroundColor: 'transparent',
-    border: '2px solid #00bcd4',
-    borderRadius: 4,
-    color: '#00bcd4',
-    fontSize: '1rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    transition: '.1s ease',
-    '&:hover': {
-      backgroundColor: '#00bcd4',
-      color: '#000',
-    },
-  },
 }));
 
 const Home = () => {
@@ -68,8 +50,13 @@ const Home = () => {
             There is no time to waste exploring, head back to your boards
             screen, now!
           </h6>
-          <Link to='/boards' style={{ textDecoration: 'none' }}>
-            <div className={classes.customButton}>Boards</div>
+          <Link
+            to='/boards'
+            style={{ textDecoration: 'none', marginTop: '10px', fontSize: 0 }}
+          >
+            <Button color='primary' variant='outlined' size='large'>
+              Boards
+            </Button>
           </Link>
         </>
       ) : (
@@ -79,8 +66,13 @@ const Home = () => {
             Project Manager is an app that helps you with productivity and
             maintaining order in your project
           </h6>
-          <Link to='/register' style={{ textDecoration: 'none' }}>
-            <div className={classes.customButton}>Get Started</div>
+          <Link
+            to='/register'
+            style={{ textDecoration: 'none', marginTop: '10px', fontSize: 0 }}
+          >
+            <Button color='primary' variant='outlined' size='large'>
+              Get Started
+            </Button>
           </Link>
           <p className={classes.paragraph}>
             Already a user? <Link to='/signin'>Sign in</Link>{' '}
