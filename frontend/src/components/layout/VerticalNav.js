@@ -107,7 +107,7 @@ const VerticalNav = () => {
             <IconButton className={classes.arrowButton} onClick={expandHandle}>
               <ArrowForwardIosIcon
                 className={classes.arrowIcon}
-                color={!navExpanded && mobile ? 'primary' : ''}
+                color={!navExpanded && mobile ? 'primary' : 'inherit'}
                 style={{
                   color: navExpanded && '#fff',
                   transform: navExpanded ? 'rotate(-180deg)' : 'rotate(0deg)',

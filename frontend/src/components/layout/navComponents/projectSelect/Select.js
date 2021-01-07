@@ -63,9 +63,13 @@ const SelectItem = ({ anchorEl, setAnchorEl, title, navExpanded }) => {
           </Typography>
         </div>
         {anchorEl ? (
-          <ArrowDropUpIcon className={!navExpanded && classes.arrowMargin} />
+          <ArrowDropUpIcon
+            className={!navExpanded ? classes.arrowMargin : ''}
+          />
         ) : (
-          <ArrowDropDownIcon className={!navExpanded && classes.arrowMargin} />
+          <ArrowDropDownIcon
+            className={!navExpanded ? classes.arrowMargin : ''}
+          />
         )}
       </Fragment>
     </div>
