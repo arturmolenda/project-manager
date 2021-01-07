@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 4,
     height: 40,
     cursor: 'pointer',
-    margin: '0 16px',
+    margin: '0 14px',
     transition: 'border .25s ease-out',
     '&:hover': {
       border: '2px solid #fff',

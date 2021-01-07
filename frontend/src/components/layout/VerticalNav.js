@@ -85,7 +85,7 @@ const VerticalNav = () => {
         ref={navbarRef}
         className={classes.verticalNavbar}
         style={{
-          width: navExpanded ? '13.5rem' : mobile ? 48 : 60,
+          width: navExpanded ? '13.5rem' : mobile ? 48 : 56,
           position: mobile ? 'absolute' : 'initial',
           background: navExpanded
             ? 'linear-gradient(0deg, rgb(0, 23, 67) 0%, rgb(20, 116, 172) 100%)'
