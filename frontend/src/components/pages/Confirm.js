@@ -49,6 +49,7 @@ const Confirm = () => {
     error: resendError,
     success: resendSuccess,
   } = useSelector((state) => state.userEmailResend);
+  const { userInfo } = useSelector((state) => state.userLogin);
 
   useEffect(() => {
     console.log(id);
@@ -71,17 +72,30 @@ const Confirm = () => {
         <>
           <DoneOutlineIcon style={{ fontSize: '10rem', color: '#fff' }} />
           <h6 style={{ maxWidth: 500 }}>
-            Your registration is complete. Start a new project if you haven't
-            already!
+            Your registration is complete.{' '}
+            {userInfo
+              ? "Start a new project if you haven't already!"
+              : 'Log in with your account details and start a new project!'}
           </h6>
-          <Link
-            to='/boards'
-            style={{ textDecoration: 'none', marginTop: 10, fontSize: 0 }}
-          >
-            <Button variant='outlined' color='primary' size='large'>
-              Boards
-            </Button>
-          </Link>
+          {userInfo ? (
+            <Link
+              to='/signin'
+              style={{ textDecoration: 'none', marginTop: 10, fontSize: 0 }}
+            >
+              <Button variant='outlined' color='primary' size='large'>
+                Sign In
+              </Button>
+            </Link>
+          ) : (
+            <Link
+              to='/boards'
+              style={{ textDecoration: 'none', marginTop: 10, fontSize: 0 }}
+            >
+              <Button variant='outlined' color='primary' size='large'>
+                Boards
+              </Button>
+            </Link>
+          )}
         </>
       ) : resendError ? (
         <>

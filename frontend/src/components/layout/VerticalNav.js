@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect, useRef } from 'react';
 
+import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
-import { useRef } from 'react';
-import NavLinks from './NavLinks';
+import NavLinks from './navComponents/NavLinks';
 
 const useStyles = makeStyles(() => ({
   verticalNavbar: {
@@ -53,7 +52,6 @@ const VerticalNav = () => {
   const [navExpanded, setNavExpanded] = useState(true);
   const [mobile, setMobile] = useState(false);
   const navbarRef = useRef();
-
   const classes = useStyles();
 
   const handleWindowSizeChange = () => {
@@ -109,8 +107,9 @@ const VerticalNav = () => {
             <IconButton className={classes.arrowButton} onClick={expandHandle}>
               <ArrowForwardIosIcon
                 className={classes.arrowIcon}
+                color={!navExpanded && mobile ? 'primary' : 'inherit'}
                 style={{
-                  color: '#fff',
+                  color: navExpanded && '#fff',
                   transform: navExpanded ? 'rotate(-180deg)' : 'rotate(0deg)',
                 }}
               />
