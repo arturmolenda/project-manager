@@ -7,8 +7,8 @@ import mongoose from 'mongoose';
 import initialLabels from '../utils/labelsData.js';
 
 // @desc    Create Project
-// @route   POST /api/users/login
-// @access  Public
+// @route   POST /api/projects/
+// @access  Private
 const createProject = asyncHandler(async (req, res) => {
   const { title, background } = req.body;
   const createdProject = new Project({

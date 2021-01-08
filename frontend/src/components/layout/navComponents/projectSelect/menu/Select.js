@@ -1,8 +1,11 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+
+import { useSelector } from 'react-redux';
+
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import FolderIcon from '@material-ui/icons/Folder';
-import { makeStyles, Typography, Tooltip } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -41,8 +44,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SelectItem = ({ anchorEl, setAnchorEl, title, navExpanded }) => {
+const SelectItem = ({ anchorEl, setAnchorEl, navExpanded }) => {
   const classes = useStyles();
+  const { project } = useSelector((state) => state.projectSetCurrent);
+
   return (
     <div
       className={classes.container}
@@ -52,14 +57,14 @@ const SelectItem = ({ anchorEl, setAnchorEl, title, navExpanded }) => {
         display: !navExpanded && 'inline-flex',
       }}
     >
-      <Fragment>
+      <>
         <div
           className={classes.innerContainer}
           style={{ display: !navExpanded && 'none' }}
         >
           <FolderIcon className={classes.folderIcon} />
           <Typography variant='subtitle2' className={classes.text}>
-            {title ? title : 'Select Project'}
+            {project ? project.title : 'Select Project'}
           </Typography>
         </div>
         {anchorEl ? (
@@ -71,7 +76,7 @@ const SelectItem = ({ anchorEl, setAnchorEl, title, navExpanded }) => {
             className={!navExpanded ? classes.arrowMargin : ''}
           />
         )}
-      </Fragment>
+      </>
     </div>
   );
 };
