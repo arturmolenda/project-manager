@@ -10,11 +10,13 @@ import transporter from '../utils/sendEmail.js';
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
+    .populate('projectsCreated')
+    .populate('projectsJoined');
   if (user && (await user.matchPassword(password))) {
     res.json({
       ...user._doc,
+      password: undefined,
       token: generateToken(user._id),
     });
   } else {
@@ -145,4 +147,15 @@ const resendEmail = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, registerUser, confirmEmail, resendEmail };
+// @desc    Get User Data
+// @route   GET /api/user/
+// @access  Private
+const getUserData = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ _id: req.user._id })
+    .select('-password')
+    .populate('projectsCreated')
+    .populate('projectsJoined');
+  res.status(200).json({ ...user._doc, token: generateToken(user._id) });
+});
+
+export { authUser, registerUser, confirmEmail, resendEmail, getUserData };
