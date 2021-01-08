@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.active-project-link li {
+  border-left: 7px solid rgb(103, 226, 162);
+  padding-left: 9px;
+}
