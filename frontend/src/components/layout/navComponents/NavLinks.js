@@ -3,12 +3,18 @@ import { NavLink } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-import { makeStyles, Tooltip, MenuItem } from '@material-ui/core';
+import {
+  makeStyles,
+  Tooltip,
+  MenuItem,
+  CircularProgress,
+} from '@material-ui/core';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
+
 import NewProjectModal from './NewProjectModal';
 import UserNav from './UserNav';
 import ProjectSelect from './projectSelect/ProjectSelect';
@@ -36,10 +42,12 @@ const useStyles = makeStyles(() => ({
 const NavLinks = ({ navExpanded, mobile }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const classes = useStyles();
-  const { userInfo } = useSelector((state) => state.userLogin);
+  const { loading, userInfo } = useSelector((state) => state.userLogin);
   return (
     <>
-      {userInfo ? (
+      {loading && (!mobile || (mobile && navExpanded)) ? (
+        <CircularProgress style={{ margin: '5vh auto 0 auto' }} />
+      ) : userInfo ? (
         <>
           <UserNav navExpanded={navExpanded} mobile={mobile} />
           <ProjectSelect navExpanded={navExpanded} mobile={mobile} />
