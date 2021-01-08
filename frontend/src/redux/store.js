@@ -11,12 +11,14 @@ import {
   userEmailConfirmReducer,
   userEmailResendReducer,
 } from './reducers/userReducers';
+import { projectCreateReducer } from './reducers/projectReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userEmailConfirm: userEmailConfirmReducer,
   userEmailResend: userEmailResendReducer,
+  projectCreate: projectCreateReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

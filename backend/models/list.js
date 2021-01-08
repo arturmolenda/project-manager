@@ -8,7 +8,6 @@ const listSchema = mongoose.Schema({
       taskIds: [{ type: mongoose.Types.ObjectId, ref: 'Task' }],
     },
   ],
-  listOrder: [{ type: String, required: true }],
   archivedIds: [
     { type: mongoose.Types.ObjectId, required: false, ref: 'Task' },
   ],

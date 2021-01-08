@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDb from './config/db.js';
 import morgan from 'morgan';
 import userRoutes from './routes/userRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 dotenv.config();
@@ -14,6 +15,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
 
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 const PORT = process.env.PORT || 5000;
