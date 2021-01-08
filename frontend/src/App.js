@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -6,11 +6,12 @@ import {
   Switch,
 } from 'react-router-dom';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   createMuiTheme,
   CssBaseline,
+  LinearProgress,
   MuiThemeProvider,
 } from '@material-ui/core';
 
@@ -23,6 +24,7 @@ import themeFile from './util/theme';
 import Confirm from './components/pages/Confirm';
 import Boards from './components/pages/Boards';
 import Project from './components/pages/Project';
+import { getUserData } from './redux/actions/userActions';
 
 const theme = createMuiTheme(themeFile);
 
@@ -33,38 +35,56 @@ const PrivateRoute = ({ children, path, exact = false, userInfo }) => (
 );
 
 const App = () => {
-  const { userInfo } = useSelector((state) => state.userLogin);
-
+  const { loading, userInfo } = useSelector((state) => state.userLogin);
+  const dispatch = useDispatch({});
+  useEffect(() => {
+    if (userInfo && Object.keys(userInfo).length === 1)
+      dispatch(getUserData(userInfo.token));
+  }, [dispatch, userInfo]);
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
         <Layout>
-          <Switch>
-            <Route exact path='/'>
-              <ParticlesBackground />
-              <Home />
-            </Route>
-            <Route exact path='/signin'>
-              <ParticlesBackground />
-              <Login />
-            </Route>
-            <Route exact path='/register'>
-              <ParticlesBackground />
-              <Register />
-            </Route>
-            <Route exact path='/confirm/:id'>
-              <ParticlesBackground />
-              <Confirm />
-            </Route>
-            <PrivateRoute exact path='/boards' userInfo={userInfo}>
-              <ParticlesBackground />
-              <Boards />
-            </PrivateRoute>
-            <PrivateRoute exact path='/project/:id' userInfo={userInfo}>
-              <Project />
-            </PrivateRoute>
-          </Switch>
+          {loading ? (
+            <>
+              <LinearProgress
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  width: '100%',
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Switch>
+                <Route exact path='/'>
+                  <ParticlesBackground />
+                  <Home />
+                </Route>
+                <Route exact path='/signin'>
+                  <ParticlesBackground />
+                  <Login />
+                </Route>
+                <Route exact path='/register'>
+                  <ParticlesBackground />
+                  <Register />
+                </Route>
+                <Route exact path='/confirm/:id'>
+                  <ParticlesBackground />
+                  <Confirm />
+                </Route>
+                <PrivateRoute exact path='/boards' userInfo={userInfo}>
+                  <ParticlesBackground />
+                  <Boards />
+                </PrivateRoute>
+                <PrivateRoute exact path='/project/:id' userInfo={userInfo}>
+                  <Project />
+                </PrivateRoute>
+              </Switch>
+            </>
+          )}
         </Layout>
       </Router>
     </MuiThemeProvider>

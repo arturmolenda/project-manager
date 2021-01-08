@@ -29,7 +29,7 @@ export const login = (email, password) => async (dispatch) => {
     );
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    localStorage.setItem('userInfo', JSON.stringify({ token: data.token }));
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -115,5 +115,24 @@ export const resendEmail = (emailCode) => async (dispatch) => {
           ? error.response.data.message
           : error.message,
     });
+  }
+};
+
+export const getUserData = (token) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_LOGIN_REQUEST });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data } = await axios.get('/api/users/', config);
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+  } catch (error) {
+    localStorage.removeItem('userInfo');
+    dispatch({ type: USER_LOGOUT });
+    console.error(error);
   }
 };
