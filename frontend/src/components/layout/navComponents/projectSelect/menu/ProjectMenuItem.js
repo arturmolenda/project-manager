@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ProjectMenuItem = ({ project, index, setAnchorEl }) => {
+const ProjectMenuItem = ({ project, setAnchorEl }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const clickHandle = () => {
@@ -34,8 +34,7 @@ const ProjectMenuItem = ({ project, index, setAnchorEl }) => {
     <NavLink
       to={`/project/${project._id}`}
       className={classes.link}
-      exact='true'
-      key={index}
+      exact
       activeClassName='active-project-link'
     >
       <MenuItem className={classes.container} onClick={clickHandle}>
