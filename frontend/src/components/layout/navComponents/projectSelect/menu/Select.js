@@ -34,6 +34,7 @@ const useStyles = makeStyles(() => ({
     overflowX: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
+    userSelect: 'none',
   },
   folderIcon: {
     fontSize: 20,
@@ -44,7 +45,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SelectItem = ({ anchorEl, setAnchorEl, navExpanded }) => {
+const Select = ({ anchorEl, setAnchorEl, navExpanded }) => {
   const classes = useStyles();
   const { project } = useSelector((state) => state.projectSetCurrent);
 
@@ -81,4 +82,4 @@ const SelectItem = ({ anchorEl, setAnchorEl, navExpanded }) => {
   );
 };
 
-export default SelectItem;
+export default Select;
