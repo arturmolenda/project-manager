@@ -12,9 +12,10 @@ const isObjectId = /^[0-9a-fA-F]{24}$/;
 
 const Project = () => {
   const [projectLoading, setProjectLoading] = useState(false);
+  const [background, setBackground] = useState(false);
   const backgroundRef = useRef();
   const dispatch = useDispatch();
-  const { project } = useSelector((state) => state.projectGetData);
+  const { loading, project } = useSelector((state) => state.projectGetData);
   const { userInfo } = useSelector((state) => state.userLogin);
   const { id } = useParams();
   const history = useHistory();
@@ -42,7 +43,7 @@ const Project = () => {
   // Fetch project data or navigate to boards if link is broken
   useEffect(() => {
     if (id.match(isObjectId)) {
-      backgroundRef.current.style.backgroundImage = 'none';
+      setBackground('none');
       setProjectLoading(true);
       dispatch(getProjectData(id));
     } else {
@@ -54,6 +55,7 @@ const Project = () => {
   useEffect(() => {
     return () => {
       dispatch({ type: PROJECT_SET_CURRENT_RESET });
+      setProjectLoading(true);
     };
   }, [dispatch]);
 
@@ -65,7 +67,7 @@ const Project = () => {
         imageLoader.src = project.background.image;
         imageLoader.onload = () => {
           setProjectLoading(false);
-          backgroundRef.current.style.backgroundImage = `url(${project.background.image})`;
+          setBackground(`url(${project.background.image})`);
           backgroundRef.current.style.backgroundSize = project.background.size;
           backgroundRef.current.style.backgroundPosition =
             project.background.position;
@@ -74,7 +76,7 @@ const Project = () => {
         };
         imageLoader.onerror = () => setProjectLoading(false);
       } else if (project.background.color) {
-        backgroundRef.current.style.backgroundImage = project.background.color;
+        setBackground(project.background.color);
         setProjectLoading(false);
       }
     }
@@ -92,9 +94,10 @@ const Project = () => {
           width: '100%',
           height: '100%',
           zIndex: -1,
+          backgroundImage: !loading && !projectLoading && background,
         }}
       />
-      {projectLoading ? <Loader /> : project && <Board />}
+      {projectLoading || loading ? <Loader /> : project && <Board />}
     </>
   );
 };
