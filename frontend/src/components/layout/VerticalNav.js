@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -26,18 +28,12 @@ const useStyles = makeStyles(() => ({
     paddingBottom: 58,
   },
   buttonContainer: {
-    position: 'absolute',
-    right: 0,
+    display: 'flex',
+    justifyContent: 'center',
     transition: 'all .2s',
     marginTop: 10,
   },
-  buttonMobile: {
-    margin: '10px 15px',
-    borderRadius: '50%',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    },
-  },
+
   arrowButton: {
     width: 48,
     color: '#fff',
@@ -51,6 +47,7 @@ const useStyles = makeStyles(() => ({
 const VerticalNav = () => {
   const [navExpanded, setNavExpanded] = useState(true);
   const [mobile, setMobile] = useState(false);
+  const { loading } = useSelector((state) => state.userLogin);
   const navbarRef = useRef();
   const classes = useStyles();
 
@@ -95,15 +92,11 @@ const VerticalNav = () => {
             : 'linear-gradient(0deg, rgb(0, 23, 67) 0%, rgb(20, 116, 172) 100%)',
         }}
       >
-        <div className={classes.innerContainer}>
+        <NavLinks navExpanded={navExpanded} mobile={mobile} />
+        {!loading && (
           <div
-            className={`${classes.buttonContainer} ${
-              mobile && classes.buttonMobile
-            }`}
-            style={{
-              margin: navExpanded && !mobile && '10px 15px 0 0',
-              right: navExpanded ? '0px' : 'calc(50% - 24px)',
-            }}
+            className={classes.buttonContainer}
+            style={{ marginLeft: !navExpanded && mobile && -35 }}
           >
             <IconButton className={classes.arrowButton} onClick={expandHandle}>
               <ArrowForwardIosIcon
@@ -116,8 +109,7 @@ const VerticalNav = () => {
               />
             </IconButton>
           </div>
-        </div>
-        <NavLinks navExpanded={navExpanded} mobile={mobile} />
+        )}
       </div>
 
       {/* Fix to use position: fixed and keep navbar's space */}

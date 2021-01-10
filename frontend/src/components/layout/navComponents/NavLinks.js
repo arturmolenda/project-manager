@@ -51,15 +51,14 @@ const NavLinks = ({ navExpanded, mobile }) => {
         <>
           <UserNav navExpanded={navExpanded} mobile={mobile} />
           <ProjectSelect navExpanded={navExpanded} mobile={mobile} />
-          <NavLink to='/boards' className={classes.navLink}>
+          <NavLink
+            to='/boards'
+            className={`${classes.navLink} ${
+              !navExpanded && mobile && classes.hiddenMenu
+            }`}
+          >
             <Tooltip placement='right' title={!navExpanded ? 'Boards' : ''}>
-              <MenuItem
-                className={
-                  navExpanded
-                    ? classes.menuItemContainer
-                    : mobile && classes.hiddenMenu
-                }
-              >
+              <MenuItem className={navExpanded && classes.menuItemContainer}>
                 <DashboardIcon className={classes.iconMargin} />
                 <p
                   className={classes.menuText}
@@ -113,15 +112,14 @@ const NavLinks = ({ navExpanded, mobile }) => {
         </>
       ) : (
         <>
-          <NavLink to='/' className={classes.navLink}>
+          <NavLink
+            to='/'
+            className={`${classes.navLink} ${
+              !navExpanded && mobile && classes.hiddenMenu
+            }`}
+          >
             <Tooltip placement='right' title={!navExpanded ? 'Home' : ''}>
-              <MenuItem
-                className={
-                  navExpanded
-                    ? classes.menuItemContainer
-                    : mobile && classes.hiddenMenu
-                }
-              >
+              <MenuItem className={navExpanded && classes.menuItemContainer}>
                 <DashboardIcon className={classes.iconMargin} />
                 <p
                   className={classes.menuText}
@@ -133,15 +131,14 @@ const NavLinks = ({ navExpanded, mobile }) => {
             </Tooltip>
           </NavLink>
 
-          <NavLink to='/signin' className={classes.navLink}>
+          <NavLink
+            to='/signin'
+            className={`${classes.navLink} ${
+              !navExpanded && mobile && classes.hiddenMenu
+            }`}
+          >
             <Tooltip placement='right' title={!navExpanded ? 'Sign In' : ''}>
-              <MenuItem
-                className={
-                  navExpanded
-                    ? classes.menuItemContainer
-                    : mobile && classes.hiddenMenu
-                }
-              >
+              <MenuItem className={navExpanded && classes.menuItemContainer}>
                 <LockOpenIcon className={classes.iconMargin} />
                 <p
                   className={classes.menuText}
@@ -153,15 +150,14 @@ const NavLinks = ({ navExpanded, mobile }) => {
             </Tooltip>
           </NavLink>
 
-          <NavLink to='/register' className={classes.navLink}>
+          <NavLink
+            to='/register'
+            className={`${classes.navLink} ${
+              !navExpanded && mobile && classes.hiddenMenu
+            }`}
+          >
             <Tooltip placement='right' title={!navExpanded ? 'Register' : ''}>
-              <MenuItem
-                className={
-                  navExpanded
-                    ? classes.menuItemContainer
-                    : mobile && classes.hiddenMenu
-                }
-              >
+              <MenuItem className={navExpanded && classes.menuItemContainer}>
                 <VpnKeyIcon className={classes.iconMargin} />
                 <p
                   className={classes.menuText}
