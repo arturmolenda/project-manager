@@ -1,11 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
-
 import { makeStyles, MenuItem, Typography } from '@material-ui/core';
-
-import { PROJECT_SET_CURRENT } from '../../../../../redux/constants/projectConstants';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -25,11 +21,7 @@ const useStyles = makeStyles(() => ({
 
 const ProjectMenuItem = ({ project, setAnchorEl }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const clickHandle = () => {
-    dispatch({ type: PROJECT_SET_CURRENT, payload: project });
-    setAnchorEl(null);
-  };
+
   return (
     <NavLink
       to={`/project/${project._id}`}
@@ -37,7 +29,7 @@ const ProjectMenuItem = ({ project, setAnchorEl }) => {
       exact
       activeClassName='active-project-link'
     >
-      <MenuItem className={classes.container} onClick={clickHandle}>
+      <MenuItem className={classes.container} onClick={() => setAnchorEl(null)}>
         <Typography variant='subtitle2' className={classes.text}>
           {project.title}
         </Typography>
