@@ -63,7 +63,10 @@ const Select = ({ anchorEl, setAnchorEl, navExpanded }) => {
           className={classes.innerContainer}
           style={{ display: !navExpanded && 'none' }}
         >
-          <FolderIcon className={classes.folderIcon} />
+          <FolderIcon
+            className={classes.folderIcon}
+            color={project && project.title && 'primary'}
+          />
           <Typography variant='subtitle2' className={classes.text}>
             {project ? project.title : 'Select Project'}
           </Typography>
