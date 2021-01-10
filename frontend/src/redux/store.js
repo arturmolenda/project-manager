@@ -14,6 +14,7 @@ import {
 import {
   projectCreateReducer,
   projectSetCurrentReducer,
+  projectGetDataReducer,
 } from './reducers/projectReducers';
 
 const reducer = combineReducers({
@@ -23,6 +24,7 @@ const reducer = combineReducers({
   userEmailResend: userEmailResendReducer,
   projectCreate: projectCreateReducer,
   projectSetCurrent: projectSetCurrentReducer,
+  projectGetData: projectGetDataReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
@@ -30,7 +32,10 @@ const userInfoFromStorage = localStorage.getItem('userInfo')
   : null;
 
 const initialState = {
-  userLogin: { userInfo: userInfoFromStorage },
+  userLogin: {
+    userInfo: userInfoFromStorage,
+    loading: userInfoFromStorage && userInfoFromStorage.token ? true : false,
+  },
 };
 
 const middleware = [thunk];
