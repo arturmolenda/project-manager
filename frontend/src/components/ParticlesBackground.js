@@ -5,7 +5,7 @@ const ParticlesBackground = ({ disableMove }) => {
     <Particles
       style={{
         background: 'rgb(35, 39, 65)',
-        position: 'absolute',
+        position: 'fixed',
         zIndex: -1,
         top: 0,
         left: 0,
