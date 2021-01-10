@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import Navbar from './navbar/Navbar';
 
 const Board = () => {
   const { project, labels, tasks } = useSelector(
@@ -7,7 +8,7 @@ const Board = () => {
   );
   return (
     <div>
-      <h1>{project.title}</h1>
+      <Navbar />
     </div>
   );
 };
