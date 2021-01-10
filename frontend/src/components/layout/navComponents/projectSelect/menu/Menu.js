@@ -56,6 +56,7 @@ const Menu = ({ anchorEl, setAnchorEl }) => {
       open={Boolean(anchorEl)}
       onClose={() => setAnchorEl(null)}
       transition
+      style={{ zIndex: 111111 }}
     >
       <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
         <Paper className={classes.container}>
