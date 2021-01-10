@@ -14,7 +14,7 @@ import {
   USER_EMAIL_RESEND_FAIL,
 } from '../constants/userConstants';
 
-export const userLoginReducer = (state = {}, action) => {
+export const userLoginReducer = (state = { loading: true }, action) => {
   switch (action.type) {
     case USER_LOGIN_REQUEST:
       return { loading: true };

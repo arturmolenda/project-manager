@@ -26,7 +26,10 @@ const useStyles = makeStyles(() => ({
     },
   },
   container: {
-    color: '#4e4949',
+    maxHeight: 300,
+    width: 209,
+    outline: 'none',
+    padding: '8px 0',
   },
   link: {
     textDecoration: 'none',
@@ -55,35 +58,42 @@ const Menu = ({ anchorEl, setAnchorEl }) => {
       transition
     >
       <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-        <Paper style={{ maxHeight: 300, width: 209, outline: 'none' }}>
+        <Paper className={classes.container}>
           {!loading &&
           userInfo &&
           Object.keys(userInfo).length !== 1 &&
-          projectsJoined.length !== 0 &&
-          projectsCreated.length !== 0 ? (
+          (projectsJoined.length !== 0 || projectsCreated.length !== 0) ? (
             <>
-              <MenuItem disabled className={classes.section}>
-                <Typography variant='h6'>Owned Projects</Typography>
-              </MenuItem>
-              {projectsCreated.map((project) => (
-                <div key={project._id}>
-                  <ProjectMenuItem
-                    project={project}
-                    setAnchorEl={setAnchorEl}
-                  />
-                </div>
-              ))}
-              <MenuItem disabled className={classes.section}>
-                <Typography variant='h6'>Joined Projects</Typography>
-              </MenuItem>
-              {projectsJoined.map((project) => (
-                <div key={project._id}>
-                  <ProjectMenuItem
-                    project={project}
-                    setAnchorEl={setAnchorEl}
-                  />
-                </div>
-              ))}
+              {projectsCreated.length !== 0 && (
+                <>
+                  <MenuItem disabled className={classes.section}>
+                    <Typography variant='h6'>Owned Projects</Typography>
+                  </MenuItem>
+                  {projectsCreated.map((project) => (
+                    <div key={project._id}>
+                      <ProjectMenuItem
+                        project={project}
+                        setAnchorEl={setAnchorEl}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+              {projectsJoined.length !== 0 && (
+                <>
+                  <MenuItem disabled className={classes.section}>
+                    <Typography variant='h6'>Joined Projects</Typography>
+                  </MenuItem>
+                  {projectsJoined.map((project) => (
+                    <div key={project._id}>
+                      <ProjectMenuItem
+                        project={project}
+                        setAnchorEl={setAnchorEl}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
             </>
           ) : (
             <div

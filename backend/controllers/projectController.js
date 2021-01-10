@@ -20,7 +20,7 @@ const createProject = asyncHandler(async (req, res) => {
     },
     users: [
       {
-        userId: req.user._id,
+        user: req.user._id,
         permissions: 2,
       },
     ],
@@ -64,4 +64,18 @@ const createProject = asyncHandler(async (req, res) => {
   res.status(201).json({ project: createdProject });
 });
 
-export { createProject };
+// @desc    Get Project Data
+// @route   GET /api/projects/:projectId
+// @access  Private
+const getProjectData = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const project = await Project.findOne({ _id: projectId }).populate({
+    path: 'users.user',
+    select: 'username email profilePicture',
+  });
+  const labels = await Label.find({ projectId });
+  const lists = await List.findOne({ projectId });
+  res.status(200).json({ project, labels, lists });
+});
+
+export { createProject, getProjectData };

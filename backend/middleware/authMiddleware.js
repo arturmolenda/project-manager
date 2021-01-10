@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import User from '../models/user.js';
+import Project from '../models/project.js';
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -24,5 +25,32 @@ const protect = asyncHandler(async (req, res, next) => {
     throw new Error('Not authorized, token in missing');
   }
 });
+const permissionsOne = asyncHandler(async (req, res, next) => {
+  const isAuthorized = await Project.findOne({
+    _id: req.params.projectId,
+    'users.user': req.user._id,
+  });
+  if (isAuthorized) next();
+  else {
+    res.status(401);
+    throw new Error('Not authorized');
+  }
+});
+const permissionsTwo = asyncHandler(async (req, res, next) => {
+  const isAuthorized = await Project.findOne({
+    _id: req.params.projectId,
+    users: {
+      $elemMatch: {
+        user: req.user._id,
+        permissions: 2,
+      },
+    },
+  });
+  if (isAuthorized) next();
+  else {
+    res.status(401);
+    throw new Error('Not authorized');
+  }
+});
 
-export { protect };
+export { protect, permissionsOne, permissionsTwo };
