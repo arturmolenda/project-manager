@@ -14,12 +14,11 @@ const useStyles = makeStyles((theme) => ({
     padding: 5,
     height: 'auto',
     zIndex: 1,
-    position: 'relative',
   },
   backgroundNav: {
     borderBottom: '1px solid #d8d8d8',
     background: '#ffffffd9',
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     left: 0,
     width: '100%',
@@ -46,7 +45,7 @@ const Navbar = () => {
   return (
     <>
       <div className={classes.backgroundNav} />
-      <div className={classes.container}>
+      <div className={classes.container} style={{ position: 'fixed' }}>
         <div style={{ display: 'flex' }}>
           <div style={{ display: 'flex' }}>
             <DeveloperBoardIcon color='primary' className={classes.boardIcon} />
@@ -66,6 +65,15 @@ const Navbar = () => {
         </div>
 
         {/* Settings buttons */}
+      </div>
+
+      <div
+        className={classes.container}
+        style={{ visibility: 'hidden', marginBottom: 40 }}
+      >
+        <div style={{ display: 'flex' }}>
+          <DeveloperBoardIcon color='primary' className={classes.boardIcon} />
+        </div>
       </div>
     </>
   );
