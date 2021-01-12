@@ -1,0 +1,12 @@
+.list-drag-ghost {
+  cursor: pointer !important;
+  transform: rotateZ(3deg);
+}
+
+.list-drag-ghost .list-drag-handle {
+  background-color: rgb(249, 249, 249) !important;
+}
+
+.smooth-dnd-container {
+  min-height: auto;
+}
