@@ -51,11 +51,14 @@ const Project = () => {
     }
   }, [history, dispatch, id]);
 
-  // Reset current project on component change
+  // Reset current project on component change and fix react-smooth-dnd drag bug
   useEffect(() => {
+    const cleanClasses = () => (document.body.className = '');
+    document.addEventListener('touchend', cleanClasses, false);
     return () => {
       dispatch({ type: PROJECT_SET_CURRENT_RESET });
       setProjectLoading(true);
+      document.removeEventListener('touchend', cleanClasses, false);
     };
   }, [dispatch]);
 
