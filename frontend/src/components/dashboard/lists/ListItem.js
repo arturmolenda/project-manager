@@ -1,9 +1,12 @@
 import React from 'react';
 
-import { makeStyles, Paper, Typography } from '@material-ui/core';
-
 import { Container, Draggable } from 'react-smooth-dnd';
-import AddTask from './tasks/AddTask';
+
+import { makeStyles, Paper } from '@material-ui/core';
+
+import AddInput from '../shared/AddInput';
+import TitleUpdate from './TitleUpdate';
+import ListMore from './listMore/ListMore';
 
 const useStyles = makeStyles(() => ({
   listContainer: {
@@ -17,8 +20,8 @@ const useStyles = makeStyles(() => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 8px',
+    position: 'relative',
+    padding: '6px 8px',
     borderBottom: '1px solid #d0d3dc',
     backgroundColor: '#ebecf0',
     transition: 'background-color 0.2s ease',
@@ -47,8 +50,8 @@ const ListItem = ({ list }) => {
     <Draggable>
       <Paper elevation={3} className={classes.listContainer}>
         <div className={`list-drag-handle ${classes.header}`}>
-          <Typography variant='body1'>{list.title}</Typography>
-          {/* List More options */}
+          <TitleUpdate currentTitle={list.title} />
+          <ListMore listId={list._id} />
         </div>
 
         <div
@@ -65,11 +68,9 @@ const ListItem = ({ list }) => {
               showOnTop: true,
               className: 'drop-preview',
             }}
-          >
-            {/* Tasks */}
-          </Container>
+          ></Container>
         </div>
-        <AddTask listId={list._id} />
+        <AddInput listId={list._id} placeholder={'Add new task'} />
       </Paper>
     </Draggable>
   );

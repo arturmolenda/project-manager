@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { useSelector } from 'react-redux';
 import { Container } from 'react-smooth-dnd';
-import ListItem from './ListItem';
+
 import './draggingStyles.css';
-import AddList from './AddList';
+import ListItem from './ListItem';
+import AddInput from '../shared/AddInput';
 
 const Lists = () => {
   const { lists } = useSelector((state) => state.projectGetData);
@@ -35,7 +37,7 @@ const Lists = () => {
           lists.lists.length > 0 &&
           lists.lists.map((list) => <ListItem key={list._id} list={list} />)}
       </Container>
-      <AddList />
+      <AddInput placeholder={'Add new list'} />
     </div>
   );
 };
