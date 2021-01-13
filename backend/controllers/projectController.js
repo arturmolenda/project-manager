@@ -30,22 +30,22 @@ const createProject = asyncHandler(async (req, res) => {
       {
         _id: new mongoose.Types.ObjectId(),
         title: 'To Do',
-        taskIds: [],
+        tasks: [],
       },
       {
         _id: new mongoose.Types.ObjectId(),
         title: 'In Progress',
-        taskIds: [],
+        tasks: [],
       },
       {
         _id: new mongoose.Types.ObjectId(),
         title: 'To Review',
-        taskIds: [],
+        tasks: [],
       },
       {
         _id: new mongoose.Types.ObjectId(),
         title: 'Finished',
-        taskIds: [],
+        tasks: [],
       },
     ],
     projectId: createdProject._id,
@@ -75,7 +75,16 @@ const getProjectData = asyncHandler(async (req, res) => {
   });
   const labels = await Label.find({ projectId });
   const lists = await List.findOne({ projectId });
-  res.status(200).json({ project, labels, lists });
+  const userPermissions = project.users.find((user) =>
+    req.user._id.equals(user.user._id)
+  );
+
+  res.status(200).json({
+    project: { ...project._doc, permissions: userPermissions.permissions },
+
+    labels,
+    lists,
+  });
 });
 
 export { createProject, getProjectData };

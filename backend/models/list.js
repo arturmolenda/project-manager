@@ -5,7 +5,7 @@ const listSchema = mongoose.Schema({
     {
       _id: { type: mongoose.Types.ObjectId, required: true },
       title: { type: String, required: true },
-      taskIds: [{ type: mongoose.Types.ObjectId, ref: 'Task' }],
+      tasks: [{ type: mongoose.Types.ObjectId, ref: 'Task' }],
     },
   ],
   archivedIds: [
