@@ -16,6 +16,7 @@ import {
   projectSetCurrentReducer,
   projectGetDataReducer,
 } from './reducers/projectReducers';
+import { socketConnectionReducer } from './reducers/socketReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   projectCreate: projectCreateReducer,
   projectSetCurrent: projectSetCurrentReducer,
   projectGetData: projectGetDataReducer,
+  socketConnection: socketConnectionReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')

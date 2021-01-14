@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../redux/actions/userActions';
 
 import {
   makeStyles,
@@ -41,8 +42,9 @@ const useStyles = makeStyles(() => ({
 
 const NavLinks = ({ navExpanded, mobile }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const classes = useStyles();
   const { loading, userInfo } = useSelector((state) => state.userLogin);
+  const dispatch = useDispatch();
+  const classes = useStyles();
   return (
     <>
       {loading && (!mobile || (mobile && navExpanded)) ? (
@@ -94,7 +96,7 @@ const NavLinks = ({ navExpanded, mobile }) => {
                   ? classes.menuItemContainer
                   : mobile && classes.hiddenMenu
               }
-              // onClick={logoutHandle}
+              onClick={() => dispatch(logout())}
             >
               <ExitToAppIcon className={classes.iconMargin} />
               <p
