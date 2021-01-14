@@ -13,7 +13,12 @@ import {
   USER_EMAIL_RESEND_SUCCESS,
   USER_EMAIL_RESEND_FAIL,
 } from '../constants/userConstants';
+import {
+  SOCKET_CONNECT_RESET,
+  SOCKET_CONNECT_SUCCESS,
+} from '../constants/socketConstants';
 import axios from 'axios';
+import io from 'socket.io-client';
 
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -30,6 +35,19 @@ export const login = (email, password) => async (dispatch) => {
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
     localStorage.setItem('userInfo', JSON.stringify({ token: data.token }));
+
+    // connect to socket server
+    const socket = io.connect('http://localhost:5000', {
+      transports: ['websocket', 'polling', 'flashsocket'],
+      auth: {
+        headers: {
+          authorization: `Bearer ${data.token}`,
+        },
+      },
+    });
+    socket.on('connect', () =>
+      dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket })
+    );
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -65,7 +83,12 @@ export const register = (username, email, password) => async (dispatch) => {
   }
 };
 
-export const logout = () => async (dispatch) => {
+export const logout = () => async (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+  socket.disconnect();
+  dispatch({ type: SOCKET_CONNECT_RESET });
   localStorage.removeItem('userInfo');
   dispatch({ type: USER_LOGOUT });
 };
@@ -130,6 +153,19 @@ export const getUserData = (token) => async (dispatch) => {
     };
     const { data } = await axios.get('/api/users/', config);
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+    // connect to socket server
+    const socket = io.connect('http://localhost:5000', {
+      transports: ['websocket', 'polling', 'flashsocket'],
+      auth: {
+        headers: {
+          authorization: `Bearer ${data.token}`,
+        },
+      },
+    });
+    socket.on('connect', () =>
+      dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket })
+    );
   } catch (error) {
     localStorage.removeItem('userInfo');
     dispatch({ type: USER_LOGOUT });
