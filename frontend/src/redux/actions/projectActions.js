@@ -51,6 +51,7 @@ export const getProjectData = (projectId) => async (dispatch, getState) => {
 
     const {
       userLogin: { userInfo },
+      socketConnection: { socket },
     } = getState();
 
     const config = {
@@ -61,7 +62,10 @@ export const getProjectData = (projectId) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(`/api/projects/${projectId}`, config);
-    console.log(data);
+
+    // join socket project board room
+    socket.emit('join-board', { room: projectId });
+
     dispatch({ type: PROJECT_GET_DATA_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
