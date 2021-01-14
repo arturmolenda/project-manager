@@ -33,9 +33,6 @@ export const login = (email, password) => async (dispatch) => {
       config
     );
 
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
-    localStorage.setItem('userInfo', JSON.stringify({ token: data.token }));
-
     // connect to socket server
     const socket = io.connect('http://localhost:5000', {
       transports: ['websocket', 'polling', 'flashsocket'],
@@ -45,9 +42,12 @@ export const login = (email, password) => async (dispatch) => {
         },
       },
     });
-    socket.on('connect', () =>
-      dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket })
-    );
+    socket.on('connect', () => {
+      dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket });
+      dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+    });
+
+    localStorage.setItem('userInfo', JSON.stringify({ token: data.token }));
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -152,7 +152,6 @@ export const getUserData = (token) => async (dispatch) => {
       },
     };
     const { data } = await axios.get('/api/users/', config);
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
     // connect to socket server
     const socket = io.connect('http://localhost:5000', {
@@ -163,9 +162,10 @@ export const getUserData = (token) => async (dispatch) => {
         },
       },
     });
-    socket.on('connect', () =>
-      dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket })
-    );
+    socket.on('connect', () => {
+      dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket });
+      dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+    });
   } catch (error) {
     localStorage.removeItem('userInfo');
     dispatch({ type: USER_LOGOUT });
