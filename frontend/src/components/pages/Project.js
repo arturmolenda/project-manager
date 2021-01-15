@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { getProjectData } from '../../redux/actions/projectActions';
 import {
   PROJECT_SET_CURRENT,
@@ -15,7 +15,9 @@ const Project = () => {
   const [background, setBackground] = useState(false);
   const backgroundRef = useRef();
   const dispatch = useDispatch();
-  const { loading, project } = useSelector((state) => state.projectGetData);
+  const { loading, project, error } = useSelector(
+    (state) => state.projectGetData
+  );
   const { userInfo } = useSelector((state) => state.userLogin);
   const { socket } = useSelector((state) => state.socketConnection);
   const { id } = useParams();
@@ -84,8 +86,8 @@ const Project = () => {
         setBackground(project.background.color);
         setProjectLoading(false);
       }
-    }
-  }, [id, project]);
+    } else if (error) setProjectLoading(false);
+  }, [id, project, error]);
 
   return (
     <>
@@ -102,7 +104,13 @@ const Project = () => {
           backgroundImage: !loading && !projectLoading && background,
         }}
       />
-      {projectLoading || loading ? <Loader /> : project && <Board />}
+      {projectLoading || loading ? (
+        <Loader />
+      ) : error ? (
+        <Redirect to='/boards' />
+      ) : (
+        project && <Board />
+      )}
     </>
   );
 };
