@@ -37,9 +37,7 @@ export const login = (email, password) => async (dispatch) => {
     const socket = io.connect('http://localhost:5000', {
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
-        headers: {
-          authorization: `Bearer ${data.token}`,
-        },
+        authorization: `Bearer ${data.token}`,
       },
     });
     socket.on('connect', () => {
@@ -157,9 +155,7 @@ export const getUserData = (token) => async (dispatch) => {
     const socket = io.connect('http://localhost:5000', {
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
-        headers: {
-          authorization: `Bearer ${data.token}`,
-        },
+        authorization: `Bearer ${data.token}`,
       },
     });
     socket.on('connect', () => {
