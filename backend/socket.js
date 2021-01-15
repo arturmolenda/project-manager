@@ -1,30 +1,28 @@
-import jwt from 'jsonwebtoken';
-import asyncHandler from 'express-async-handler';
 import User from './models/user.js';
-
-const authorizeSocketConnection = asyncHandler(async (req) => {
-  const token = req.headers.authorization.split(' ')[1];
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const user = await User.findById(decoded.id).select('-password');
-  return user;
-});
+import Task from './models/task.js';
+import Project from './models/project.js';
+import mongoose from 'mongoose';
+import {
+  authorizeSocketConnection,
+  levelOneAuth,
+  levelTwoAuth,
+} from './middleware/socketMiddleware.js';
 
 export const socket = (io) => {
   io.on('connection', async (socket) => {
     // Authorize user upon initial connection
-    const user = await authorizeSocketConnection(socket.handshake.auth, socket);
-    if (user) socket.user = user;
-    else socket.disconnect(true);
-
+    await authorizeSocketConnection(socket.handshake.auth, socket);
     console.log('Connected users:', io.sockets.server.eio.clientsCount);
 
-    socket.on('join-board', ({ room }) => {
-      console.log('joined board', room);
+    socket.on('join-board', async ({ room }) => {
+      // Check is user is part of the project
+      await levelOneAuth({ projectId: room }, socket);
+      console.log('Joined board', room);
       socket.join(room);
     });
 
     socket.on('disconnect-board', ({ room }) => {
-      console.log('disconnected-board', room);
+      console.log('Disconnected-board', room);
       socket.leave(room);
     });
   });
