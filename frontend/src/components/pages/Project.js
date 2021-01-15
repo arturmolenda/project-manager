@@ -17,6 +17,7 @@ const Project = () => {
   const dispatch = useDispatch();
   const { loading, project } = useSelector((state) => state.projectGetData);
   const { userInfo } = useSelector((state) => state.userLogin);
+  const { socket } = useSelector((state) => state.socketConnection);
   const { id } = useParams();
   const history = useHistory();
 
@@ -45,7 +46,7 @@ const Project = () => {
     if (id.match(isObjectId)) {
       setBackground('none');
       setProjectLoading(true);
-      dispatch(getProjectData(id));
+      dispatch(getProjectData(id, project && project._id));
     } else {
       history.push('/boards');
     }
@@ -58,6 +59,7 @@ const Project = () => {
     return () => {
       dispatch({ type: PROJECT_SET_CURRENT_RESET });
       setProjectLoading(true);
+      socket.emit('disconnect-board', { room: id });
       document.removeEventListener('touchend', cleanClasses, false);
     };
   }, [dispatch]);
