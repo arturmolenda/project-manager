@@ -44,13 +44,7 @@ const App = () => {
   }, [dispatch, userInfo]);
 
   useEffect(() => {
-    console.log('socket refresh');
-    if (socket) {
-      socket.on('auth-error', () => {
-        console.log('auth error');
-        dispatch(logout());
-      });
-    }
+    if (socket) socket.on('auth-error', () => dispatch(logout()));
   }, [dispatch, socket]);
   return (
     <MuiThemeProvider theme={theme}>
