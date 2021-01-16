@@ -1,6 +1,7 @@
 import User from './models/user.js';
 import Task from './models/task.js';
 import Project from './models/project.js';
+import List from './models/list.js';
 import mongoose from 'mongoose';
 import {
   authorizeSocketConnection,
@@ -24,6 +25,37 @@ export const socket = (io) => {
     socket.on('disconnect-board', ({ room }) => {
       console.log('Disconnected-board', room);
       socket.leave(room);
+    });
+
+    socket.on('add-task', async (data, callback) => {
+      const taskId = mongoose.Types.ObjectId();
+      const createdTask = new Task({
+        _id: taskId,
+        title: data.title,
+        description: '',
+        deadline: null,
+        comments: [],
+        labels: [],
+        users: [],
+        author: socket.user.username,
+        creatorId: socket.user._id,
+        projectId: data.projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      io.to(data.projectId).emit('new-task', {
+        task: createdTask,
+        listId: data.listId,
+      });
+
+      callback();
+
+      await List.findOneAndUpdate(
+        { projectId: data.projectId, 'lists._id': data.listId },
+        { $push: { [`lists.$.tasks`]: taskId } }
+      );
+      await createdTask.save();
     });
   });
   io.on('disconnect', (socket) => {
