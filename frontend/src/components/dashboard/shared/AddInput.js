@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import {
   makeStyles,
   InputAdornment,
@@ -72,6 +74,8 @@ const useStyles = (listId, isOpen) =>
 const AddInput = ({ listId, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState('');
+  const { socket } = useSelector((state) => state.socketConnection);
+  const { project } = useSelector((state) => state.projectSetCurrent);
   const classes = useStyles(listId, isOpen)();
   const inputRef = useRef();
   const cancelHandle = () => {
@@ -83,7 +87,7 @@ const AddInput = ({ listId, placeholder }) => {
   const keyPressHandle = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (title.trim() !== '') addAction();
+      addAction();
     }
   };
   const focusHandle = () => {
@@ -98,19 +102,23 @@ const AddInput = ({ listId, placeholder }) => {
   };
 
   const focusOutHandle = () => title === '' && setIsOpen(false);
-  const preventBlurHandle = (e) => {
-    console.log('mouse down');
-    e.preventDefault();
-  };
+  const preventBlurHandle = (e) => e.preventDefault();
 
   const addAction = () => {
-    setTitle('');
-    if (listId) {
-      // Add task action
-    } else {
-      // Add list action
+    if (title.trim() !== '') {
+      if (listId) {
+        socket.emit(
+          'add-task',
+          { projectId: project._id, listId, title },
+          () => {
+            setTitle('');
+            inputRef.current.focus();
+          }
+        );
+      } else {
+        // Add list action
+      }
     }
-    inputRef.current.focus();
   };
 
   return (

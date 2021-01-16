@@ -45,7 +45,10 @@ export const createProject = (title) => async (dispatch, getState) => {
   }
 };
 
-export const getProjectData = (projectId) => async (dispatch, getState) => {
+export const getProjectData = (projectId, prevProjectId) => async (
+  dispatch,
+  getState
+) => {
   try {
     dispatch({ type: PROJECT_GET_DATA_REQUEST });
 
@@ -63,7 +66,8 @@ export const getProjectData = (projectId) => async (dispatch, getState) => {
 
     const { data } = await axios.get(`/api/projects/${projectId}`, config);
 
-    // join socket project board room
+    // join and leave socket's project board room
+    if (prevProjectId) socket.emit('disconnect-board', { room: prevProjectId });
     socket.emit('join-board', { room: projectId });
 
     dispatch({ type: PROJECT_GET_DATA_SUCCESS, payload: data });

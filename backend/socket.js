@@ -1,31 +1,61 @@
-import jwt from 'jsonwebtoken';
-import asyncHandler from 'express-async-handler';
 import User from './models/user.js';
-
-const authorizeSocketConnection = asyncHandler(async (req) => {
-  const token = req.headers.authorization.split(' ')[1];
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const user = await User.findById(decoded.id).select('-password');
-  return user;
-});
+import Task from './models/task.js';
+import Project from './models/project.js';
+import List from './models/list.js';
+import mongoose from 'mongoose';
+import {
+  authorizeSocketConnection,
+  levelOneAuth,
+  levelTwoAuth,
+} from './middleware/socketMiddleware.js';
 
 export const socket = (io) => {
   io.on('connection', async (socket) => {
     // Authorize user upon initial connection
-    const user = await authorizeSocketConnection(socket.handshake.auth, socket);
-    if (user) socket.user = user;
-    else socket.disconnect(true);
-
+    await authorizeSocketConnection(socket.handshake.auth, socket);
     console.log('Connected users:', io.sockets.server.eio.clientsCount);
 
-    socket.on('join-board', ({ room }) => {
-      console.log('joined board', room);
+    socket.on('join-board', async ({ room }) => {
+      // Check is user is part of the project
+      await levelOneAuth({ projectId: room }, socket);
+      console.log('Joined board', room);
       socket.join(room);
     });
 
     socket.on('disconnect-board', ({ room }) => {
-      console.log('disconnected-board', room);
+      console.log('Disconnected-board', room);
       socket.leave(room);
+    });
+
+    socket.on('add-task', async (data, callback) => {
+      const taskId = mongoose.Types.ObjectId();
+      const createdTask = new Task({
+        _id: taskId,
+        title: data.title,
+        description: '',
+        deadline: null,
+        comments: [],
+        labels: [],
+        users: [],
+        author: socket.user.username,
+        creatorId: socket.user._id,
+        projectId: data.projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      io.to(data.projectId).emit('new-task', {
+        task: createdTask,
+        listId: data.listId,
+      });
+
+      callback();
+
+      await List.findOneAndUpdate(
+        { projectId: data.projectId, 'lists._id': data.listId },
+        { $push: { [`lists.$.tasks`]: taskId } }
+      );
+      await createdTask.save();
     });
   });
   io.on('disconnect', (socket) => {

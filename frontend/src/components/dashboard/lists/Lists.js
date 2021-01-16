@@ -12,6 +12,7 @@ const Lists = () => {
   const dropHandle = (e) => {
     console.log('dropped', e);
   };
+
   return (
     <div
       id='board-container'
@@ -35,7 +36,9 @@ const Lists = () => {
       >
         {lists &&
           lists.lists.length > 0 &&
-          lists.lists.map((list) => <ListItem key={list._id} list={list} />)}
+          lists.lists.map((list) => (
+            <ListItem key={list._id} list={list} projectId={lists.projectId} />
+          ))}
       </Container>
       <AddInput placeholder={'Add new list'} />
     </div>

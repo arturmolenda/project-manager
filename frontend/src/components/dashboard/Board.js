@@ -1,6 +1,10 @@
+import React, { useEffect } from 'react';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { PROJECT_GET_DATA_ADD_TASK } from '../../redux/constants/projectConstants';
+
 import { makeStyles } from '@material-ui/core';
-import React from 'react';
-import { useSelector } from 'react-redux';
+
 import Lists from './lists/Lists';
 import Navbar from './navbar/Navbar';
 
@@ -25,10 +29,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Board = () => {
+  const dispatch = useDispatch();
+  const { socket } = useSelector((state) => state.socketConnection);
   const { project, labels, tasks } = useSelector(
     (state) => state.projectGetData
   );
   const classes = useStyles();
+
+  useEffect(() => {
+    socket.on('new-task', (data) => {
+      dispatch({ type: PROJECT_GET_DATA_ADD_TASK, payload: data });
+    });
+  }, [dispatch, socket]);
+
   return (
     <div className={classes.boardContainer}>
       <Navbar />

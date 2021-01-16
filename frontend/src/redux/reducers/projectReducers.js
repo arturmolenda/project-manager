@@ -9,7 +9,9 @@ import {
   PROJECT_GET_DATA_SUCCESS,
   PROJECT_GET_DATA_FAIL,
   PROJECT_GET_DATA_RESET,
+  PROJECT_GET_DATA_ADD_TASK,
 } from '../constants/projectConstants';
+import deepcopy from 'deepcopy';
 
 export const projectCreateReducer = (state = {}, action) => {
   switch (action.type) {
@@ -51,6 +53,13 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
         lists: action.payload.lists,
         labels: action.payload.labels,
       };
+    case PROJECT_GET_DATA_ADD_TASK:
+      const stateClone = deepcopy(state);
+      const listIndex = stateClone.lists.lists.findIndex(
+        (list) => list._id === action.payload.listId
+      );
+      stateClone.lists.lists[listIndex].tasks.push(action.payload.task);
+      return stateClone;
     case PROJECT_GET_DATA_FAIL:
       return { loading: false, error: action.payload };
     case PROJECT_GET_DATA_RESET:

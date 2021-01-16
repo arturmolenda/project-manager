@@ -74,7 +74,7 @@ const getProjectData = asyncHandler(async (req, res) => {
     select: 'username email profilePicture',
   });
   const labels = await Label.find({ projectId });
-  const lists = await List.findOne({ projectId });
+  const lists = await List.findOne({ projectId }).populate('lists.tasks');
   const userPermissions = project.users.find((user) =>
     req.user._id.equals(user.user._id)
   );

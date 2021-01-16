@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { getUserData, logout } from './redux/actions/userActions';
 
 import {
   createMuiTheme,
@@ -15,16 +16,15 @@ import {
   MuiThemeProvider,
 } from '@material-ui/core';
 
+import themeFile from './util/theme';
 import Home from './components/pages/Home';
 import Login from './components/pages/Login';
 import Register from './components/pages/Register';
 import Layout from './components/layout/Layout';
 import ParticlesBackground from './components/ParticlesBackground';
-import themeFile from './util/theme';
 import Confirm from './components/pages/Confirm';
 import Boards from './components/pages/Boards';
 import Project from './components/pages/Project';
-import { getUserData } from './redux/actions/userActions';
 
 const theme = createMuiTheme(themeFile);
 
@@ -36,11 +36,16 @@ const PrivateRoute = ({ children, path, exact = false, userInfo }) => (
 
 const App = () => {
   const { loading, userInfo } = useSelector((state) => state.userLogin);
+  const { socket } = useSelector((state) => state.socketConnection);
   const dispatch = useDispatch({});
   useEffect(() => {
     if (userInfo && Object.keys(userInfo).length === 1)
       dispatch(getUserData(userInfo.token));
   }, [dispatch, userInfo]);
+
+  useEffect(() => {
+    if (socket) socket.on('auth-error', () => dispatch(logout()));
+  }, [dispatch, socket]);
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
