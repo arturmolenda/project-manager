@@ -15,6 +15,7 @@ import {
   projectCreateReducer,
   projectSetCurrentReducer,
   projectGetDataReducer,
+  projectTaskMoveReducer,
 } from './reducers/projectReducers';
 import { socketConnectionReducer } from './reducers/socketReducers';
 
@@ -26,6 +27,7 @@ const reducer = combineReducers({
   projectCreate: projectCreateReducer,
   projectSetCurrent: projectSetCurrentReducer,
   projectGetData: projectGetDataReducer,
+  projectTaskMove: projectTaskMoveReducer,
   socketConnection: socketConnectionReducer,
 });
 

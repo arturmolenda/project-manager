@@ -3,8 +3,11 @@ import {
   PROJECT_CREATE_REQUEST,
   PROJECT_CREATE_SUCCESS,
   PROJECT_GET_DATA_FAIL,
+  PROJECT_GET_DATA_MOVE_TASK,
   PROJECT_GET_DATA_REQUEST,
   PROJECT_GET_DATA_SUCCESS,
+  PROJECT_TASK_MOVE,
+  PROJECT_TASK_MOVE_RESET,
 } from '../constants/projectConstants';
 import axios from 'axios';
 import { BACKGROUND_COLORS } from '../../util/colorsContants';
@@ -79,5 +82,78 @@ export const getProjectData = (projectId, prevProjectId) => async (
           ? error.response.data.message
           : error.message,
     });
+  }
+};
+
+// Action used to emit to the socket 'task-move' event for other clients
+// and also prepare and dispatch data for local task move
+export const projectTaskMove = (
+  dropResult,
+  listIndex,
+  projectId,
+  task
+) => async (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectTaskMove: { added, removed },
+  } = getState();
+  const emitTaskMove = (added, removed) => {
+    dispatch({
+      type: PROJECT_GET_DATA_MOVE_TASK,
+      payload: {
+        added,
+        removed,
+        task,
+      },
+    });
+    socket.emit('task-move', {
+      added,
+      removed,
+      taskId: task._id,
+      projectId,
+    });
+
+    dispatch({ type: PROJECT_TASK_MOVE_RESET });
+  };
+  if (dropResult.removedIndex !== null && dropResult.addedIndex !== null) {
+    emitTaskMove(
+      { index: dropResult.addedIndex, listIndex },
+      {
+        listIndex,
+        index: dropResult.removedIndex,
+      },
+      projectId
+    );
+  } else if (dropResult.removedIndex !== null) {
+    added
+      ? emitTaskMove(
+          added,
+          { listIndex, index: dropResult.removedIndex },
+          projectId
+        )
+      : dispatch({
+          type: PROJECT_TASK_MOVE,
+          payload: {
+            added: false,
+            removed: {
+              listIndex,
+              index: dropResult.removedIndex,
+            },
+          },
+        });
+  } else if (dropResult.addedIndex !== null) {
+    removed
+      ? emitTaskMove(
+          { index: dropResult.addedIndex, listIndex },
+          removed,
+          projectId
+        )
+      : dispatch({
+          type: PROJECT_TASK_MOVE,
+          payload: {
+            added: { index: dropResult.addedIndex, listIndex },
+            removed: false,
+          },
+        });
   }
 };
