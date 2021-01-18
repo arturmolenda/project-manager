@@ -18,16 +18,19 @@ code {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 14px;
-}
-
 ::-webkit-scrollbar-thumb {
   background-color: #babac0;
-  border: 3px solid transparent;
-  border-radius: 16px;
-  background-clip: content-box;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #a0a0a5;
+  background-color: #ababad;
+}
+
+::-webkit-scrollbar {
+  height: 12px;
+  width: 8px;
+}
+::-webkit-scrollbar-track-piece {
+  background: rgba(9, 30, 66, 0.13);
+  border-radius: 10px;
 }
