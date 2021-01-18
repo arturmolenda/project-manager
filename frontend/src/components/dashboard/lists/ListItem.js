@@ -1,4 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+
+import { useDispatch } from 'react-redux';
+import { projectTaskMove } from '../../../redux/actions/projectActions';
 
 import { Container, Draggable } from 'react-smooth-dnd';
 
@@ -36,67 +39,62 @@ const useStyles = makeStyles(() => ({
   list: {
     maxHeight: '65vh',
     overflow: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
     transition: 'background-color 0.2s ease',
     userSelect: 'none',
-    padding: '4px 2px 0px 8px',
-    marginRight: 1,
+    padding: '4px 2px 0px 2px',
+    margin: '0 3px',
   },
 }));
 
 const ListItem = React.memo(
-  ({ list, projectId }) => {
+  ({ list, projectId, index }) => {
     const classes = useStyles();
-    const [listOverflow, setListOverflow] = useState(false);
-    const listRef = useRef(false);
-    const dropHandle = (e) => {
-      console.log('dropped', e);
+    const dispatch = useDispatch();
+
+    const dropHandle = (dropResult) => {
+      // Handle task move
+      // Need to store data until both addedIndex and removedIndex are ready
+      // react-smooth-dnd designed this function to be called in each list and
+      // give either nothing in res or added or removed or both if move is within one list
+      if (dropResult.removedIndex === dropResult.addedIndex) return;
+      if (dropResult.added !== null || dropResult.removed !== null) {
+        dispatch(
+          projectTaskMove(dropResult, index, projectId, dropResult.payload)
+        );
+      }
     };
 
-    useEffect(
-      () =>
-        0 > listRef.current.clientHeight - listRef.current.scrollHeight
-          ? setListOverflow(true)
-          : setListOverflow(false),
-      [list.tasks]
-    );
+    const getTaskPayload = (taskIndex) => list.tasks[taskIndex];
 
     return (
-      <Draggable>
+      <Draggable draggableid={list._id} index={index}>
         <Paper elevation={3} className={classes.listContainer}>
           <div className={`list-drag-handle ${classes.header}`}>
             <TitleUpdate currentTitle={list.title} />
             <ListMore listId={list._id} />
           </div>
 
-          <div
-            ref={listRef}
-            className={classes.list}
-            id={list._id}
-            style={{
-              padding:
-                list.tasks.length === 0
-                  ? 0
-                  : listOverflow
-                  ? '4px 2px 0px 8px'
-                  : '4px 8px 0px',
-              marginRight: listOverflow && 1,
-            }}
-          >
+          <div className={classes.list} id={list._id}>
             <Container
               onDrop={dropHandle}
               groupName='col'
               dragClass='task-drag-ghost'
+              animationDuration={0}
               dropPlaceholder={{
-                animationDuration: 150,
                 showOnTop: true,
                 className: 'drop-preview',
               }}
+              disableScrollOverlapDetection={true}
+              getChildPayload={(index) => getTaskPayload(index)}
             >
               {list.tasks.length > 0 &&
-                list.tasks.map((task) => (
-                  <Task key={task._id} task={task} projectId={projectId} />
+                list.tasks.map((task, index) => (
+                  <Task
+                    key={task._id}
+                    index={index}
+                    task={task}
+                    projectId={projectId}
+                  />
                 ))}
             </Container>
           </div>

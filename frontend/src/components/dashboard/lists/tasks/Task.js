@@ -35,11 +35,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Task = React.memo(({ task, projectId }) => {
+const Task = React.memo(({ task, projectId, index }) => {
   const classes = useStyles();
 
   return (
-    <Draggable>
+    <Draggable draggableid={task._id} index={index}>
       <Link
         to={`/project/${projectId}/${task._id}`}
         style={{ textDecoration: 'none', color: 'initial' }}

@@ -21,7 +21,7 @@ const useStyles = (listId, isOpen) =>
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          margin: '6px 10px',
+          margin: '0 10px 6px',
         }
       : {
           display: 'flex',
@@ -63,7 +63,7 @@ const useStyles = (listId, isOpen) =>
     },
     addIconTask: {
       color: '#a3a3a3',
-      marginTop: 19,
+      marginTop: isOpen ? 18 : 19,
     },
     closeBtn: {
       padding: 6,
@@ -88,10 +88,9 @@ const AddInput = ({ listId, placeholder }) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       addAction();
-    }
+    } else if (e.key === 'Escape') cancelHandle();
   };
   const focusHandle = () => {
-    inputRef.current.focus();
     setIsOpen(true);
     if (listId) {
       animateScroll.scrollToBottom({
@@ -124,7 +123,7 @@ const AddInput = ({ listId, placeholder }) => {
   return (
     <div
       className={classes.container}
-      onClick={(e) => isOpen && e.preventDefault()}
+      onClick={() => !isOpen && inputRef.current.focus()}
     >
       <Input
         className={classes.inputContainer}
