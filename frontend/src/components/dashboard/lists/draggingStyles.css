@@ -7,6 +7,12 @@
   background-color: rgb(249, 249, 249) !important;
 }
 
-.smooth-dnd-container {
-  min-height: auto;
+.smooth-dnd-ghost.vertical {
+  transform: rotateZ(3deg);
+}
+
+.drop-preview {
+  background-color: rgb(204, 204, 204);
+  border-radius: 3px;
+  margin-bottom: 8px;
 }
