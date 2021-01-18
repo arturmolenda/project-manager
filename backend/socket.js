@@ -57,6 +57,50 @@ export const socket = (io) => {
       );
       await createdTask.save();
     });
+
+    socket.on('task-move', async (data) => {
+      const { removed, added, taskId, projectId } = data;
+      let lists;
+      if (removed.listIndex === added.listIndex) {
+        await List.updateOne(
+          { projectId },
+          {
+            $pull: {
+              [`lists.${removed.listIndex}.tasks`]: taskId,
+            },
+          }
+        );
+        lists = await List.findOneAndUpdate(
+          { projectId },
+          {
+            $push: {
+              [`lists.${added.listIndex}.tasks`]: {
+                $each: [taskId],
+                $position: added.index,
+              },
+            },
+          },
+          { returnOriginal: false }
+        ).populate('lists.tasks');
+      } else {
+        lists = await List.findOneAndUpdate(
+          { projectId },
+          {
+            $pull: {
+              [`lists.${removed.listIndex}.tasks`]: taskId,
+            },
+            $push: {
+              [`lists.${added.listIndex}.tasks`]: {
+                $each: [taskId],
+                $position: added.index,
+              },
+            },
+          },
+          { returnOriginal: false }
+        ).populate('lists.tasks');
+      }
+      socket.to(projectId).emit('task-moved', lists);
+    });
   });
   io.on('disconnect', (socket) => {
     console.log('User disconnected.');
