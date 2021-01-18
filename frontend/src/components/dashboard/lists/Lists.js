@@ -9,6 +9,7 @@ import AddInput from '../shared/AddInput';
 
 const Lists = () => {
   const { lists } = useSelector((state) => state.projectGetData);
+
   const dropHandle = (e) => {
     console.log('dropped', e);
   };
@@ -36,8 +37,13 @@ const Lists = () => {
       >
         {lists &&
           lists.lists.length > 0 &&
-          lists.lists.map((list) => (
-            <ListItem key={list._id} list={list} projectId={lists.projectId} />
+          lists.lists.map((list, index) => (
+            <ListItem
+              key={list._id}
+              list={list}
+              index={index}
+              projectId={lists.projectId}
+            />
           ))}
       </Container>
       <AddInput placeholder={'Add new list'} />
