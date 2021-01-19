@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { createProject } from '../../../redux/actions/projectActions';
+import { PROJECT_CREATE_RESET } from '../../../redux/constants/projectConstants';
 
 import {
   Dialog,
@@ -13,8 +14,8 @@ import {
   Button,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+
 import Loader from '../../Loader';
-import { PROJECT_CREATE_RESET } from '../../../redux/constants/projectConstants';
 
 const NewProjectModal = ({ open, handleClose }) => {
   const [title, setTitle] = useState('');
@@ -34,7 +35,7 @@ const NewProjectModal = ({ open, handleClose }) => {
 
   useEffect(() => {
     if (project) {
-      history.push(`/projects/${project._id}`);
+      history.push(`/project/${project._id}`);
       dispatch({ type: PROJECT_CREATE_RESET });
       setTitle('');
       handleClose();
