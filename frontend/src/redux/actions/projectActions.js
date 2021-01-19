@@ -6,6 +6,7 @@ import {
   PROJECT_DATA_MOVE_TASK,
   PROJECT_DATA_REQUEST,
   PROJECT_DATA_SUCCESS,
+  PROJECT_DATA_UPDATE_LISTS,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
 } from '../constants/projectConstants';
@@ -28,7 +29,7 @@ export const createProject = (title) => async (dispatch, getState) => {
     };
     // set random background for new project
     const background =
-      BACKGROUND_COLORS[Math.floor(Math.random() * Math.floor(6))];
+      BACKGROUND_COLORS[Math.floor(Math.random() * Math.floor(5))];
 
     const { data } = await axios.post(
       '/api/projects/',
@@ -156,4 +157,22 @@ export const projectTaskMove = (
           },
         });
   }
+};
+export const projectListMove = (removedIndex, addedIndex) => async (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+  const listsCopy = Object.assign({}, lists);
+  const [list] = listsCopy.lists.splice(removedIndex, 1);
+  listsCopy.lists.splice(addedIndex, 0, list);
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+  socket.emit('list-move', {
+    addedIndex,
+    removedIndex,
+    projectId: lists.projectId,
+  });
 };
