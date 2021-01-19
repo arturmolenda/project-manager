@@ -14,6 +14,7 @@ import {
   PROJECT_TASK_MOVE_RESET,
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_DATA_MOVE_TASK,
+  PROJECT_DATA_ADD_LIST,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -77,6 +78,11 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       stateCopy.lists.lists[removed.listIndex].tasks.splice(removed.index, 1);
       stateCopy.lists.lists[added.listIndex].tasks.splice(added.index, 0, task);
       return stateCopy;
+    }
+    case PROJECT_DATA_ADD_LIST: {
+      const stateClone = Object.assign({}, state);
+      stateClone.lists.lists.push(action.payload.list);
+      return stateClone;
     }
     case PROJECT_DATA_FAIL:
       return { loading: false, error: action.payload };
