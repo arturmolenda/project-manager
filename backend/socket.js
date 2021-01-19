@@ -101,7 +101,7 @@ export const socket = (io) => {
           { returnOriginal: false }
         ).populate('lists.tasks');
       }
-      socket.to(projectId).emit('task-moved', lists);
+      socket.to(projectId).emit('lists-update', lists);
     });
 
     socket.on('add-list', async (data, callback) => {
@@ -118,6 +118,15 @@ export const socket = (io) => {
         { projectId: data.projectId },
         { $push: { lists: newList } }
       );
+    });
+
+    socket.on('list-move', async (data) => {
+      const { removedIndex, addedIndex, projectId } = data;
+      const lists = await List.findOne({ projectId }).populate('lists.tasks');
+      const [list] = lists.lists.splice(removedIndex, 1);
+      lists.lists.splice(addedIndex, 0, list);
+      await lists.save();
+      socket.to(projectId).emit('lists-update', lists);
     });
   });
   io.on('disconnect', (socket) => {
