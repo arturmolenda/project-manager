@@ -27,6 +27,8 @@ export const socket = (io) => {
       socket.leave(room);
     });
 
+    // Board actions
+
     socket.on('add-task', async (data, callback) => {
       const taskId = mongoose.Types.ObjectId();
       const createdTask = new Task({
@@ -100,6 +102,22 @@ export const socket = (io) => {
         ).populate('lists.tasks');
       }
       socket.to(projectId).emit('task-moved', lists);
+    });
+
+    socket.on('add-list', async (data, callback) => {
+      const newList = {
+        _id: mongoose.Types.ObjectId(),
+        title: data.title,
+        tasks: [],
+      };
+      io.to(data.projectId).emit('list-added', {
+        list: newList,
+      });
+      callback();
+      await List.updateOne(
+        { projectId: data.projectId },
+        { $push: { lists: newList } }
+      );
     });
   });
   io.on('disconnect', (socket) => {
