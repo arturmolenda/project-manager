@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  PROJECT_GET_DATA_ADD_TASK,
-  PROJECT_GET_DATA_UPDATE_LISTS,
+  PROJECT_DATA_ADD_TASK,
+  PROJECT_DATA_UPDATE_LISTS,
 } from '../../redux/constants/projectConstants';
 
 import { makeStyles } from '@material-ui/core';
@@ -38,11 +38,12 @@ const Board = () => {
 
   useEffect(() => {
     socket.on('new-task', (data) => {
-      dispatch({ type: PROJECT_GET_DATA_ADD_TASK, payload: data });
+      dispatch({ type: PROJECT_DATA_ADD_TASK, payload: data });
     });
     socket.on('task-moved', (data) => {
-      dispatch({ type: PROJECT_GET_DATA_UPDATE_LISTS, payload: data });
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data });
     });
+    socket.on('list-added', (data) => {});
   }, [dispatch, socket]);
 
   return (

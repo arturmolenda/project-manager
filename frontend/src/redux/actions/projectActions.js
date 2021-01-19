@@ -2,10 +2,10 @@ import {
   PROJECT_CREATE_FAIL,
   PROJECT_CREATE_REQUEST,
   PROJECT_CREATE_SUCCESS,
-  PROJECT_GET_DATA_FAIL,
-  PROJECT_GET_DATA_MOVE_TASK,
-  PROJECT_GET_DATA_REQUEST,
-  PROJECT_GET_DATA_SUCCESS,
+  PROJECT_DATA_FAIL,
+  PROJECT_DATA_MOVE_TASK,
+  PROJECT_DATA_REQUEST,
+  PROJECT_DATA_SUCCESS,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
 } from '../constants/projectConstants';
@@ -53,7 +53,7 @@ export const getProjectData = (projectId, prevProjectId) => async (
   getState
 ) => {
   try {
-    dispatch({ type: PROJECT_GET_DATA_REQUEST });
+    dispatch({ type: PROJECT_DATA_REQUEST });
 
     const {
       userLogin: { userInfo },
@@ -73,10 +73,10 @@ export const getProjectData = (projectId, prevProjectId) => async (
     if (prevProjectId) socket.emit('disconnect-board', { room: prevProjectId });
     socket.emit('join-board', { room: projectId });
 
-    dispatch({ type: PROJECT_GET_DATA_SUCCESS, payload: data });
+    dispatch({ type: PROJECT_DATA_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
-      type: PROJECT_GET_DATA_FAIL,
+      type: PROJECT_DATA_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
@@ -99,7 +99,7 @@ export const projectTaskMove = (
   } = getState();
   const emitTaskMove = (added, removed) => {
     dispatch({
-      type: PROJECT_GET_DATA_MOVE_TASK,
+      type: PROJECT_DATA_MOVE_TASK,
       payload: {
         added,
         removed,
