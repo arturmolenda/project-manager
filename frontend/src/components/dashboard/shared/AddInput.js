@@ -28,7 +28,7 @@ const useStyles = (listId, isOpen) =>
           flexDirection: 'column',
           minWidth: 265,
           backgroundColor: '#eaeaea',
-          margin: '0 8px 0 4px',
+          margin: '0 10px 0 4px',
           padding: isOpen && '5.5px 5px',
           borderRadius: 3,
           '&:hover': {
@@ -115,7 +115,11 @@ const AddInput = ({ listId, placeholder }) => {
           }
         );
       } else {
-        // Add list action
+        socket.emit('add-list', { projectId: project._id, title }, () => {
+          setTitle('');
+          inputRef.current.focus();
+          document.getElementById('board-container').scrollLeft += 1000;
+        });
       }
     }
   };

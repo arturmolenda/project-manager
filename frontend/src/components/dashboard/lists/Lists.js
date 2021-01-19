@@ -20,33 +20,41 @@ const Lists = () => {
       style={{
         maxWidth: '100%',
         display: 'flex',
-        alignItems: 'flex-start',
         marginTop: '10vh',
+        overflowX: 'auto',
+        padding: '0 4px',
       }}
     >
-      <Container
-        onDrop={dropHandle}
-        orientation='horizontal'
-        dragHandleSelector='.list-drag-handle'
-        dropPlaceholder={{
-          animationDuration: 150,
-          showOnTop: true,
-          className: 'cards-drop-preview',
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
         }}
-        dragClass='list-drag-ghost'
       >
-        {lists &&
-          lists.lists.length > 0 &&
-          lists.lists.map((list, index) => (
-            <ListItem
-              key={list._id}
-              list={list}
-              index={index}
-              projectId={lists.projectId}
-            />
-          ))}
-      </Container>
-      <AddInput placeholder={'Add new list'} />
+        <Container
+          onDrop={dropHandle}
+          orientation='horizontal'
+          dragHandleSelector='.list-drag-handle'
+          dropPlaceholder={{
+            animationDuration: 150,
+            showOnTop: true,
+            className: 'cards-drop-preview',
+          }}
+          dragClass='list-drag-ghost'
+        >
+          {lists &&
+            lists.lists.length > 0 &&
+            lists.lists.map((list, index) => (
+              <ListItem
+                key={list._id}
+                list={list}
+                index={index}
+                projectId={lists.projectId}
+              />
+            ))}
+        </Container>
+        <AddInput placeholder={'Add new list'} />
+      </div>
     </div>
   );
 };

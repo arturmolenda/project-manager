@@ -41,8 +41,8 @@ const useStyles = makeStyles(() => ({
     overflow: 'auto',
     transition: 'background-color 0.2s ease',
     userSelect: 'none',
-    padding: '4px 2px 0px 2px',
-    margin: '0 3px',
+    padding: '4px 3px 0px 3px',
+    margin: '0 2px',
   },
 }));
 

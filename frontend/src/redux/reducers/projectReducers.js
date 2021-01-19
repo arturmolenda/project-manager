@@ -5,15 +5,16 @@ import {
   PROJECT_CREATE_RESET,
   PROJECT_SET_CURRENT,
   PROJECT_SET_CURRENT_RESET,
-  PROJECT_GET_DATA_REQUEST,
-  PROJECT_GET_DATA_SUCCESS,
-  PROJECT_GET_DATA_FAIL,
-  PROJECT_GET_DATA_RESET,
-  PROJECT_GET_DATA_ADD_TASK,
+  PROJECT_DATA_REQUEST,
+  PROJECT_DATA_SUCCESS,
+  PROJECT_DATA_FAIL,
+  PROJECT_DATA_RESET,
+  PROJECT_DATA_ADD_TASK,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
-  PROJECT_GET_DATA_UPDATE_LISTS,
-  PROJECT_GET_DATA_MOVE_TASK,
+  PROJECT_DATA_UPDATE_LISTS,
+  PROJECT_DATA_MOVE_TASK,
+  PROJECT_DATA_ADD_LIST,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -48,16 +49,16 @@ export const projectSetCurrentReducer = (state = {}, action) => {
 
 export const projectGetDataReducer = (state = { loading: true }, action) => {
   switch (action.type) {
-    case PROJECT_GET_DATA_REQUEST:
+    case PROJECT_DATA_REQUEST:
       return { loading: true };
-    case PROJECT_GET_DATA_SUCCESS:
+    case PROJECT_DATA_SUCCESS:
       return {
         loading: false,
         project: action.payload.project,
         lists: action.payload.lists,
         labels: action.payload.labels,
       };
-    case PROJECT_GET_DATA_ADD_TASK: {
+    case PROJECT_DATA_ADD_TASK: {
       const stateClone = deepcopy(state);
       const listIndex = stateClone.lists.lists.findIndex(
         (list) => list._id === action.payload.listId
@@ -65,11 +66,11 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       stateClone.lists.lists[listIndex].tasks.push(action.payload.task);
       return stateClone;
     }
-    case PROJECT_GET_DATA_UPDATE_LISTS: {
+    case PROJECT_DATA_UPDATE_LISTS: {
       const stateClone = deepcopy(state);
       return { ...stateClone, lists: action.payload };
     }
-    case PROJECT_GET_DATA_MOVE_TASK: {
+    case PROJECT_DATA_MOVE_TASK: {
       const {
         payload: { added, removed, task },
       } = action;
@@ -78,9 +79,14 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       stateCopy.lists.lists[added.listIndex].tasks.splice(added.index, 0, task);
       return stateCopy;
     }
-    case PROJECT_GET_DATA_FAIL:
+    case PROJECT_DATA_ADD_LIST: {
+      const stateClone = Object.assign({}, state);
+      stateClone.lists.lists.push(action.payload.list);
+      return stateClone;
+    }
+    case PROJECT_DATA_FAIL:
       return { loading: false, error: action.payload };
-    case PROJECT_GET_DATA_RESET:
+    case PROJECT_DATA_RESET:
       return {};
     default:
       return state;
