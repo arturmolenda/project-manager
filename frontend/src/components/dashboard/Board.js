@@ -40,7 +40,7 @@ const Board = () => {
     socket.on('new-task', (data) => {
       dispatch({ type: PROJECT_DATA_ADD_TASK, payload: data });
     });
-    socket.on('task-moved', (data) => {
+    socket.on('lists-update', (data) => {
       dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data });
     });
     socket.on('list-added', (data) => {
