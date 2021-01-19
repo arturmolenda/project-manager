@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { projectListMove } from '../../../redux/actions/projectActions';
+
 import { Container } from 'react-smooth-dnd';
 
 import './draggingStyles.css';
@@ -9,9 +11,11 @@ import AddInput from '../shared/AddInput';
 
 const Lists = () => {
   const { lists } = useSelector((state) => state.projectGetData);
-
-  const dropHandle = (e) => {
-    console.log('dropped', e);
+  const dispatch = useDispatch();
+  const dropHandle = ({ removedIndex, addedIndex }) => {
+    if (removedIndex !== null && addedIndex !== null) {
+      dispatch(projectListMove(removedIndex, addedIndex));
+    }
   };
 
   return (
