@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { PROJECT_DATA_TITLE_UPDATE } from '../../../redux/constants/projectConstants';
+
 import { makeStyles } from '@material-ui/core';
 
 import AutosizeInput from 'react-input-autosize';
-import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -32,6 +34,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NavTitle = () => {
+  const dispatch = useDispatch();
+  const { socket } = useSelector((state) => state.socketConnection);
   const { project } = useSelector((state) => state.projectGetData);
   const [projectTitle, setProjectTitle] = useState(project.title);
   const [titleOpen, setTitleOpen] = useState(false);
@@ -43,9 +47,21 @@ const NavTitle = () => {
   const keyPressHandle = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (projectTitle.trim() !== '') {
-        closeHandle();
-        // action
+      if (projectTitle.trim() !== '' && projectTitle !== project.title) {
+        socket.emit(
+          'project-title-update',
+          {
+            title: projectTitle,
+            projectId: project._id,
+          },
+          () => {
+            dispatch({
+              type: PROJECT_DATA_TITLE_UPDATE,
+              payload: { title: projectTitle, projectId: project._id },
+            });
+            inputRef.current.blur();
+          }
+        );
       }
     } else if (e.key === 'Escape') inputRef.current.blur();
   };
