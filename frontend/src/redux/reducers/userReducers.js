@@ -1,3 +1,4 @@
+import { PROJECT_DATA_TITLE_UPDATE } from '../constants/projectConstants';
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -13,6 +14,7 @@ import {
   USER_EMAIL_RESEND_SUCCESS,
   USER_EMAIL_RESEND_FAIL,
 } from '../constants/userConstants';
+import deepcopy from 'deepcopy';
 
 export const userLoginReducer = (state = { loading: true }, action) => {
   switch (action.type) {
@@ -20,6 +22,22 @@ export const userLoginReducer = (state = { loading: true }, action) => {
       return { loading: true };
     case USER_LOGIN_SUCCESS:
       return { loading: false, userInfo: action.payload };
+    case PROJECT_DATA_TITLE_UPDATE: {
+      const {
+        payload: { title, projectId },
+      } = action;
+      const stateClone = deepcopy(state.userInfo);
+      stateClone.projectsCreated.map((x) => {
+        if (x._id === projectId) x.title = title;
+        return x;
+      });
+      stateClone.projectsJoined.map((x) => {
+        if (x._id === projectId) x.title = title;
+        return x;
+      });
+
+      return { ...state, userInfo: stateClone };
+    }
     case USER_LOGIN_FAIL:
       return { loading: false, error: action.payload };
     case USER_LOGOUT:
