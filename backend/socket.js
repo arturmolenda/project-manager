@@ -128,6 +128,22 @@ export const socket = (io) => {
       await lists.save();
       socket.to(projectId).emit('lists-update', lists);
     });
+
+    socket.on('list-title-update', async (data, callback) => {
+      const { title, listIndex, projectId } = data;
+      callback();
+      socket.to(projectId).emit('list-title-updated', { title, listIndex });
+      await List.updateOne(
+        { projectId },
+        { $set: { [`lists.${listIndex}.title`]: title } }
+      );
+    });
+    socket.on('project-title-update', async (data, callback) => {
+      const { title, projectId } = data;
+      callback();
+      socket.to(projectId).emit('project-title-updated', { title, projectId });
+      await Project.updateOne({ _id: projectId }, { $set: { title: title } });
+    });
   });
   io.on('disconnect', (socket) => {
     console.log('User disconnected.');
