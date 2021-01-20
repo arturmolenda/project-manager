@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { InputBase, makeStyles } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
+import { PROJECT_DATA_LIST_TITLE_UPDATE } from '../../../redux/constants/projectConstants';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -26,7 +28,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TitleUpdate = ({ currentTitle }) => {
+const TitleUpdate = ({ currentTitle, listIndex, projectId }) => {
+  const dispatch = useDispatch();
+  const { socket } = useSelector((state) => state.socketConnection);
   const [title, setTitle] = useState(currentTitle);
   const [open, setOpen] = useState(false);
   const titleRef = useRef();
@@ -36,8 +40,29 @@ const TitleUpdate = ({ currentTitle }) => {
 
   const keyPressHandle = (e) => {
     if (e.key === 'Escape') titleRef.current.blur();
-    if (title !== currentTitle && title.trim() !== '' && e.key === 'Enter') {
-      console.log('action');
+    else if (
+      title !== currentTitle &&
+      title.trim() !== '' &&
+      e.key === 'Enter' &&
+      !e.shiftKey
+    ) {
+      e.preventDefault();
+
+      socket.emit(
+        'list-title-update',
+        {
+          title,
+          projectId,
+          listIndex,
+        },
+        () => {
+          dispatch({
+            type: PROJECT_DATA_LIST_TITLE_UPDATE,
+            payload: { title, listIndex },
+          });
+          titleRef.current.blur();
+        }
+      );
     }
   };
   const blurHandle = () => {

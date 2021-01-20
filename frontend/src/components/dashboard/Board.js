@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   PROJECT_DATA_ADD_LIST,
   PROJECT_DATA_ADD_TASK,
+  PROJECT_DATA_LIST_TITLE_UPDATE,
+  PROJECT_DATA_TITLE_UPDATE,
   PROJECT_DATA_UPDATE_LISTS,
 } from '../../redux/constants/projectConstants';
 
@@ -46,6 +48,12 @@ const Board = () => {
     socket.on('list-added', (data) => {
       console.log(data);
       dispatch({ type: PROJECT_DATA_ADD_LIST, payload: data });
+    });
+    socket.on('list-title-updated', (data) => {
+      dispatch({ type: PROJECT_DATA_LIST_TITLE_UPDATE, payload: data });
+    });
+    socket.on('project-title-updated', (data) => {
+      dispatch({ type: PROJECT_DATA_TITLE_UPDATE, payload: data });
     });
   }, [dispatch, socket]);
 

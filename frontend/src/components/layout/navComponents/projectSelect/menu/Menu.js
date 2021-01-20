@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
     maxHeight: 300,
     width: 209,
     outline: 'none',
-    padding: '8px 0',
+    overflow: 'auto',
   },
   link: {
     textDecoration: 'none',

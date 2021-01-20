@@ -15,6 +15,8 @@ import {
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_DATA_MOVE_TASK,
   PROJECT_DATA_ADD_LIST,
+  PROJECT_DATA_LIST_TITLE_UPDATE,
+  PROJECT_DATA_TITLE_UPDATE,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -40,6 +42,11 @@ export const projectSetCurrentReducer = (state = {}, action) => {
   switch (action.type) {
     case PROJECT_SET_CURRENT:
       return { project: action.payload };
+    case PROJECT_DATA_TITLE_UPDATE: {
+      const stateClone = deepcopy(state);
+      stateClone.project.title = action.payload.title;
+      return stateClone;
+    }
     case PROJECT_SET_CURRENT_RESET:
       return {};
     default:
@@ -82,6 +89,19 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
     case PROJECT_DATA_ADD_LIST: {
       const stateClone = Object.assign({}, state);
       stateClone.lists.lists.push(action.payload.list);
+      return stateClone;
+    }
+    case PROJECT_DATA_LIST_TITLE_UPDATE: {
+      const {
+        payload: { listIndex, title },
+      } = action;
+      const stateClone = deepcopy(state);
+      stateClone.lists.lists[listIndex].title = title;
+      return stateClone;
+    }
+    case PROJECT_DATA_TITLE_UPDATE: {
+      const stateClone = deepcopy(state);
+      stateClone.project.title = action.payload.title;
       return stateClone;
     }
     case PROJECT_DATA_FAIL:

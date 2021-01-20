@@ -70,7 +70,11 @@ const ListItem = React.memo(
       <Draggable draggableid={list._id} index={index}>
         <Paper elevation={3} className={classes.listContainer}>
           <div className={`list-drag-handle ${classes.header}`}>
-            <TitleUpdate currentTitle={list.title} />
+            <TitleUpdate
+              currentTitle={list.title}
+              listIndex={index}
+              projectId={projectId}
+            />
             <ListMore listId={list._id} />
           </div>
 
