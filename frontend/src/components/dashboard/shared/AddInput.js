@@ -131,6 +131,7 @@ const AddInput = ({ listId, placeholder }) => {
     >
       <Input
         className={classes.inputContainer}
+        id={listId && `task-input-${listId}`}
         inputRef={inputRef}
         onBlur={focusOutHandle}
         onFocus={focusHandle}
