@@ -7,6 +7,7 @@ const taskSchema = mongoose.Schema(
     description: { type: String, required: false, default: '' },
     deadline: { type: Date, required: false },
     author: { type: String, required: true },
+    archived: { type: Boolean, required: false, default: false },
     comments: [{ type: Object, required: true }],
     users: [{ type: mongoose.Types.ObjectId, required: false, ref: 'User' }],
     labels: [{ type: mongoose.Types.ObjectId, required: false, ref: 'Label' }],
