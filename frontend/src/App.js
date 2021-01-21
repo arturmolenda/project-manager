@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUserData, logout } from './redux/actions/userActions';
 
 import {
-  createMuiTheme,
+  unstable_createMuiStrictModeTheme as createMuiTheme,
   CssBaseline,
   LinearProgress,
   MuiThemeProvider,

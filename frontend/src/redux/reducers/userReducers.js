@@ -3,6 +3,7 @@ import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAIL,
+  USER_DATA_UPDATE,
   USER_LOGOUT,
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
@@ -38,6 +39,8 @@ export const userLoginReducer = (state = { loading: true }, action) => {
 
       return { ...state, userInfo: stateClone };
     }
+    case USER_DATA_UPDATE:
+      return { ...state, userInfo: action.payload };
     case USER_LOGIN_FAIL:
       return { loading: false, error: action.payload };
     case USER_LOGOUT:

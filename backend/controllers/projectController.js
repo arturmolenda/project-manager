@@ -49,7 +49,7 @@ const createProject = asyncHandler(async (req, res) => {
       },
     ],
     projectId: createdProject._id,
-    archivedIds: [],
+    archivedTasks: [],
   });
   const labelsData = initialLabels.map((label) => {
     return { ...label, projectId: createdProject._id };
@@ -74,7 +74,9 @@ const getProjectData = asyncHandler(async (req, res) => {
     select: 'username email profilePicture',
   });
   const labels = await Label.find({ projectId });
-  const lists = await List.findOne({ projectId }).populate('lists.tasks');
+  const lists = await List.findOne({ projectId })
+    .populate('lists.tasks')
+    .populate('archivedTasks');
   const userPermissions = project.users.find((user) =>
     req.user._id.equals(user.user._id)
   );

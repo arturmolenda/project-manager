@@ -75,7 +75,7 @@ const ListItem = React.memo(
               listIndex={index}
               projectId={projectId}
             />
-            <ListMore listId={list._id} />
+            <ListMore listId={list._id} listIndex={index} />
           </div>
 
           <div className={classes.list} id={list._id}>
@@ -92,10 +92,11 @@ const ListItem = React.memo(
               getChildPayload={(index) => getTaskPayload(index)}
             >
               {list.tasks.length > 0 &&
-                list.tasks.map((task, index) => (
+                list.tasks.map((task, i) => (
                   <Task
                     key={task._id}
-                    index={index}
+                    index={i}
+                    listIndex={index}
                     task={task}
                     projectId={projectId}
                   />

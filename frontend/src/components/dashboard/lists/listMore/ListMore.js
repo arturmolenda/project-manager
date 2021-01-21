@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ListMenu from './ListMenu';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ListMore = ({ listId }) => {
+const ListMore = ({ listId, listIndex }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   return (
@@ -27,7 +28,12 @@ const ListMore = ({ listId }) => {
       >
         <MoreVertIcon />
       </div>
-      {/* Menu */}
+      <ListMenu
+        anchorEl={anchorEl}
+        handleClose={() => setAnchorEl(null)}
+        listId={listId}
+        listIndex={listIndex}
+      />
     </>
   );
 };

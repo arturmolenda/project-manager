@@ -7,13 +7,19 @@ import {
   PROJECT_DATA_REQUEST,
   PROJECT_DATA_SUCCESS,
   PROJECT_DATA_UPDATE_LISTS,
+  PROJECT_SET_CURRENT,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
 } from '../constants/projectConstants';
-import axios from 'axios';
+import { USER_DATA_UPDATE } from '../constants/userConstants';
 import { BACKGROUND_COLORS } from '../../util/colorsContants';
+import axios from 'axios';
+import deepcopy from 'deepcopy';
 
-export const createProject = (title) => async (dispatch, getState) => {
+export const createProject = (title, callback) => async (
+  dispatch,
+  getState
+) => {
   try {
     dispatch({ type: PROJECT_CREATE_REQUEST });
 
@@ -36,7 +42,13 @@ export const createProject = (title) => async (dispatch, getState) => {
       { title, background },
       config
     );
+    callback(data.project._id);
 
+    const userInfoClone = Object.assign({}, userInfo);
+    userInfoClone.projectsCreated.push(data.project);
+    // Update user's projects and set current project
+    dispatch({ type: USER_DATA_UPDATE, payload: userInfoClone });
+    dispatch({ type: PROJECT_SET_CURRENT, payload: data.project });
     dispatch({ type: PROJECT_CREATE_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
@@ -174,5 +186,81 @@ export const projectListMove = (removedIndex, addedIndex) => async (
     addedIndex,
     removedIndex,
     projectId: lists.projectId,
+  });
+};
+
+export const projectTaskArchive = (
+  taskId,
+  projectId,
+  taskIndex,
+  listIndex
+) => async (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+
+  const listsCopy = deepcopy(lists);
+  const [task] = listsCopy.lists[listIndex].tasks.splice(taskIndex, 1);
+  task.archived = true;
+  listsCopy.archivedTasks.push(task);
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+
+  socket.emit('task-archive', {
+    taskId,
+    projectId,
+    listIndex,
+  });
+};
+
+export const projectTasksArchive = (listIndex, callback) => async (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+
+  const listsCopy = deepcopy(lists);
+  const [tasks] = listsCopy.lists[listIndex].tasks.splice(
+    0,
+    listsCopy.lists[listIndex].tasks.length
+  );
+  if (tasks.length > 0) {
+    const archivedTasks = tasks.map((task) => (task.archived = true));
+    listsCopy.archivedTasks = [...listsCopy.archivedTasks, ...archivedTasks];
+  }
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+  callback();
+
+  socket.emit('tasks-archive', {
+    projectId: lists.projectId,
+    listIndex,
+  });
+};
+
+export const projectListDelete = (listIndex, listId, callback) => async (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+
+  const listsCopy = deepcopy(lists);
+  const [list] = listsCopy.lists.splice(listIndex, 1);
+  if (list.tasks.length > 0) {
+    const archivedTasks = list.tasks.map((task) => (task.archived = true));
+    listsCopy.archivedTasks = [...listsCopy.archivedTasks, ...archivedTasks];
+  }
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+  callback();
+
+  socket.emit('list-delete', {
+    projectId: lists.projectId,
+    listIndex,
+    listId,
   });
 };

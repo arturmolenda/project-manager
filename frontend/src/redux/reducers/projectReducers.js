@@ -74,8 +74,7 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       return stateClone;
     }
     case PROJECT_DATA_UPDATE_LISTS: {
-      const stateClone = deepcopy(state);
-      return { ...stateClone, lists: action.payload };
+      return { ...state, lists: action.payload };
     }
     case PROJECT_DATA_MOVE_TASK: {
       const {
