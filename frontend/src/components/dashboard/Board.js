@@ -55,6 +55,13 @@ const Board = () => {
     socket.on('project-title-updated', (data) => {
       dispatch({ type: PROJECT_DATA_TITLE_UPDATE, payload: data });
     });
+    return () => {
+      socket.off('new-task');
+      socket.off('lists-update');
+      socket.off('list-added');
+      socket.off('list-title-updated');
+      socket.off('project-title-updated');
+    };
   }, [dispatch, socket]);
 
   return (
