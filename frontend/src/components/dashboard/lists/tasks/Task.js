@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { makeStyles, Typography } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { projectTaskArchive } from '../../../../redux/actions/projectActions';
 
 import { Draggable } from 'react-smooth-dnd';
+
+import { makeStyles, Typography } from '@material-ui/core';
+
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(() => ({
   taskContainer: {
@@ -33,10 +38,28 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  deleteIcon: {
+    display: 'none',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 3,
+    borderRadius: 3,
+    color: '#656363',
+    zIndex: 40,
+    '&:hover': {
+      backgroundColor: '#cccccc2b',
+    },
+  },
 }));
 
-const Task = React.memo(({ task, projectId, index }) => {
+const Task = React.memo(({ task, projectId, index, listIndex }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const archiveHandle = (e) => {
+    e.preventDefault();
+    dispatch(projectTaskArchive(task._id, projectId, index, listIndex));
+  };
 
   return (
     <Draggable draggableid={task._id} index={index}>
@@ -49,6 +72,12 @@ const Task = React.memo(({ task, projectId, index }) => {
             <div className={classes.titleContainer}>
               <Typography variant='subtitle2'>{task.title}</Typography>
             </div>
+            {!task.archived && (
+              <DeleteIcon
+                className={classes.deleteIcon}
+                onClick={archiveHandle}
+              />
+            )}
           </div>
         </div>
       </Link>
