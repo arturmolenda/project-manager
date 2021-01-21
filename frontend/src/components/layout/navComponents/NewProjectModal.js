@@ -22,25 +22,21 @@ const NewProjectModal = ({ open, handleClose }) => {
   const [titleError, setTitleError] = useState('');
   const history = useHistory();
   const dispatch = useDispatch();
-  const { loading, project, error } = useSelector(
-    (state) => state.projectCreate
-  );
+  const { loading, error } = useSelector((state) => state.projectCreate);
 
   const createProjectHandle = () => {
     if (title === '') setTitleError('Cannot be empty');
     else {
-      dispatch(createProject(title));
+      dispatch(
+        createProject(title, (projectId) => {
+          history.push(`/project/${projectId}`);
+          dispatch({ type: PROJECT_CREATE_RESET });
+          setTitle('');
+          handleClose();
+        })
+      );
     }
   };
-
-  useEffect(() => {
-    if (project) {
-      history.push(`/project/${project._id}`);
-      dispatch({ type: PROJECT_CREATE_RESET });
-      setTitle('');
-      handleClose();
-    }
-  }, [history, dispatch, setTitle, handleClose, project]);
 
   const changeHandle = (e) => {
     setTitle(e.target.value);
