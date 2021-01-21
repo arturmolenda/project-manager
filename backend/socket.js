@@ -83,7 +83,9 @@ export const socket = (io) => {
             },
           },
           { returnOriginal: false }
-        ).populate('lists.tasks');
+        )
+          .populate('lists.tasks')
+          .populate('archivedTasks');
       } else {
         lists = await List.findOneAndUpdate(
           { projectId },
@@ -99,7 +101,9 @@ export const socket = (io) => {
             },
           },
           { returnOriginal: false }
-        ).populate('lists.tasks');
+        )
+          .populate('lists.tasks')
+          .populate('archivedTasks');
       }
       socket.to(projectId).emit('lists-update', lists);
     });
@@ -122,7 +126,9 @@ export const socket = (io) => {
 
     socket.on('list-move', async (data) => {
       const { removedIndex, addedIndex, projectId } = data;
-      const lists = await List.findOne({ projectId }).populate('lists.tasks');
+      const lists = await List.findOne({ projectId })
+        .populate('lists.tasks')
+        .populate('archivedTasks');
       const [list] = lists.lists.splice(removedIndex, 1);
       lists.lists.splice(addedIndex, 0, list);
       await lists.save();
@@ -138,11 +144,83 @@ export const socket = (io) => {
         { $set: { [`lists.${listIndex}.title`]: title } }
       );
     });
+
     socket.on('project-title-update', async (data, callback) => {
       const { title, projectId } = data;
       callback();
       socket.to(projectId).emit('project-title-updated', { title, projectId });
       await Project.updateOne({ _id: projectId }, { $set: { title: title } });
+    });
+
+    socket.on('task-archive', async (data, callback) => {
+      const { projectId, taskId, listIndex } = data;
+      socket.to(projectId).emit('task-archived', { taskId, listIndex });
+      await List.updateOne(
+        { projectId },
+        {
+          $pull: {
+            [`lists.${listIndex}.tasks`]: taskId,
+          },
+          $push: { archivedTasks: taskId },
+        }
+      );
+      await Task.updateOne({ _id: taskId }, { $set: { archived: true } });
+    });
+    socket.on('task-delete', async (data, callback) => {
+      const { projectId, taskId } = data;
+      callback();
+      await List.updateOne(
+        { projectId },
+        {
+          $pull: {
+            archivedTasks: taskId,
+          },
+        }
+      );
+      socket.to(projectId).emit('task-deleted', { taskId, listIndex });
+    });
+
+    socket.on('tasks-archive', async (data) => {
+      const { projectId, listIndex } = data;
+      const lists = await List.findOne({ projectId });
+      const tasks = lists.lists[listIndex].tasks.splice(
+        0,
+        lists.lists[listIndex].tasks.length
+      );
+
+      if (tasks.length > 0) {
+        await Task.updateMany(
+          { _id: { $in: tasks } },
+          { $set: { archived: true } },
+          { multi: true }
+        );
+        lists.archivedTasks = [...lists.archivedTasks, ...tasks];
+      }
+      await lists.save();
+      const newLists = await List.findOne({ projectId })
+        .populate('lists.tasks')
+        .populate('archivedTasks');
+      socket.to(projectId).emit('lists-update', { lists: newLists });
+    });
+
+    socket.on('list-delete', async (data) => {
+      const { projectId, listIndex } = data;
+      const lists = await List.findOne({ projectId });
+
+      const [deletedList] = lists.lists.splice(listIndex, 1);
+      if (deletedList.tasks.length > 0) {
+        await Task.updateMany(
+          { _id: { $in: deletedList.tasks } },
+          { $set: { archived: true } },
+          { multi: true }
+        );
+        lists.archivedTasks = [...lists.archivedTasks, ...deletedList.tasks];
+      }
+      await lists.save();
+      const newLists = await List.findOne({ projectId })
+        .populate('lists.tasks')
+        .populate('archivedTasks');
+      socket.to(projectId).emit('lists-update', { lists: newLists });
     });
   });
   io.on('disconnect', (socket) => {
