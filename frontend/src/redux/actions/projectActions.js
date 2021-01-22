@@ -223,12 +223,15 @@ export const projectTasksArchive = (listIndex, callback) => async (
   } = getState();
 
   const listsCopy = deepcopy(lists);
-  const [tasks] = listsCopy.lists[listIndex].tasks.splice(
+  const tasks = listsCopy.lists[listIndex].tasks.splice(
     0,
     listsCopy.lists[listIndex].tasks.length
   );
   if (tasks.length > 0) {
-    const archivedTasks = tasks.map((task) => (task.archived = true));
+    const archivedTasks = tasks.map((task) => {
+      task.archived = true;
+      return task;
+    });
     listsCopy.archivedTasks = [...listsCopy.archivedTasks, ...archivedTasks];
   }
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
@@ -252,7 +255,10 @@ export const projectListDelete = (listIndex, listId, callback) => async (
   const listsCopy = deepcopy(lists);
   const [list] = listsCopy.lists.splice(listIndex, 1);
   if (list.tasks.length > 0) {
-    const archivedTasks = list.tasks.map((task) => (task.archived = true));
+    const archivedTasks = list.tasks.map((task) => {
+      task.archived = true;
+      return task;
+    });
     listsCopy.archivedTasks = [...listsCopy.archivedTasks, ...archivedTasks];
   }
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
