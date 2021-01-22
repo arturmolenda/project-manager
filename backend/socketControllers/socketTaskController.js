@@ -128,6 +128,6 @@ export const socketTaskController = (io, socket) => {
     const newLists = await List.findOne({ projectId })
       .populate('lists.tasks')
       .populate('archivedTasks');
-    socket.to(projectId).emit('lists-update', { lists: newLists });
+    socket.to(projectId).emit('lists-update', newLists);
   });
 };
