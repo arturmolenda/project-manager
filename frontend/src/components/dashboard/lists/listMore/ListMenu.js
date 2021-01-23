@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 
 import { useDispatch } from 'react-redux';
+import {
+  projectListDelete,
+  projectTasksArchive,
+  projectTasksTransfer,
+} from '../../../../redux/actions/projectActions';
 
 import { Menu, makeStyles, MenuItem, Divider } from '@material-ui/core';
 
 import MenuHeader from '../../shared/MenuHeader';
 import DeleteMenu from '../../shared/DeleteMenu';
-import {
-  projectListDelete,
-  projectTasksArchive,
-} from '../../../../redux/actions/projectActions';
+import TransferTasks from './TransferTasks';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -63,6 +65,12 @@ const ListMenu = ({ anchorEl, handleClose, listId, listIndex }) => {
     dispatch(projectTasksArchive(listIndex, () => closeHandle()));
   };
 
+  const transferHandle = (newListIndex) => {
+    dispatch(
+      projectTasksTransfer(listIndex, newListIndex, () => closeHandle())
+    );
+  };
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -98,9 +106,14 @@ const ListMenu = ({ anchorEl, handleClose, listId, listIndex }) => {
             buttonText={deleteMenu.btnText}
           />
         )}
-        {/* {transferMenuOpen && (
-          <TransferTasks />
-        )} */}
+        {transferMenuOpen && (
+          <TransferTasks
+            listId={listId}
+            goBackHandle={() => setTransferMenuOpen(false)}
+            handleClose={closeHandle}
+            transferHandle={transferHandle}
+          />
+        )}
         {!deleteMenu.open && !transferMenuOpen && (
           <div>
             <MenuHeader handleClose={closeHandle} title={'List Actions'} />

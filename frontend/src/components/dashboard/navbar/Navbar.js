@@ -3,7 +3,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
+
 import NavTitle from './NavTitle';
+import ArchivedTasks from './archivedTasks/ArchivedTasks';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -28,6 +30,13 @@ const useStyles = makeStyles(() => ({
     fontSize: 40,
     margin: 'auto 10px auto 0px',
   },
+  navIcons: {
+    display: 'flex',
+    height: '100%',
+    position: 'fixed',
+    top: 8,
+    right: 8,
+  },
 }));
 
 const Navbar = () => {
@@ -45,7 +54,9 @@ const Navbar = () => {
           {/* Users */}
         </div>
 
-        {/* Settings buttons */}
+        <div className={classes.navIcons}>
+          <ArchivedTasks />
+        </div>
       </div>
 
       <div

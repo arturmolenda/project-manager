@@ -203,7 +203,7 @@ export const projectTaskArchive = (
   const listsCopy = deepcopy(lists);
   const [task] = listsCopy.lists[listIndex].tasks.splice(taskIndex, 1);
   task.archived = true;
-  listsCopy.archivedTasks.push(task);
+  listsCopy.archivedTasks.unshift(task);
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
 
   socket.emit('task-archive', {
@@ -223,13 +223,16 @@ export const projectTasksArchive = (listIndex, callback) => async (
   } = getState();
 
   const listsCopy = deepcopy(lists);
-  const [tasks] = listsCopy.lists[listIndex].tasks.splice(
+  const tasks = listsCopy.lists[listIndex].tasks.splice(
     0,
     listsCopy.lists[listIndex].tasks.length
   );
   if (tasks.length > 0) {
-    const archivedTasks = tasks.map((task) => (task.archived = true));
-    listsCopy.archivedTasks = [...listsCopy.archivedTasks, ...archivedTasks];
+    const archivedTasks = tasks.map((task) => {
+      task.archived = true;
+      return task;
+    });
+    listsCopy.archivedTasks = [...archivedTasks, ...listsCopy.archivedTasks];
   }
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
   callback();
@@ -252,8 +255,11 @@ export const projectListDelete = (listIndex, listId, callback) => async (
   const listsCopy = deepcopy(lists);
   const [list] = listsCopy.lists.splice(listIndex, 1);
   if (list.tasks.length > 0) {
-    const archivedTasks = list.tasks.map((task) => (task.archived = true));
-    listsCopy.archivedTasks = [...listsCopy.archivedTasks, ...archivedTasks];
+    const archivedTasks = list.tasks.map((task) => {
+      task.archived = true;
+      return task;
+    });
+    listsCopy.archivedTasks = [...archivedTasks, ...listsCopy.archivedTasks];
   }
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
   callback();
@@ -262,5 +268,87 @@ export const projectListDelete = (listIndex, listId, callback) => async (
     projectId: lists.projectId,
     listIndex,
     listId,
+  });
+};
+
+export const projectTaskDelete = (taskId, taskIndex, callback) => async (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+
+  const listsCopy = deepcopy(lists);
+  listsCopy.archivedTasks.splice(taskIndex, 1);
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+  callback();
+
+  socket.emit('task-delete', {
+    projectId: lists.projectId,
+    taskId,
+    taskIndex,
+  });
+};
+
+export const projectTaskTransfer = (
+  taskIndex,
+  listIndex,
+  newListIndex,
+  callback
+) => async (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+
+  const listsCopy = deepcopy(lists);
+  let task;
+  // if listIndex is undefined then function is called from archived tasks
+  if (listIndex) {
+    [task] = listsCopy.lists[listIndex].tasks.splice(taskIndex, 1);
+  } else {
+    [task] = listsCopy.archivedTasks.splice(taskIndex, 1);
+    task.archived = false;
+  }
+  listsCopy.lists[newListIndex].tasks.push(task);
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+  callback();
+  socket.emit('task-transfer', {
+    projectId: lists.projectId,
+    taskId: task._id,
+    listIndex,
+    newListIndex,
+  });
+};
+
+export const projectTasksTransfer = (
+  listIndex,
+  newListIndex,
+  callback
+) => async (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+  } = getState();
+
+  const listsCopy = deepcopy(lists);
+  const tasks = listsCopy.lists[listIndex].tasks.splice(
+    0,
+    listsCopy.lists[listIndex].tasks.length
+  );
+  console.log(tasks, listIndex, newListIndex);
+  listsCopy.lists[newListIndex].tasks = [
+    ...listsCopy.lists[newListIndex].tasks,
+    ...tasks,
+  ];
+  console.log(listsCopy);
+  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+  callback();
+  socket.emit('tasks-transfer', {
+    projectId: lists.projectId,
+    listIndex,
+    newListIndex,
   });
 };
