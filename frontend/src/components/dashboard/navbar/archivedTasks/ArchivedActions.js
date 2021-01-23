@@ -21,20 +21,25 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ArchivedActions = ({ taskId, openTransferMenu, openDeleteMenu }) => {
+const ArchivedActions = ({
+  taskId,
+  taskIndex,
+  openTransferMenu,
+  openDeleteMenu,
+}) => {
   const classes = useStyles();
 
   return (
     <div className={classes.container}>
       <p
         className={classes.text}
-        onClick={(e) => openTransferMenu(e.currentTarget, taskId)}
+        onClick={(e) => openTransferMenu(e.currentTarget, taskIndex)}
       >
         Transfer to list
       </p>
       <p
         className={classes.text}
-        onClick={(e) => openDeleteMenu(e.currentTarget, taskId)}
+        onClick={(e) => openDeleteMenu(e.currentTarget, taskIndex, taskId)}
       >
         Delete
       </p>

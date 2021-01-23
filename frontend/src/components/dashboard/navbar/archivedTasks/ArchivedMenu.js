@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  projectTaskDelete,
+  projectTaskTransfer,
+} from '../../../../redux/actions/projectActions';
 
 import { Typography, makeStyles, Popover } from '@material-ui/core';
 
@@ -41,39 +45,46 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ArchivedMenu = ({ anchorEl, handleClose, projectId }) => {
+  const dispatch = useDispatch();
   const { lists } = useSelector((state) => state.projectGetData);
   const [transferAnchorEl, setTransferAnchorEl] = useState(null);
   const [deleteAnchorEl, setDeleteAnchorEl] = useState(null);
+  const [taskIndex, setTaskIndex] = useState(null);
   const [taskId, setTaskId] = useState(null);
   const classes = useStyles();
 
   // Transfer menu actions | open, close, restore
-  const openTransferMenu = (target, id) => {
+  const openTransferMenu = (target, index) => {
     setTransferAnchorEl(target);
-    setTaskId(id);
+    setTaskIndex(index);
   };
   const closeTransferMenu = () => {
     setTransferAnchorEl(null);
-    setTaskId(false);
+    setTaskIndex(null);
   };
 
-  const restoreTaskHandle = (listId) => {
-    console.log('restoreTask', listId, taskId);
+  const transferActionHandle = (newListIndex) => {
+    dispatch(
+      projectTaskTransfer(taskIndex, null, newListIndex, () =>
+        closeTransferMenu()
+      )
+    );
   };
 
   // Delete menu actions | open, close, restore
-  const openDeleteMenu = (target, id) => {
+  const openDeleteMenu = (target, index, taskId) => {
     setDeleteAnchorEl(target);
-    setTaskId(id);
+    setTaskIndex(index);
+    setTaskId(taskId);
   };
 
   const closeDeleteMenu = () => {
     setDeleteAnchorEl(null);
-    setTaskId(false);
+    setTaskIndex(null);
   };
 
   const deleteTaskHandle = () => {
-    console.log('delete');
+    dispatch(projectTaskDelete(taskId, taskIndex, () => closeDeleteMenu()));
   };
 
   return (
@@ -100,15 +111,16 @@ const ArchivedMenu = ({ anchorEl, handleClose, projectId }) => {
           <div className={classes.innerItems}>
             {lists.archivedTasks &&
               lists.archivedTasks.length > 0 &&
-              lists.archivedTasks.map((task) => (
-                <>
+              lists.archivedTasks.map((task, taskIndex) => (
+                <div key={task._id}>
                   <Task task={task} projectId={projectId} archived={true} />
                   <ArchivedActions
-                    taskId={task.id}
+                    taskId={task._id}
+                    taskIndex={taskIndex}
                     openTransferMenu={openTransferMenu}
                     openDeleteMenu={openDeleteMenu}
                   />
-                </>
+                </div>
               ))}
             {lists.archivedTasks && lists.archivedTasks.length === 0 && (
               <div className={classes.emptyArchive}>No Archived Tasks</div>
@@ -119,7 +131,7 @@ const ArchivedMenu = ({ anchorEl, handleClose, projectId }) => {
       <TransferMenu
         anchorEl={transferAnchorEl}
         closeHandle={closeTransferMenu}
-        restoreTaskHandle={restoreTaskHandle}
+        transferActionHandle={transferActionHandle}
       />
       <DeleteMenu
         anchorEl={deleteAnchorEl}

@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const TransferMenu = ({ anchorEl, closeHandle, restoreTaskHandle }) => {
+const TransferMenu = ({ anchorEl, closeHandle, transferActionHandle }) => {
   const { lists } = useSelector((state) => state.projectGetData);
   const classes = useStyles();
   return (
@@ -47,10 +47,10 @@ const TransferMenu = ({ anchorEl, closeHandle, restoreTaskHandle }) => {
       <div className={classes.container}>
         {lists.lists &&
           lists.lists.length > 0 &&
-          lists.lists.map((list) => (
+          lists.lists.map((list, listIndex) => (
             <p
               key={list._id}
-              onClick={() => restoreTaskHandle(list._id)}
+              onClick={() => transferActionHandle(listIndex)}
               className={classes.menuItem}
             >
               {list.title}
