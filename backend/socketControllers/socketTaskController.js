@@ -90,23 +90,32 @@ export const socketTaskController = (io, socket) => {
         $pull: {
           [`lists.${listIndex}.tasks`]: taskId,
         },
-        $push: { archivedTasks: taskId },
+        $push: {
+          archivedTasks: {
+            $each: [taskId],
+            $position: 0,
+          },
+        },
       }
     );
     await Task.updateOne({ _id: taskId }, { $set: { archived: true } });
   });
-  socket.on('task-delete', async (data, callback) => {
-    const { projectId, taskId } = data;
-    callback();
-    await List.updateOne(
+  socket.on('task-delete', async (data) => {
+    const { projectId, taskId, taskIndex } = data;
+    const lists = await List.updateOne(
       { projectId },
       {
         $pull: {
           archivedTasks: taskId,
         },
-      }
-    );
-    socket.to(projectId).emit('task-deleted', { taskId, listIndex });
+      },
+      { returnOriginal: false }
+    )
+      .populate('lists.tasks')
+      .populate('archivedTasks');
+
+    socket.to(projectId).emit('lists-update', lists);
+    await Task.findOneAndDelete({ _id: taskId });
   });
   socket.on('tasks-archive', async (data) => {
     const { projectId, listIndex } = data;
@@ -122,7 +131,57 @@ export const socketTaskController = (io, socket) => {
         { $set: { archived: true } },
         { multi: true }
       );
-      lists.archivedTasks = [...lists.archivedTasks, ...tasks];
+      lists.archivedTasks = [...tasks, ...lists.archivedTasks];
+    }
+    await lists.save();
+    const newLists = await List.findOne({ projectId })
+      .populate('lists.tasks')
+      .populate('archivedTasks');
+    socket.to(projectId).emit('lists-update', newLists);
+  });
+
+  socket.on('task-transfer', async (data) => {
+    const { projectId, taskId, listIndex, newListIndex } = data;
+    // if listIndex is undefined then function is called from archived tasks
+    if (listIndex) {
+      await List.findOneAndUpdate(
+        { projectId },
+        {
+          $pull: { [`lists.${listIndex}.tasks`]: taskId },
+          $push: { [`lists.${newListIndex}.tasks`]: taskId },
+        }
+      );
+    } else {
+      await List.findOneAndUpdate(
+        { projectId },
+        {
+          $pull: { archivedTasks: taskId },
+          $push: { [`lists.${newListIndex}.tasks`]: taskId },
+        }
+      );
+      await Task.findOneAndUpdate(
+        { _id: taskId },
+        { $set: { archived: false } }
+      );
+    }
+    const newLists = await List.findOne({ projectId })
+      .populate('lists.tasks')
+      .populate('archivedTasks');
+    socket.to(projectId).emit('lists-update', newLists);
+  });
+
+  socket.on('tasks-transfer', async (data) => {
+    const { projectId, listIndex, newListIndex } = data;
+    const lists = await List.findOne({ projectId });
+    const tasks = lists.lists[listIndex].tasks.splice(
+      0,
+      lists.lists[listIndex].tasks.length
+    );
+    if (tasks.length > 0) {
+      lists.lists[newListIndex].tasks = [
+        ...lists.lists[newListIndex].tasks,
+        ...tasks,
+      ];
     }
     await lists.save();
     const newLists = await List.findOne({ projectId })
