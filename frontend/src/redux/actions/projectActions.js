@@ -7,6 +7,9 @@ import {
   PROJECT_DATA_REQUEST,
   PROJECT_DATA_SUCCESS,
   PROJECT_DATA_UPDATE_LISTS,
+  PROJECT_FIND_USERS_FAIL,
+  PROJECT_FIND_USERS_REQUEST,
+  PROJECT_FIND_USERS_SUCCESS,
   PROJECT_SET_CURRENT,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
@@ -338,12 +341,10 @@ export const projectTasksTransfer = (
     0,
     listsCopy.lists[listIndex].tasks.length
   );
-  console.log(tasks, listIndex, newListIndex);
   listsCopy.lists[newListIndex].tasks = [
     ...listsCopy.lists[newListIndex].tasks,
     ...tasks,
   ];
-  console.log(listsCopy);
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
   callback();
   socket.emit('tasks-transfer', {
@@ -351,4 +352,60 @@ export const projectTasksTransfer = (
     listIndex,
     newListIndex,
   });
+};
+
+export const findUsersToInvite = (userData) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PROJECT_FIND_USERS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+      projectGetData: { project },
+    } = getState();
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    // eslint-disable-next-line
+    const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const isEmail = regex.test(userData.toLowerCase());
+
+    const { data } = await axios.post(
+      `/api/users/find/${project._id}`,
+      { userData, isEmail },
+      config
+    );
+    dispatch({ type: PROJECT_FIND_USERS_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: PROJECT_FIND_USERS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const sendProjectInvitations = (users, callback) => async (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { project },
+  } = getState();
+
+  socket.emit(
+    'project-invite-users',
+    {
+      projectId: project._id,
+      users,
+    },
+    callback
+  );
 };

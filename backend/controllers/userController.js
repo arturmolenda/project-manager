@@ -1,4 +1,5 @@
 import User from '../models/user.js';
+import Project from '../models/project.js';
 import EmailSecret from '../models/emailSecret.js';
 import generateToken from '../utils/generateToken.js';
 import asyncHandler from 'express-async-handler';
@@ -158,4 +159,46 @@ const getUserData = asyncHandler(async (req, res) => {
   res.status(200).json({ ...user._doc, token: generateToken(user._id) });
 });
 
-export { authUser, registerUser, confirmEmail, resendEmail, getUserData };
+// @desc    Get users by name or email
+// @route   POST /api/users/find
+// @access  Private
+const findUsers = asyncHandler(async (req, res) => {
+  const { isEmail, userData } = req.body;
+  const { projectId } = req.params;
+  let users;
+  if (isEmail) {
+    users = await User.find({ email: userData }).select('-password').limit(8);
+  } else
+    users = await User.find({ username: { $regex: userData, $options: 'i' } })
+      .select('-password')
+      .limit(8);
+
+  const project = await Project.findById(projectId);
+  if (users.length > 0) {
+    users = users.map((user) => {
+      project.users.forEach((x) => {
+        if (x.user.equals(user._id)) {
+          user._doc.joinedStatus = x.permissions > 0 ? '(joined)' : '(invited)';
+        }
+      });
+      return user;
+    });
+    res.status(200).json(users);
+  } else {
+    res.status(404);
+    throw new Error(
+      isEmail
+        ? 'No users were found under given email'
+        : 'No users were found, try using email address'
+    );
+  }
+});
+
+export {
+  authUser,
+  registerUser,
+  confirmEmail,
+  resendEmail,
+  getUserData,
+  findUsers,
+};
