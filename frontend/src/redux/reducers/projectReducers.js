@@ -17,6 +17,11 @@ import {
   PROJECT_DATA_ADD_LIST,
   PROJECT_DATA_LIST_TITLE_UPDATE,
   PROJECT_DATA_TITLE_UPDATE,
+  PROJECT_FIND_USERS_REQUEST,
+  PROJECT_FIND_USERS_SUCCESS,
+  PROJECT_FIND_USERS_FAIL,
+  PROJECT_DATA_JOIN_LINK_UPDATE,
+  PROJECT_DATA_USERS_UPDATE,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -103,6 +108,17 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       stateClone.project.title = action.payload.title;
       return stateClone;
     }
+    case PROJECT_DATA_JOIN_LINK_UPDATE: {
+      const stateClone = deepcopy(state);
+      stateClone.project.joinId = action.payload.joinId;
+      stateClone.project.joinIdActive = action.payload.joinIdActive;
+      return stateClone;
+    }
+    case PROJECT_DATA_USERS_UPDATE: {
+      const stateClone = deepcopy(state);
+      stateClone.users = action.payload;
+      return stateClone;
+    }
     case PROJECT_DATA_FAIL:
       return { loading: false, error: action.payload };
     case PROJECT_DATA_RESET:
@@ -127,6 +143,22 @@ export const projectTaskMoveReducer = (
       return state;
     case PROJECT_TASK_MOVE_RESET:
       return { removed: null, added: null };
+    default:
+      return state;
+  }
+};
+
+export const projectFindUsersReducer = (state = { users: [] }, action) => {
+  switch (action.type) {
+    case PROJECT_FIND_USERS_REQUEST:
+      return { loading: true };
+    case PROJECT_FIND_USERS_SUCCESS:
+      return {
+        loading: false,
+        users: action.payload,
+      };
+    case PROJECT_FIND_USERS_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }
