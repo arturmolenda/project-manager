@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   PROJECT_DATA_ADD_LIST,
   PROJECT_DATA_ADD_TASK,
+  PROJECT_DATA_JOIN_LINK_UPDATE,
   PROJECT_DATA_LIST_TITLE_UPDATE,
   PROJECT_DATA_TITLE_UPDATE,
   PROJECT_DATA_UPDATE_LISTS,
+  PROJECT_DATA_USERS_UPDATE,
 } from '../../redux/constants/projectConstants';
 
 import { makeStyles } from '@material-ui/core';
@@ -55,12 +57,20 @@ const Board = () => {
     socket.on('project-title-updated', (data) => {
       dispatch({ type: PROJECT_DATA_TITLE_UPDATE, payload: data });
     });
+    socket.on('project-join-link-updated', (data) => {
+      dispatch({ type: PROJECT_DATA_JOIN_LINK_UPDATE, payload: data });
+    });
+    socket.on('project-users-updated', (data) => {
+      dispatch({ type: PROJECT_DATA_USERS_UPDATE, payload: data });
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
       socket.off('list-added');
       socket.off('list-title-updated');
       socket.off('project-title-updated');
+      socket.off('project-join-link-updated');
+      socket.off('project-users-updated');
     };
   }, [dispatch, socket]);
 
