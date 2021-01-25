@@ -13,8 +13,12 @@ const authorizeSocketConnection = asyncHandler(async (data, socket) => {
 
 const levelOneAuth = asyncHandler(async (data, socket) => {
   const isAuthorized = await Project.findOne({
-    _id: data.projectId,
-    'users.user': socket.user._id,
+    users: {
+      $elemMatch: {
+        user: socket.user._id,
+        $or: [{ permissions: 1 }, { permissions: 2 }],
+      },
+    },
   });
   if (!isAuthorized) socket.emit('auth-error');
 });

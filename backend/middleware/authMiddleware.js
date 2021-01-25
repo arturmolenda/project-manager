@@ -28,7 +28,12 @@ const protect = asyncHandler(async (req, res, next) => {
 const permissionsOne = asyncHandler(async (req, res, next) => {
   const isAuthorized = await Project.findOne({
     _id: req.params.projectId,
-    'users.user': req.user._id,
+    users: {
+      $elemMatch: {
+        user: req.user._id,
+        $or: [{ permissions: 1 }, { permissions: 2 }],
+      },
+    },
   });
   if (isAuthorized) next();
   else {
