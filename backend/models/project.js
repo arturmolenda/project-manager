@@ -15,11 +15,14 @@ const projectSchema = mongoose.Schema(
       {
         user: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
         permissions: { type: Number, required: true, default: 1 },
-        tasksAssigned: [{ type: mongoose.Types.ObjectId }],
+        tasksAssigned: [
+          { type: mongoose.Types.ObjectId, required: false, ref: 'Task' },
+        ],
       },
     ],
     creatorId: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
     joinId: { type: mongoose.Types.ObjectId, required: true },
+    joinIdActive: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
