@@ -18,6 +18,11 @@ export const socket = (io) => {
     await authorizeSocketConnection(socket.handshake.auth, socket);
     console.log('Connected users:', io.sockets.server.eio.clientsCount);
 
+    socket.on('join-notifications', async ({ room }) => {
+      console.log('Joined notifications', room);
+      socket.join(room);
+    });
+
     socket.on('join-board', async ({ room }) => {
       // Check is user is part of the project
       await levelOneAuth({ projectId: room }, socket);
