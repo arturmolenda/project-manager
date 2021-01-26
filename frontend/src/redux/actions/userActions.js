@@ -12,6 +12,7 @@ import {
   USER_EMAIL_RESEND_REQUEST,
   USER_EMAIL_RESEND_SUCCESS,
   USER_EMAIL_RESEND_FAIL,
+  USER_NOTIFICATIONS_UPDATE,
 } from '../constants/userConstants';
 import {
   SOCKET_CONNECT_RESET,
@@ -161,10 +162,25 @@ export const getUserData = (token) => async (dispatch) => {
     socket.on('connect', () => {
       dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket });
       dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+      socket.emit('join-notifications', { room: data._id });
     });
   } catch (error) {
     localStorage.removeItem('userInfo');
     dispatch({ type: USER_LOGOUT });
     console.error(error);
   }
+};
+
+export const getUpdatedNotifications = () => async (dispatch, getState) => {
+  const {
+    userLogin: { userInfo },
+  } = getState();
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
+  const { data } = await axios.get('/api/users/notifications', config);
+  dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: data });
 };

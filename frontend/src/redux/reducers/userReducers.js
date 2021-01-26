@@ -14,6 +14,7 @@ import {
   USER_EMAIL_RESEND_REQUEST,
   USER_EMAIL_RESEND_SUCCESS,
   USER_EMAIL_RESEND_FAIL,
+  USER_NOTIFICATIONS_UPDATE,
 } from '../constants/userConstants';
 import deepcopy from 'deepcopy';
 
@@ -41,6 +42,15 @@ export const userLoginReducer = (state = { loading: true }, action) => {
     }
     case USER_DATA_UPDATE:
       return { ...state, userInfo: action.payload };
+    case USER_NOTIFICATIONS_UPDATE:
+      return {
+        ...state,
+        userInfo: {
+          ...state.userInfo,
+          notifications: action.payload.notifications,
+          newNotificationsCount: action.payload.newNotificationsCount,
+        },
+      };
     case USER_LOGIN_FAIL:
       return { loading: false, error: action.payload };
     case USER_LOGOUT:

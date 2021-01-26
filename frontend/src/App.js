@@ -7,7 +7,11 @@ import {
 } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserData, logout } from './redux/actions/userActions';
+import {
+  getUpdatedNotifications,
+  getUserData,
+  logout,
+} from './redux/actions/userActions';
 
 import {
   unstable_createMuiStrictModeTheme as createMuiTheme,
@@ -44,7 +48,10 @@ const App = () => {
   }, [dispatch, userInfo]);
 
   useEffect(() => {
-    if (socket) socket.on('auth-error', () => dispatch(logout()));
+    if (socket) {
+      socket.on('new-notification', () => dispatch(getUpdatedNotifications()));
+      socket.on('auth-error', () => dispatch(logout()));
+    }
   }, [dispatch, socket]);
   return (
     <MuiThemeProvider theme={theme}>
