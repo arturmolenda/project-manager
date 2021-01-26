@@ -6,7 +6,7 @@ const notificationSchema = new Schema(
   {
     type: { type: String, required: true },
     description: { type: String, required: false },
-    projectId: {
+    project: {
       type: mongoose.Types.ObjectId,
       required: true,
       ref: 'Project',
