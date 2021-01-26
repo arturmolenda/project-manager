@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
+import { useSelector } from 'react-redux';
+
+import { IconButton, Badge } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
+import NotificationsMenu from './NotificationsMenu';
+
 const Notifications = () => {
+  const { userInfo } = useSelector((state) => state.userLogin);
+  const [anchorEl, setAnchorEl] = useState();
   return (
-    <IconButton color='inherit'>
-      <Badge badgeContent={0} color='secondary'>
-        <NotificationsIcon />
-      </Badge>
-    </IconButton>
+    <>
+      <IconButton color='inherit' onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <Badge badgeContent={userInfo.newNotificationsCount} color='secondary'>
+          <NotificationsIcon />
+        </Badge>
+      </IconButton>
+      <NotificationsMenu
+        anchorEl={anchorEl}
+        handleClose={() => setAnchorEl(null)}
+      />
+    </>
   );
 };
 
