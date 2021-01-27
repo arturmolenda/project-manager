@@ -286,11 +286,11 @@ const discardNotification = asyncHandler(async (req, res) => {
 });
 
 // @desc    Mark notifications as seen
-// @route   POST /api/users/markNotifications
+// @route   PUT /api/users/markNotifications
 // @access  Private
 const markNotifications = asyncHandler(async (req, res) => {
   await Notification.updateMany(
-    { recipient: req.user._id },
+    { recipient: req.user._id, seenDate: null },
     { $set: { seenDate: new Date() } }
   );
   res.status(200);
