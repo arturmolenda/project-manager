@@ -16,10 +16,29 @@ const authUser = asyncHandler(async (req, res) => {
     .populate('projectsCreated')
     .populate('projectsJoined');
   if (user && (await user.matchPassword(password))) {
-    res.json({
-      ...user._doc,
-      password: undefined,
-      token: generateToken(user._id),
+    const notifications = await Notification.find({
+      recipient: user._id,
+    })
+      .sort({ createdAt: -1 })
+      .populate('project')
+      .populate({
+        path: 'sender',
+        select: 'username email profilePicture',
+      });
+    const newNotificationsCount = await Notification.countDocuments({
+      recipient: user._id,
+      seenDate: null,
+    });
+
+    res.status(200).json({
+      userInfo: {
+        ...user._doc,
+        token: generateToken(user._id),
+      },
+      notifications: {
+        items: notifications,
+        newNotificationsCount,
+      },
     });
   } else {
     res.status(401);
@@ -173,10 +192,14 @@ const getUserData = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    ...user._doc,
-    token: generateToken(user._id),
-    notifications,
-    newNotificationsCount,
+    userInfo: {
+      ...user._doc,
+      token: generateToken(user._id),
+    },
+    notifications: {
+      items: notifications,
+      newNotificationsCount,
+    },
   });
 });
 
@@ -234,8 +257,10 @@ const getNotifications = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    notifications,
-    newNotificationsCount,
+    notifications: {
+      items: notifications,
+      newNotificationsCount,
+    },
   });
 });
 

@@ -38,7 +38,7 @@ export const login = (email, password) => async (dispatch) => {
     const socket = io.connect('http://localhost:5000', {
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
-        authorization: `Bearer ${data.token}`,
+        authorization: `Bearer ${data.userInfo.token}`,
       },
     });
     socket.on('connect', () => {
@@ -46,7 +46,10 @@ export const login = (email, password) => async (dispatch) => {
       dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
     });
 
-    localStorage.setItem('userInfo', JSON.stringify({ token: data.token }));
+    localStorage.setItem(
+      'userInfo',
+      JSON.stringify({ token: data.userInfo.token })
+    );
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -146,28 +149,26 @@ export const getUserData = (token) => async (dispatch) => {
 
     const config = {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     };
-    const { data } = await axios.get('/api/users/', config);
+    const { data } = await axios.get('/api/users', config);
 
     // connect to socket server
     const socket = io.connect('http://localhost:5000', {
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
-        authorization: `Bearer ${data.token}`,
+        authorization: `Bearer ${data.userInfo.token}`,
       },
     });
     socket.on('connect', () => {
       dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket });
       dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
-      socket.emit('join-notifications', { room: data._id });
+      socket.emit('join-notifications', { room: data.userInfo._id });
     });
   } catch (error) {
     localStorage.removeItem('userInfo');
     dispatch({ type: USER_LOGOUT });
-    console.error(error);
   }
 };
 
@@ -182,5 +183,5 @@ export const getUpdatedNotifications = () => async (dispatch, getState) => {
     },
   };
   const { data } = await axios.get('/api/users/notifications', config);
-  dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: data });
+  dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: data.notifications });
 };
