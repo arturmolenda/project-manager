@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
@@ -43,9 +44,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NotificationsMenu = ({ anchorEl, handleClose }) => {
-  const { userInfo } = useSelector((state) => state.userLogin);
+  const { socket } = useSelector((state) => state.socketConnection);
+  const { notifications } = useSelector((state) => state.userLogin);
   const [notificationsIndexes, setNotificationsIndexes] = useState([]);
   const classes = useStyles();
+  const history = useHistory();
 
   // Keeps track of which notifications are "opened", meaning have discard and accept buttons displayed
   const projectNotificationHandle = (e, index) => {
@@ -70,6 +73,16 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
 
   const actionHandle = (notification) => {
     console.log('join project');
+    if (notification.type === 'Project Invitation') {
+      socket.emit(
+        'project-join',
+        { projectId: notification.project._id },
+        () => {
+          handleClose();
+          history.push(`/project/${notification.project._id}`);
+        }
+      );
+    }
   };
 
   return (
@@ -89,8 +102,8 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
         Notifications
       </Typography>
       <div className={classes.menuContainer}>
-        {userInfo.notifications.length > 0 ? (
-          userInfo.notifications.map((notification, index) => (
+        {notifications.items.length > 0 ? (
+          notifications.items.map((notification, index) => (
             <NotificationItem
               key={index}
               projectNotificationHandle={projectNotificationHandle}
