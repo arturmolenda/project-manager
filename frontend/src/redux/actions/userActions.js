@@ -185,3 +185,21 @@ export const getUpdatedNotifications = () => async (dispatch, getState) => {
   const { data } = await axios.get('/api/users/notifications', config);
   dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: data.notifications });
 };
+
+export const discardNotification = (
+  notificationId,
+  notificationIndex
+) => async (dispatch, getState) => {
+  const {
+    userLogin: { userInfo, notifications },
+  } = getState();
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
+  notifications.items.splice(notificationIndex, 1);
+  dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: notifications });
+  await axios.delete(`/api/users/${notificationId}`, config);
+};
