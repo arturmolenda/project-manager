@@ -12,6 +12,7 @@ import {
   getUserData,
   logout,
 } from './redux/actions/userActions';
+import { USER_DATA_UPDATE } from './redux/constants/userConstants';
 
 import {
   unstable_createMuiStrictModeTheme as createMuiTheme,
@@ -29,6 +30,7 @@ import ParticlesBackground from './components/ParticlesBackground';
 import Confirm from './components/pages/Confirm';
 import Boards from './components/pages/Boards';
 import Project from './components/pages/Project';
+import ProjectJoinPage from './components/pages/ProjectJoinPage';
 
 const theme = createMuiTheme(themeFile);
 
@@ -49,7 +51,12 @@ const App = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('new-notification', () => dispatch(getUpdatedNotifications()));
+      socket.on('notifications-updated', () =>
+        dispatch(getUpdatedNotifications())
+      );
+      socket.on('user-updated', (data) =>
+        dispatch({ type: USER_DATA_UPDATE, payload: data })
+      );
       socket.on('auth-error', () => dispatch(logout()));
     }
   }, [dispatch, socket]);
@@ -93,6 +100,13 @@ const App = () => {
                 </PrivateRoute>
                 <PrivateRoute exact path='/project/:id' userInfo={userInfo}>
                   <Project />
+                </PrivateRoute>
+                <PrivateRoute
+                  exact
+                  path='/invite/:projectId/:joinId'
+                  userInfo={userInfo}
+                >
+                  <ProjectJoinPage />
                 </PrivateRoute>
               </Switch>
             </>
