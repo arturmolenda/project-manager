@@ -268,7 +268,20 @@ const getNotifications = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:notificationId
 // @access  Private
 const discardNotification = asyncHandler(async (req, res) => {
-  await Notification.deleteOne({ _id: req.params.notificationId });
+  const notification = await Notification.findOneAndDelete({
+    _id: req.params.notificationId,
+  });
+  // remove invited user from project
+  if (notification.type === 'Project Invitation') {
+    const project = await Project.findById(notification.project);
+    const userIndex = project.users.findIndex((x) =>
+      x.user.equals(notification.recipient)
+    );
+    if (userIndex !== -1) {
+      project.users.splice(userIndex, 1);
+      await project.save();
+    }
+  }
   res.status(200);
 });
 
