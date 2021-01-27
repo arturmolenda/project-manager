@@ -67,10 +67,9 @@ const useStyles = makeStyles(() => ({
 
 const NotificationItem = ({
   projectNotificationHandle,
-  discardNotification,
+  discardNotificationHandle,
   actionHandle,
   notificationsIndexes,
-  category,
   notification,
   index,
 }) => {
@@ -79,7 +78,7 @@ const NotificationItem = ({
     <div style={{ position: 'relative' }}>
       <MenuItem
         className={classes.notificationContainer}
-        onClick={(e) => projectNotificationHandle(e, index, category)}
+        onClick={() => projectNotificationHandle(index)}
         disabled={notificationsIndexes.indexOf(index) !== -1}
       >
         <div className={classes.notificationFlexContainer}>
@@ -122,7 +121,7 @@ const NotificationItem = ({
         <div className={classes.btnActions}>
           <Button
             color='secondary'
-            onClick={(e) => discardNotification(e, index, category)}
+            onClick={() => discardNotificationHandle(notification._id, index)}
           >
             Discard
           </Button>
@@ -136,7 +135,7 @@ const NotificationItem = ({
           <IconButton
             color='secondary'
             className={classes.closeBtn}
-            onClick={(e) => projectNotificationHandle(e, index, category)}
+            onClick={() => projectNotificationHandle(index)}
           >
             <CloseIcon />
           </IconButton>
