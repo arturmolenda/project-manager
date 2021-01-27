@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { discardNotification } from '../../../../redux/actions/userActions';
 
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -47,11 +48,12 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
   const { socket } = useSelector((state) => state.socketConnection);
   const { notifications } = useSelector((state) => state.userLogin);
   const [notificationsIndexes, setNotificationsIndexes] = useState([]);
+  const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
 
   // Keeps track of which notifications are "opened", meaning have discard and accept buttons displayed
-  const projectNotificationHandle = (e, index) => {
+  const projectNotificationHandle = (index) => {
     // remove index from array
     const value = notificationsIndexes.indexOf(index);
     if (value !== -1) {
@@ -66,9 +68,8 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
     }
   };
 
-  const discardNotification = (event, index) => {
-    console.log(index);
-    console.log(event.target);
+  const discardNotificationHandle = (notificationId, index) => {
+    dispatch(discardNotification(notificationId, index));
   };
 
   const actionHandle = (notification) => {
@@ -108,7 +109,7 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
               key={index}
               projectNotificationHandle={projectNotificationHandle}
               actionHandle={actionHandle}
-              discardNotification={discardNotification}
+              discardNotificationHandle={discardNotificationHandle}
               notificationsIndexes={notificationsIndexes}
               notification={notification}
               index={index}
