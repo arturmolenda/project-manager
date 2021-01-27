@@ -203,3 +203,18 @@ export const discardNotification = (
   dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: notifications });
   await axios.delete(`/api/users/${notificationId}`, config);
 };
+
+export const markNotificationsSeen = () => async (dispatch, getState) => {
+  const {
+    userLogin: { userInfo, notifications },
+  } = getState();
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
+  notifications.newNotificationsCount = 0;
+  dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: notifications });
+  await axios.put(`/api/users/markNotifications`, {}, config);
+};
