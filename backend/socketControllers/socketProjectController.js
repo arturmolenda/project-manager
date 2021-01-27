@@ -1,5 +1,7 @@
 import Project from '../models/project.js';
 import Notification from '../models/notification.js';
+import User from '../models/user.js';
+import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
 
 export const socketProjectController = (io, socket) => {
@@ -28,7 +30,7 @@ export const socketProjectController = (io, socket) => {
           user: user._id,
           permissions: 0,
         });
-        io.to(user._id).emit('new-notification');
+        io.to(user._id).emit('notifications-updated');
       });
       Promise.all(promise).then(async () => {
         await project.save();
@@ -69,5 +71,69 @@ export const socketProjectController = (io, socket) => {
       { _id: projectId },
       { $set: { joinIdActive: false } }
     );
+  });
+
+  // adds user to project by invitation either by notification or by join link
+  socket.on('project-join', async (data, callback) => {
+    const { projectId, joinId } = data;
+    let joinSuccess = false;
+    const project = await Project.findById(projectId);
+    const user = await User.findById(socket.user.id);
+    const invitation = await Notification.findOne({
+      type: 'Project Invitation',
+      project: projectId,
+      recipient: socket.user._id,
+    });
+    const handleInvitation = async () => {
+      if (invitation) {
+        await invitation.delete();
+        const userIndex = project.users.findIndex((x) =>
+          x.user.equals(socket.user._id)
+        );
+        if (userIndex !== -1) {
+          project.users[userIndex].permissions = 1;
+          joinSuccess = true;
+        }
+      }
+    };
+
+    if (project && project.joinId.equals(joinId) && project.joinIdActive) {
+      if (!invitation) {
+        project.users.push({
+          user: user._id,
+          permissions: 1,
+        });
+        joinSuccess = true;
+      }
+      await handleInvitation();
+    } else if (project && !joinId) {
+      await handleInvitation();
+    }
+    if (joinSuccess) {
+      user.projectsJoined.push(projectId);
+      await project.save();
+      await user.save();
+      const updatedUser = await User.findOne({ _id: user._id })
+        .select('-password')
+        .populate('projectsCreated')
+        .populate('projectsJoined');
+      io.to(String(socket.user._id)).emit('user-updated', {
+        ...updatedUser._doc,
+        token: generateToken(updatedUser._id),
+      });
+
+      callback();
+      if (invitation) {
+        io.to(String(socket.user._id)).emit('notifications-updated');
+      }
+      const newProjectUsers = await Project.findById(projectId).populate({
+        path: 'users.user',
+        select: 'username email profilePicture',
+      });
+      io.to(data.projectId).emit(
+        'project-users-updated',
+        newProjectUsers.users
+      );
+    }
   });
 };
