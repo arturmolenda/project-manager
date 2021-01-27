@@ -8,12 +8,16 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import NotificationsMenu from './NotificationsMenu';
 
 const Notifications = () => {
-  const { userInfo } = useSelector((state) => state.userLogin);
+  const { notifications } = useSelector((state) => state.userLogin);
   const [anchorEl, setAnchorEl] = useState();
+
   return (
     <>
       <IconButton color='inherit' onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <Badge badgeContent={userInfo.newNotificationsCount} color='secondary'>
+        <Badge
+          badgeContent={notifications.newNotificationsCount}
+          color='secondary'
+        >
           <NotificationsIcon />
         </Badge>
       </IconButton>

@@ -23,7 +23,11 @@ export const userLoginReducer = (state = { loading: true }, action) => {
     case USER_LOGIN_REQUEST:
       return { loading: true };
     case USER_LOGIN_SUCCESS:
-      return { loading: false, userInfo: action.payload };
+      return {
+        loading: false,
+        userInfo: action.payload.userInfo,
+        notifications: action.payload.notifications,
+      };
     case PROJECT_DATA_TITLE_UPDATE: {
       const {
         payload: { title, projectId },
@@ -45,11 +49,7 @@ export const userLoginReducer = (state = { loading: true }, action) => {
     case USER_NOTIFICATIONS_UPDATE:
       return {
         ...state,
-        userInfo: {
-          ...state.userInfo,
-          notifications: action.payload.notifications,
-          newNotificationsCount: action.payload.newNotificationsCount,
-        },
+        notifications: action.payload,
       };
     case USER_LOGIN_FAIL:
       return { loading: false, error: action.payload };
