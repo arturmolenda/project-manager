@@ -18,7 +18,7 @@ export const socketProjectController = (io, socket) => {
       const promise = users.map(async (user) => {
         const inviteNotification = new Notification({
           type: 'Project Invitation',
-          projectId: projectId,
+          project: projectId,
           seenDate: null,
           sender: socket.user._id,
           recipient: user._id,
@@ -28,9 +28,7 @@ export const socketProjectController = (io, socket) => {
           user: user._id,
           permissions: 0,
         });
-        io.to(user._id).emit('new-notification', {
-          notification: inviteNotification,
-        });
+        io.to(user._id).emit('new-notification');
       });
       Promise.all(promise).then(async () => {
         await project.save();

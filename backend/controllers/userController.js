@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import Project from '../models/project.js';
+import Notification from '../models/notification.js';
 import EmailSecret from '../models/emailSecret.js';
 import generateToken from '../utils/generateToken.js';
 import asyncHandler from 'express-async-handler';
@@ -149,14 +150,34 @@ const resendEmail = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get User Data
-// @route   GET /api/user/
+// @route   GET /api/users/
 // @access  Private
 const getUserData = asyncHandler(async (req, res) => {
   const user = await User.findOne({ _id: req.user._id })
     .select('-password')
     .populate('projectsCreated')
     .populate('projectsJoined');
-  res.status(200).json({ ...user._doc, token: generateToken(user._id) });
+
+  const notifications = await Notification.find({
+    recipient: req.user._id,
+  })
+    .sort({ createdAt: -1 })
+    .populate('project')
+    .populate({
+      path: 'sender',
+      select: 'username email profilePicture',
+    });
+  const newNotificationsCount = await Notification.countDocuments({
+    recipient: req.user._id,
+    seenDate: null,
+  });
+
+  res.status(200).json({
+    ...user._doc,
+    token: generateToken(user._id),
+    notifications,
+    newNotificationsCount,
+  });
 });
 
 // @desc    Get users by name or email
@@ -194,6 +215,49 @@ const findUsers = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get notifications
+// @route   GET /api/users/notifications
+// @access  Private
+const getNotifications = asyncHandler(async (req, res) => {
+  const notifications = await Notification.find({
+    recipient: req.user._id,
+  })
+    .sort({ createdAt: -1 })
+    .populate('project')
+    .populate({
+      path: 'sender',
+      select: 'username email profilePicture',
+    });
+  const newNotificationsCount = await Notification.countDocuments({
+    recipient: req.user._id,
+    seenDate: null,
+  });
+
+  res.status(200).json({
+    notifications,
+    newNotificationsCount,
+  });
+});
+
+// @desc    Discard notification
+// @route   DELETE /api/users/:notificationId
+// @access  Private
+const discardNotification = asyncHandler(async (req, res) => {
+  await Notification.deleteOne({ _id: req.params.notificationId });
+  res.status(200);
+});
+
+// @desc    Mark notifications as seen
+// @route   POST /api/users/markNotifications
+// @access  Private
+const markNotifications = asyncHandler(async (req, res) => {
+  await Notification.updateMany(
+    { recipient: req.user._id },
+    { $set: { seenDate: new Date() } }
+  );
+  res.status(200);
+});
+
 export {
   authUser,
   registerUser,
@@ -201,4 +265,7 @@ export {
   resendEmail,
   getUserData,
   findUsers,
+  markNotifications,
+  getNotifications,
+  discardNotification,
 };
