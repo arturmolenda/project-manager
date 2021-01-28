@@ -7,6 +7,7 @@ import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 import NavTitle from './NavTitle';
 import ArchivedTasks from './archivedTasks/ArchivedTasks';
 import InviteUsers from './inviteUsers/InviteUsers';
+import Users from './users/Users';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -51,7 +52,7 @@ const Navbar = () => {
             <DeveloperBoardIcon color='primary' className={classes.boardIcon} />
             <NavTitle />
           </div>
-          {/* Users */}
+          <Users />
           <InviteUsers />
         </div>
 
