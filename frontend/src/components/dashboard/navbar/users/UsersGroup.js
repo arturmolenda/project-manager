@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 
 import UserItem from './UserItem';
+import GroupMenu from './userMenus/GroupMenu';
+// import AdministratorMenu from './userMenus/AdministratorMenu';
+// import NormalMenu from './userMenus/NormalMenu';
+// import UsersGroupMenu from './userMenus/UsersGroupMenu';
 
 const useStyles = makeStyles((theme) => ({
   avatarGroup: {
@@ -35,20 +39,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UsersGroup = ({ users, handleClick, projectId, userPermissions }) => {
+const UsersGroup = ({
+  users,
+  handleUserClick,
+  projectId,
+  userPermissions,
+  creatorId,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-
+  console.log(users);
   return (
     <>
       <div className={classes.avatarGroup}>
         {users.slice(0, 3).map((user, index) => (
           <UserItem
-            key={user._id}
-            userPermissions={user.permissions}
+            key={user.user._id}
+            permissions={user.permissions}
             user={user.user}
-            index={index}
-            handleClick={handleClick}
+            handleUserClick={(e) => handleUserClick(e.currentTarget, user)}
             zIndex={index === 0 ? 3 : index === 1 ? 2 : 1}
           />
         ))}
@@ -61,6 +70,14 @@ const UsersGroup = ({ users, handleClick, projectId, userPermissions }) => {
           <p>+{users.length - 3}</p>
         </div>
       )}
+      <GroupMenu
+        anchorEl={anchorEl}
+        handleClose={() => setAnchorEl(null)}
+        users={users}
+        projectId={projectId}
+        creatorId={creatorId}
+        userPermissions={userPermissions}
+      />
     </>
   );
 };
