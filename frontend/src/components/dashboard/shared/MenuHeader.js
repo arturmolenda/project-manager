@@ -50,6 +50,8 @@ const MenuHeader = ({ goBackHandle, handleClose, title }) => {
             fontSize: '1.3rem',
             cursor: 'pointer',
             marginRight: 10,
+            width: 21,
+            height: 21,
           }}
           onClick={handleClose}
         />
