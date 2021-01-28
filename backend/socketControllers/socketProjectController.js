@@ -39,7 +39,10 @@ export const socketProjectController = (io, socket) => {
           select: 'username email profilePicture',
         });
         callback();
-        io.to(data.projectId).emit('users-updated', newProjectUsers.users);
+        io.to(data.projectId).emit(
+          'project-users-updated',
+          newProjectUsers.users
+        );
       });
     }
   });

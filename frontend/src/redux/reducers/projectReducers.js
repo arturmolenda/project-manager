@@ -116,7 +116,7 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
     }
     case PROJECT_DATA_USERS_UPDATE: {
       const stateClone = deepcopy(state);
-      stateClone.users = action.payload;
+      stateClone.project.users = action.payload;
       return stateClone;
     }
     case PROJECT_DATA_FAIL:
