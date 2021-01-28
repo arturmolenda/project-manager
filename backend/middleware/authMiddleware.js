@@ -31,11 +31,11 @@ const permissionsOne = asyncHandler(async (req, res, next) => {
     users: {
       $elemMatch: {
         user: req.user._id,
-        $or: [{ permissions: 1 }, { permissions: 2 }],
+        permissions: { $in: [1, 2] },
       },
     },
   });
-  if (isAuthorized) next();
+  if (isAuthorized.users.length !== 0) next();
   else {
     res.status(401);
     throw new Error('Not authorized');
@@ -51,7 +51,7 @@ const permissionsTwo = asyncHandler(async (req, res, next) => {
       },
     },
   });
-  if (isAuthorized) next();
+  if (isAuthorized.users.length !== 0) next();
   else {
     res.status(401);
     throw new Error('Not authorized');

@@ -83,11 +83,11 @@ export const getProjectData = (projectId, prevProjectId) => async (
       },
     };
 
-    const { data } = await axios.get(`/api/projects/${projectId}`, config);
-
     // join and leave socket's project board room
     if (prevProjectId) socket.emit('disconnect-board', { room: prevProjectId });
     socket.emit('join-board', { room: projectId });
+
+    const { data } = await axios.get(`/api/projects/${projectId}`, config);
 
     dispatch({ type: PROJECT_DATA_SUCCESS, payload: data });
   } catch (error) {
