@@ -44,6 +44,7 @@ export const login = (email, password) => async (dispatch) => {
     socket.on('connect', () => {
       dispatch({ type: SOCKET_CONNECT_SUCCESS, payload: socket });
       dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+      socket.emit('join-notifications', { room: data.userInfo._id });
     });
 
     localStorage.setItem(
