@@ -89,10 +89,11 @@ export const logout = () => async (dispatch, getState) => {
   const {
     socketConnection: { socket },
   } = getState();
-  socket.disconnect();
-  dispatch({ type: SOCKET_CONNECT_RESET });
+  // window.location = '/login'
   localStorage.removeItem('userInfo');
   dispatch({ type: USER_LOGOUT });
+  socket.disconnect();
+  dispatch({ type: SOCKET_CONNECT_RESET });
 };
 
 export const confirmEmail = (emailCode) => async (dispatch) => {

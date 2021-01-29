@@ -37,27 +37,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UserItem = ({
-  handleClick,
-  userPermissions,
+  handleUserClick,
+  permissions,
   user,
-  index,
   zIndex,
   allUsersMenu,
 }) => {
   const classes = useStyles();
   return (
     <>
-      {userPermissions === 2 && (
+      {permissions === 2 && (
         <div style={{ zIndex }}>
           <Tooltip
             title={
               allUsersMenu ? user.username : `${user.username} (Administrator)`
             }
-            onClick={
-              index === 0
-                ? (event) => handleClick(event.currentTarget, index)
-                : (event) => handleClick(event.currentTarget, index)
-            }
+            onClick={handleUserClick}
           >
             <div className={classes.innerContainer}>
               <NotificationsIcon
@@ -72,12 +67,9 @@ const UserItem = ({
           </Tooltip>
         </div>
       )}
-      {userPermissions === 1 && (
+      {permissions === 1 && (
         <div style={{ zIndex }}>
-          <Tooltip
-            title={user.username}
-            onClick={(event) => handleClick(event.currentTarget, index)}
-          >
+          <Tooltip title={user.username} onClick={handleUserClick}>
             <div className={classes.innerContainer}>
               <Avatar
                 className={`${classes.avatar} ${classes.avatarBorderFix}`}
@@ -87,7 +79,7 @@ const UserItem = ({
           </Tooltip>
         </div>
       )}
-      {userPermissions === 0 && (
+      {permissions === 0 && (
         <div style={{ zIndex }}>
           <Tooltip
             title={allUsersMenu ? user.username : `${user.username} (Invited)`}
@@ -95,7 +87,7 @@ const UserItem = ({
             <div className={classes.innerContainer}>
               <div
                 className={classes.invitedUserBg}
-                onClick={(event) => handleClick(event.currentTarget, index)}
+                onClick={handleUserClick}
               />
               <Avatar
                 className={`${classes.avatar} ${classes.avatarBorderFix}`}

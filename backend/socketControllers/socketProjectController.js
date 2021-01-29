@@ -5,6 +5,7 @@ import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
 
 export const socketProjectController = (io, socket) => {
+  // @desc Update project title
   socket.on('project-title-update', async (data, callback) => {
     const { title, projectId } = data;
     callback();
@@ -12,9 +13,9 @@ export const socketProjectController = (io, socket) => {
     await Project.updateOne({ _id: projectId }, { $set: { title: title } });
   });
 
+  // @desc Send invitation to a project
   socket.on('project-invite-users', async (data, callback) => {
     const { projectId, users } = data;
-
     const project = await Project.findById(projectId);
     if (users.length > 0) {
       const promise = users.map(async (user) => {
@@ -39,11 +40,15 @@ export const socketProjectController = (io, socket) => {
           select: 'username email profilePicture',
         });
         callback();
-        io.to(data.projectId).emit('users-updated', newProjectUsers.users);
+        io.to(data.projectId).emit(
+          'project-users-updated',
+          newProjectUsers.users
+        );
       });
     }
   });
 
+  // @desc Enable project join link
   socket.on('project-create-join-link', async (data) => {
     const { projectId } = data;
     const joinId = new mongoose.Types.ObjectId();
@@ -61,6 +66,8 @@ export const socketProjectController = (io, socket) => {
       }
     );
   });
+
+  // @desc Disable project join link
   socket.on('project-disable-join-link', async (data) => {
     const { projectId } = data;
     io.to(projectId).emit('project-join-link-updated', {
@@ -73,7 +80,7 @@ export const socketProjectController = (io, socket) => {
     );
   });
 
-  // adds user to project by invitation either by notification or by join link
+  // @desc Adds user to project by invitation either by notification or by join link
   socket.on('project-join', async (data, callback) => {
     const { projectId, joinId } = data;
     let joinSuccess = false;
@@ -133,6 +140,67 @@ export const socketProjectController = (io, socket) => {
       io.to(data.projectId).emit(
         'project-users-updated',
         newProjectUsers.users
+      );
+    }
+  });
+
+  // @desc Update user permissions
+  socket.on('project-user-permissions-update', async (data, callback) => {
+    const { projectId, userId, newPermissions } = data;
+    if (socket.user.permissions === 2) {
+      const projectData = await Project.findOneAndUpdate(
+        { _id: projectId, 'users.user': userId },
+        {
+          $set: {
+            'users.$.permissions': newPermissions,
+          },
+        },
+        { returnOriginal: false }
+      ).populate({
+        path: 'users.user',
+        select: 'username email profilePicture',
+      });
+      callback();
+      io.to(projectId).emit('user-permissions-changed', {
+        userUpdated: {
+          userId,
+          newPermissions,
+          projectId,
+        },
+      });
+      io.to(projectId).emit('project-users-updated', projectData.users);
+    }
+  });
+
+  // @desc Remove user from project
+  socket.on('project-user-remove', async (data, callback) => {
+    const { projectId, userId } = data;
+    if (socket.user.permissions === 2 || socket.user._id.equals(userId)) {
+      const projectData = await Project.findOneAndUpdate(
+        { _id: projectId, 'users.user': userId },
+        {
+          $pull: {
+            users: {
+              user: userId,
+            },
+          },
+        },
+        { returnOriginal: false }
+      ).populate({
+        path: 'users.user',
+        select: 'username email profilePicture',
+      });
+      callback();
+      io.to(projectId).emit('user-removed', {
+        userUpdated: {
+          userId,
+          projectId,
+        },
+      });
+      io.to(projectId).emit('project-users-updated', projectData.users);
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { projectsJoined: projectId } }
       );
     }
   });

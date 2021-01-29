@@ -3,6 +3,7 @@ import List from '../models/list.js';
 import mongoose from 'mongoose';
 
 export const socketTaskController = (io, socket) => {
+  // @desc Create new task
   socket.on('add-task', async (data, callback) => {
     const taskId = mongoose.Types.ObjectId();
     const createdTask = new Task({
@@ -34,6 +35,7 @@ export const socketTaskController = (io, socket) => {
     await createdTask.save();
   });
 
+  // @desc Drag task to other list or within the same list
   socket.on('task-move', async (data) => {
     const { removed, added, taskId, projectId } = data;
     let lists;
@@ -81,7 +83,9 @@ export const socketTaskController = (io, socket) => {
     }
     socket.to(projectId).emit('lists-update', lists);
   });
-  socket.on('task-archive', async (data, callback) => {
+
+  // @desc Archive single task
+  socket.on('task-archive', async (data) => {
     const { projectId, taskId, listIndex } = data;
     socket.to(projectId).emit('task-archived', { taskId, listIndex });
     await List.updateOne(
@@ -100,8 +104,10 @@ export const socketTaskController = (io, socket) => {
     );
     await Task.updateOne({ _id: taskId }, { $set: { archived: true } });
   });
+
+  // @desc Delete archived task
   socket.on('task-delete', async (data) => {
-    const { projectId, taskId, taskIndex } = data;
+    const { projectId, taskId } = data;
     const lists = await List.updateOne(
       { projectId },
       {
@@ -117,6 +123,8 @@ export const socketTaskController = (io, socket) => {
     socket.to(projectId).emit('lists-update', lists);
     await Task.findOneAndDelete({ _id: taskId });
   });
+
+  // @desc Archive all tasks within single list
   socket.on('tasks-archive', async (data) => {
     const { projectId, listIndex } = data;
     const lists = await List.findOne({ projectId });
@@ -140,6 +148,7 @@ export const socketTaskController = (io, socket) => {
     socket.to(projectId).emit('lists-update', newLists);
   });
 
+  // @desc Transfer task to other list or within one list or from archive | available in archive or in task modal
   socket.on('task-transfer', async (data) => {
     const { projectId, taskId, listIndex, newListIndex } = data;
     // if listIndex is undefined then function is called from archived tasks
@@ -170,6 +179,7 @@ export const socketTaskController = (io, socket) => {
     socket.to(projectId).emit('lists-update', newLists);
   });
 
+  // @desc Transfer all tasks within particular list to other list
   socket.on('tasks-transfer', async (data) => {
     const { projectId, listIndex, newListIndex } = data;
     const lists = await List.findOne({ projectId });

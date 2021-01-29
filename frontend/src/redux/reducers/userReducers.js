@@ -15,6 +15,7 @@ import {
   USER_EMAIL_RESEND_SUCCESS,
   USER_EMAIL_RESEND_FAIL,
   USER_NOTIFICATIONS_UPDATE,
+  USER_REMOVED,
 } from '../constants/userConstants';
 import deepcopy from 'deepcopy';
 
@@ -51,6 +52,14 @@ export const userLoginReducer = (state = { loading: true }, action) => {
         ...state,
         notifications: action.payload,
       };
+    case USER_REMOVED: {
+      const stateClone = deepcopy(state.userInfo);
+      const projectIndex = stateClone.projectsJoined.findIndex(
+        (x) => x._id === action.payload
+      );
+      stateClone.projectsJoined.splice(projectIndex, 1);
+      return { ...state, userInfo: stateClone };
+    }
     case USER_LOGIN_FAIL:
       return { loading: false, error: action.payload };
     case USER_LOGOUT:

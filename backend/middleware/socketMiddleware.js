@@ -12,28 +12,38 @@ const authorizeSocketConnection = asyncHandler(async (data, socket) => {
 });
 
 const levelOneAuth = asyncHandler(async (data, socket) => {
-  const isAuthorized = await Project.findOne({
-    users: {
-      $elemMatch: {
-        user: socket.user._id,
-        $or: [{ permissions: 1 }, { permissions: 2 }],
-      },
+  const isAuthorized = await Project.findOne(
+    {
+      _id: data.projectId,
     },
-  });
-  if (!isAuthorized) socket.emit('auth-error');
+    {
+      users: {
+        $elemMatch: {
+          user: socket.user._id,
+          permissions: { $in: [1, 2] },
+        },
+      },
+    }
+  );
+  if (isAuthorized.users.length === 0) socket.emit('auth-error');
+  else socket.user.permissions = isAuthorized.users[0].permissions;
 });
 
 const levelTwoAuth = asyncHandler(async (data, socket) => {
-  const isAuthorized = await Project.findOne({
-    _id: data.projectId,
-    users: {
-      $elemMatch: {
-        user: socket.user._id,
-        permissions: 2,
-      },
+  const isAuthorized = await Project.findOne(
+    {
+      _id: data.projectId,
     },
-  });
-  if (!isAuthorized) socket.emit('auth-error');
+    {
+      users: {
+        $elemMatch: {
+          user: socket.user._id,
+          permissions: 2,
+        },
+      },
+    }
+  );
+  if (isAuthorized.users.length === 0) socket.emit('auth-error');
 });
 
 export { authorizeSocketConnection, levelOneAuth, levelTwoAuth };

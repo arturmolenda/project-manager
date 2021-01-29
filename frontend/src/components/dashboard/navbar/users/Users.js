@@ -1,27 +1,85 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { PROJECT_DATA_PERMISSIONS_UPDATE } from '../../../../redux/constants/projectConstants';
+import { USER_REMOVED } from '../../../../redux/constants/userConstants';
+
+import UserMenu from './userMenus/UserMenu';
 import UsersGroup from './UsersGroup';
 
 const Users = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const {
-    project: { users, permissions, _id: projectId },
+    project: { users, permissions: userPermissions, _id: projectId, creatorId },
   } = useSelector((state) => state.projectGetData);
-  const [userIndex, setUserIndex] = useState(null);
+  const { userInfo } = useSelector((state) => state.userLogin);
+  const { socket } = useSelector((state) => state.socketConnection);
+  const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClick = (anchor, index) => {
+  useEffect(() => {
+    // fix issues with menu being opened while permissions are changed
+    socket.on('user-permissions-changed', ({ userUpdated }) => {
+      if (
+        userInfo._id === userUpdated.userId ||
+        (user && user.user._id === userUpdated.userId)
+      ) {
+        setAnchorEl(null);
+      }
+      if (userInfo._id === userUpdated.userId) {
+        socket.emit('join-board', { room: userUpdated.projectId });
+        dispatch({
+          type: PROJECT_DATA_PERMISSIONS_UPDATE,
+          payload: userUpdated.newPermissions,
+        });
+      }
+    });
+    socket.on('user-removed', ({ userUpdated }) => {
+      if (userInfo._id === userUpdated.userId) {
+        dispatch({ type: USER_REMOVED, payload: userUpdated.projectId });
+        history.push('/boards');
+      } else if (user && user.user._id === userUpdated.userId)
+        setAnchorEl(null);
+    });
+    return () => {
+      socket.off('user-permissions-changed');
+      socket.off('user-removed');
+    };
+  }, [dispatch, history, socket, anchorEl, userInfo, user]);
+
+  const handleUserClick = (anchor, user) => {
     setAnchorEl(anchor);
-    setUserIndex(index);
+    setUser(user);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setUser(null);
   };
 
   return (
-    <UsersGroup
-      users={users}
-      handleClick={handleClick}
-      projectId={projectId}
-      userPermissions={permissions}
-    />
+    <>
+      <UsersGroup
+        users={users}
+        handleUserClick={handleUserClick}
+        projectId={projectId}
+        creatorId={creatorId}
+        userPermissions={userPermissions}
+      />
+      {users && user !== null && (
+        <UserMenu
+          userPermissions={userPermissions}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          user={user.user}
+          permissions={user.permissions}
+          projectOwner={user.user._id === creatorId}
+          projectId={projectId}
+        />
+      )}
+    </>
   );
 };
 
