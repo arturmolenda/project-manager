@@ -103,12 +103,10 @@ export const getProjectData = (projectId, prevProjectId) => async (
 
 // Action used to emit to the socket 'task-move' event for other clients
 // and also prepare and dispatch data for local task move
-export const projectTaskMove = (
-  dropResult,
-  listIndex,
-  projectId,
-  task
-) => async (dispatch, getState) => {
+export const projectTaskMove = (dropResult, listIndex, projectId, task) => (
+  dispatch,
+  getState
+) => {
   const {
     socketConnection: { socket },
     projectTaskMove: { added, removed },
@@ -173,7 +171,7 @@ export const projectTaskMove = (
         });
   }
 };
-export const projectListMove = (removedIndex, addedIndex) => async (
+export const projectListMove = (removedIndex, addedIndex) => (
   dispatch,
   getState
 ) => {
@@ -192,12 +190,10 @@ export const projectListMove = (removedIndex, addedIndex) => async (
   });
 };
 
-export const projectTaskArchive = (
-  taskId,
-  projectId,
-  taskIndex,
-  listIndex
-) => async (dispatch, getState) => {
+export const projectTaskArchive = (taskId, projectId, taskIndex, listIndex) => (
+  dispatch,
+  getState
+) => {
   const {
     socketConnection: { socket },
     projectGetData: { lists },
@@ -216,7 +212,7 @@ export const projectTaskArchive = (
   });
 };
 
-export const projectTasksArchive = (listIndex, callback) => async (
+export const projectTasksArchive = (listIndex, callback) => (
   dispatch,
   getState
 ) => {
@@ -246,7 +242,7 @@ export const projectTasksArchive = (listIndex, callback) => async (
   });
 };
 
-export const projectListDelete = (listIndex, listId, callback) => async (
+export const projectListDelete = (listIndex, listId, callback) => (
   dispatch,
   getState
 ) => {
@@ -274,7 +270,7 @@ export const projectListDelete = (listIndex, listId, callback) => async (
   });
 };
 
-export const projectTaskDelete = (taskId, taskIndex, callback) => async (
+export const projectTaskDelete = (taskId, taskIndex, callback) => (
   dispatch,
   getState
 ) => {
@@ -300,7 +296,7 @@ export const projectTaskTransfer = (
   listIndex,
   newListIndex,
   callback
-) => async (dispatch, getState) => {
+) => (dispatch, getState) => {
   const {
     socketConnection: { socket },
     projectGetData: { lists },
@@ -326,11 +322,10 @@ export const projectTaskTransfer = (
   });
 };
 
-export const projectTasksTransfer = (
-  listIndex,
-  newListIndex,
-  callback
-) => async (dispatch, getState) => {
+export const projectTasksTransfer = (listIndex, newListIndex, callback) => (
+  dispatch,
+  getState
+) => {
   const {
     socketConnection: { socket },
     projectGetData: { lists },
@@ -391,7 +386,7 @@ export const findUsersToInvite = (userData) => async (dispatch, getState) => {
   }
 };
 
-export const sendProjectInvitations = (users, callback) => async (
+export const sendProjectInvitations = (users, callback) => (
   dispatch,
   getState
 ) => {
@@ -415,7 +410,7 @@ export const updateUserPermissions = (
   permissions,
   projectId,
   handleClose
-) => async (dispatch, getState) => {
+) => (dispatch, getState) => {
   const {
     socketConnection: { socket },
   } = getState();
@@ -429,4 +424,25 @@ export const updateUserPermissions = (
     },
     handleClose
   );
+};
+
+export const removeUserFromProject = (userId, projectId, handleClose) => (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { project },
+  } = getState();
+
+  if (project.creatorId !== userId) {
+    socket.emit(
+      'project-user-remove',
+      {
+        projectId,
+        userId,
+      },
+      handleClose
+    );
+  }
 };
