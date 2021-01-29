@@ -44,7 +44,6 @@ const UserItem = ({
   allUsersMenu,
 }) => {
   const classes = useStyles();
-  console.log(user, permissions, allUsersMenu);
   return (
     <>
       {permissions === 2 && (
