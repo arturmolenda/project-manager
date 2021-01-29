@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { PROJECT_DATA_PERMISSIONS_UPDATE } from '../../../../redux/constants/projectConstants';
+import { USER_REMOVED } from '../../../../redux/constants/userConstants';
 
 import UserMenu from './userMenus/UserMenu';
 import UsersGroup from './UsersGroup';
 
 const Users = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const {
     project: { users, permissions: userPermissions, _id: projectId, creatorId },
   } = useSelector((state) => state.projectGetData);
@@ -33,10 +36,18 @@ const Users = () => {
         });
       }
     });
+    socket.on('user-removed', ({ userUpdated }) => {
+      if (userInfo._id === userUpdated.userId) {
+        dispatch({ type: USER_REMOVED, payload: userUpdated.projectId });
+        history.push('/boards');
+      } else if (user && user.user._id === userUpdated.userId)
+        setAnchorEl(null);
+    });
     return () => {
       socket.off('user-permissions-changed');
+      socket.off('user-removed');
     };
-  }, [dispatch, socket, anchorEl, userInfo, user]);
+  }, [dispatch, history, socket, anchorEl, userInfo, user]);
 
   const handleUserClick = (anchor, user) => {
     setAnchorEl(anchor);

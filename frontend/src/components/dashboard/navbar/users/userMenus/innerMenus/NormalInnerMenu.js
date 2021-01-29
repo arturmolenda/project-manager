@@ -1,5 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { removeUserFromProject } from '../../../../../../redux/actions/projectActions';
 
 import { makeStyles, Typography, Avatar, MenuItem } from '@material-ui/core';
 
@@ -75,11 +77,12 @@ const NormalInnerMenu = ({
   projectId,
   goBackHandle,
 }) => {
+  const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.userLogin);
   const classes = useStyles();
 
   const removeUserHandle = () => {
-    console.log('remove');
+    dispatch(removeUserFromProject(user._id, projectId, handleClose));
   };
   return (
     user && (

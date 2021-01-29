@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserPermissions } from '../../../../../../redux/actions/projectActions';
+import {
+  removeUserFromProject,
+  updateUserPermissions,
+} from '../../../../../../redux/actions/projectActions';
 
 import { makeStyles, Avatar, MenuItem, Typography } from '@material-ui/core';
 
@@ -73,7 +76,7 @@ const AdminInnerMenu = ({
   };
 
   const removeUserHandle = () => {
-    console.log('remove');
+    dispatch(removeUserFromProject(user._id, projectId, handleClose));
   };
 
   let menu = (
