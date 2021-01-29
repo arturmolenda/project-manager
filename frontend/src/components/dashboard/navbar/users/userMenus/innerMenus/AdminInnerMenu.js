@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserPermissions } from '../../../../../../redux/actions/projectActions';
 
 import { makeStyles, Avatar, MenuItem, Typography } from '@material-ui/core';
 
@@ -59,12 +61,15 @@ const AdminInnerMenu = ({
   handleClose,
   goBackHandle,
 }) => {
+  const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.userLogin);
   const [permissionsOpened, setPermissionsOpened] = useState(false);
   const classes = useStyles();
 
   const updatePermissionsHandle = () => {
-    console.log('update');
+    dispatch(
+      updateUserPermissions(user._id, permissions, projectId, handleClose)
+    );
   };
 
   const removeUserHandle = () => {
