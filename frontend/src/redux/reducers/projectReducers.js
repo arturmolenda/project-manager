@@ -23,6 +23,7 @@ import {
   PROJECT_DATA_JOIN_LINK_UPDATE,
   PROJECT_DATA_USERS_UPDATE,
   PROJECT_DATA_PERMISSIONS_UPDATE,
+  PROJECT_DATA_TASK_ARCHIVED,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -125,6 +126,17 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
         ...state,
         project: { ...state.project, permissions: action.payload },
       };
+    }
+    case PROJECT_DATA_TASK_ARCHIVED: {
+      const {
+        payload: { listIndex, taskId },
+      } = action;
+      const stateClone = deepcopy(state);
+      const taskIndex = stateClone.lists.lists[listIndex].tasks.findIndex(
+        (x) => x._id === taskId
+      );
+      stateClone.lists.lists[listIndex].tasks.splice(taskIndex, 1);
+      return stateClone;
     }
     case PROJECT_DATA_FAIL:
       return { loading: false, error: action.payload };
