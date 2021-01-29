@@ -191,6 +191,7 @@ export const socketProjectController = (io, socket) => {
         select: 'username email profilePicture',
       });
       callback();
+      io.to(userId).emit('user-removed-from-project', projectId);
       io.to(projectId).emit('user-removed', {
         userUpdated: {
           userId,

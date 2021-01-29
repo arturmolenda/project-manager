@@ -38,7 +38,6 @@ const Users = () => {
     });
     socket.on('user-removed', ({ userUpdated }) => {
       if (userInfo._id === userUpdated.userId) {
-        dispatch({ type: USER_REMOVED, payload: userUpdated.projectId });
         history.push('/boards');
       } else if (user && user.user._id === userUpdated.userId)
         setAnchorEl(null);

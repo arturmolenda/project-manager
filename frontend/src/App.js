@@ -12,7 +12,10 @@ import {
   getUserData,
   logout,
 } from './redux/actions/userActions';
-import { USER_DATA_UPDATE } from './redux/constants/userConstants';
+import {
+  USER_DATA_UPDATE,
+  USER_REMOVED,
+} from './redux/constants/userConstants';
 
 import {
   unstable_createMuiStrictModeTheme as createMuiTheme,
@@ -58,6 +61,9 @@ const App = () => {
         dispatch({ type: USER_DATA_UPDATE, payload: data })
       );
       socket.on('auth-error', () => dispatch(logout()));
+      socket.on('user-removed-from-project', (data) =>
+        dispatch({ type: USER_REMOVED, payload: data })
+      );
     }
   }, [dispatch, socket]);
   return (
