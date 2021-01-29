@@ -171,4 +171,37 @@ export const socketProjectController = (io, socket) => {
       io.to(projectId).emit('project-users-updated', projectData.users);
     }
   });
+
+  // @desc Remove user from project
+  socket.on('project-user-remove', async (data, callback) => {
+    const { projectId, userId } = data;
+    if (socket.user.permissions === 2 || socket.user._id.equals(userId)) {
+      const projectData = await Project.findOneAndUpdate(
+        { _id: projectId, 'users.user': userId },
+        {
+          $pull: {
+            users: {
+              user: userId,
+            },
+          },
+        },
+        { returnOriginal: false }
+      ).populate({
+        path: 'users.user',
+        select: 'username email profilePicture',
+      });
+      callback();
+      io.to(projectId).emit('user-removed', {
+        userUpdated: {
+          userId,
+          projectId,
+        },
+      });
+      io.to(projectId).emit('project-users-updated', projectData.users);
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { projectsJoined: projectId } }
+      );
+    }
+  });
 };
