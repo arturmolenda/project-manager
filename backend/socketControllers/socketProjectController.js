@@ -143,4 +143,32 @@ export const socketProjectController = (io, socket) => {
       );
     }
   });
+
+  // @desc Update user permissions
+  socket.on('project-user-permissions-update', async (data, callback) => {
+    const { projectId, userId, newPermissions } = data;
+    if (socket.user.permissions === 2) {
+      const projectData = await Project.findOneAndUpdate(
+        { _id: projectId, 'users.user': userId },
+        {
+          $set: {
+            'users.$.permissions': newPermissions,
+          },
+        },
+        { returnOriginal: false }
+      ).populate({
+        path: 'users.user',
+        select: 'username email profilePicture',
+      });
+      callback();
+      io.to(projectId).emit('user-permissions-changed', {
+        userUpdated: {
+          userId,
+          newPermissions,
+          projectId,
+        },
+      });
+      io.to(projectId).emit('project-users-updated', projectData.users);
+    }
+  });
 };
