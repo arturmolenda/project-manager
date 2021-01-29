@@ -6,6 +6,7 @@ import {
   PROJECT_DATA_ADD_TASK,
   PROJECT_DATA_JOIN_LINK_UPDATE,
   PROJECT_DATA_LIST_TITLE_UPDATE,
+  PROJECT_DATA_TASK_ARCHIVED,
   PROJECT_DATA_TITLE_UPDATE,
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_DATA_USERS_UPDATE,
@@ -63,6 +64,9 @@ const Board = () => {
     socket.on('project-users-updated', (data) => {
       dispatch({ type: PROJECT_DATA_USERS_UPDATE, payload: data });
     });
+    socket.on('task-archived', (data) => {
+      dispatch({ type: PROJECT_DATA_TASK_ARCHIVED, payload: data });
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
@@ -71,6 +75,7 @@ const Board = () => {
       socket.off('project-title-updated');
       socket.off('project-join-link-updated');
       socket.off('project-users-updated');
+      socket.off('task-archived');
     };
   }, [dispatch, socket]);
 
