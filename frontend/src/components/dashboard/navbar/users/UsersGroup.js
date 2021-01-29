@@ -3,9 +3,6 @@ import { makeStyles } from '@material-ui/core';
 
 import UserItem from './UserItem';
 import GroupMenu from './userMenus/GroupMenu';
-// import AdministratorMenu from './userMenus/AdministratorMenu';
-// import NormalMenu from './userMenus/NormalMenu';
-// import UsersGroupMenu from './userMenus/UsersGroupMenu';
 
 const useStyles = makeStyles((theme) => ({
   avatarGroup: {
