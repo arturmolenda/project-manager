@@ -409,3 +409,24 @@ export const sendProjectInvitations = (users, callback) => async (
     callback
   );
 };
+
+export const updateUserPermissions = (
+  userId,
+  permissions,
+  projectId,
+  handleClose
+) => async (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+
+  socket.emit(
+    'project-user-permissions-update',
+    {
+      projectId,
+      userId,
+      newPermissions: permissions === 2 ? 1 : permissions === 1 && 2,
+    },
+    handleClose
+  );
+};

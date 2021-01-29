@@ -22,6 +22,7 @@ import {
   PROJECT_FIND_USERS_FAIL,
   PROJECT_DATA_JOIN_LINK_UPDATE,
   PROJECT_DATA_USERS_UPDATE,
+  PROJECT_DATA_PERMISSIONS_UPDATE,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -118,6 +119,12 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       const stateClone = deepcopy(state);
       stateClone.project.users = action.payload;
       return stateClone;
+    }
+    case PROJECT_DATA_PERMISSIONS_UPDATE: {
+      return {
+        ...state,
+        project: { ...state.project, permissions: action.payload },
+      };
     }
     case PROJECT_DATA_FAIL:
       return { loading: false, error: action.payload };
