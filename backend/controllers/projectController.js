@@ -1,6 +1,7 @@
 import Project from '../models/project.js';
 import List from '../models/list.js';
 import Label from '../models/label.js';
+import Task from '../models/task.js';
 import User from '../models/user.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
@@ -66,7 +67,7 @@ const createProject = asyncHandler(async (req, res) => {
 
 // @desc    Get Project Data
 // @route   GET /api/projects/:projectId
-// @access  Private
+// @access  Private, Project Permissions 1
 const getProjectData = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
   const project = await Project.findOne({ _id: projectId }).populate({
@@ -83,10 +84,22 @@ const getProjectData = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     project: { ...project._doc, permissions: userPermissions.permissions },
-
     labels,
     lists,
   });
 });
 
-export { createProject, getProjectData };
+// @desc    Get Task by taskId
+// @route   GET /api/projects/getTask/:projectId/:taskId
+// @access  Private, Project Permissions 1
+const getTask = asyncHandler(async (req, res) => {
+  const { taskId, projectId } = req.params;
+  const task = await Task.findOne({ _id: taskId, projectId });
+  if (task) res.status(200).json(task);
+  else {
+    res.status(404);
+    throw new Error('Task not found');
+  }
+});
+
+export { createProject, getProjectData, getTask };
