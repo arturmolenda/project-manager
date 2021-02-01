@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
 import { projectTaskArchive } from '../../../../redux/actions/projectActions';
+import { PROJECT_SET_TASK_SUCCESS } from '../../../../redux/constants/projectConstants';
 
 import { Draggable } from 'react-smooth-dnd';
 
@@ -66,6 +67,9 @@ const Task = React.memo(({ task, projectId, index, listIndex }) => {
       <Link
         to={`/project/${projectId}/${task._id}`}
         style={{ textDecoration: 'none', color: 'initial' }}
+        onClick={() =>
+          dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task })
+        }
       >
         <div className={classes.taskContainer}>
           <div className={classes.task}>
