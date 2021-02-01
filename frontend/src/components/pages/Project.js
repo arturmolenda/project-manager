@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
-import { getProjectData } from '../../redux/actions/projectActions';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { getProjectData, setTask } from '../../redux/actions/projectActions';
 import {
   PROJECT_SET_CURRENT,
   PROJECT_SET_CURRENT_RESET,
+  PROJECT_SET_TASK_RESET,
 } from '../../redux/constants/projectConstants';
+
 import Board from '../dashboard/Board';
 import Loader from '../Loader';
+import TaskModal from '../dashboard/taskModal/TaskModal';
+
 const isObjectId = /^[0-9a-fA-F]{24}$/;
 
 const Project = () => {
@@ -20,7 +25,8 @@ const Project = () => {
   );
   const { userInfo } = useSelector((state) => state.userLogin);
   const { socket } = useSelector((state) => state.socketConnection);
-  const { id } = useParams();
+  const { task } = useSelector((state) => state.projectSetTask);
+  const { id, taskId } = useParams();
   const history = useHistory();
 
   // Set currentProject on initial mount
@@ -89,6 +95,12 @@ const Project = () => {
     } else if (error) setProjectLoading(false);
   }, [id, project, error]);
 
+  // Get or reset task used in modal
+  useEffect(() => {
+    if (id && taskId && !task) dispatch(setTask(id, taskId));
+    else if (!taskId && task) dispatch({ type: PROJECT_SET_TASK_RESET });
+  }, [dispatch, id, taskId, task]);
+
   return (
     <>
       <div
@@ -109,7 +121,12 @@ const Project = () => {
       ) : error ? (
         <Redirect to='/boards' />
       ) : (
-        project && <Board />
+        project && (
+          <>
+            <Board taskId={taskId} />
+            <TaskModal task={task} projectId={id} />
+          </>
+        )
       )}
     </>
   );
