@@ -11,6 +11,9 @@ import {
   PROJECT_FIND_USERS_REQUEST,
   PROJECT_FIND_USERS_SUCCESS,
   PROJECT_SET_CURRENT,
+  PROJECT_SET_TASK_FAIL,
+  PROJECT_SET_TASK_REQUEST,
+  PROJECT_SET_TASK_SUCCESS,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
 } from '../constants/projectConstants';
@@ -444,5 +447,37 @@ export const removeUserFromProject = (userId, projectId, handleClose) => (
       },
       handleClose
     );
+  }
+};
+
+export const setTask = (projectId, taskId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PROJECT_SET_TASK_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        // 'Content-Type': 'application/json',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(
+      `/api/projects/getTask/${projectId}/${taskId}`,
+      config
+    );
+
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: PROJECT_SET_TASK_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
   }
 };
