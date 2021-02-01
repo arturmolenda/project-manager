@@ -24,6 +24,10 @@ import {
   PROJECT_DATA_USERS_UPDATE,
   PROJECT_DATA_PERMISSIONS_UPDATE,
   PROJECT_DATA_TASK_ARCHIVED,
+  PROJECT_SET_TASK_REQUEST,
+  PROJECT_SET_TASK_SUCCESS,
+  PROJECT_SET_TASK_FAIL,
+  PROJECT_SET_TASK_RESET,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -178,6 +182,24 @@ export const projectFindUsersReducer = (state = { users: [] }, action) => {
       };
     case PROJECT_FIND_USERS_FAIL:
       return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const projectSetTaskReducer = (state = {}, action) => {
+  switch (action.type) {
+    case PROJECT_SET_TASK_REQUEST:
+      return { loading: true };
+    case PROJECT_SET_TASK_SUCCESS:
+      return {
+        loading: false,
+        task: action.payload,
+      };
+    case PROJECT_SET_TASK_FAIL:
+      return { loading: false, error: action.payload };
+    case PROJECT_SET_TASK_RESET:
+      return {};
     default:
       return state;
   }

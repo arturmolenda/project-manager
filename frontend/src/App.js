@@ -104,7 +104,11 @@ const App = () => {
                   <ParticlesBackground />
                   <Boards />
                 </PrivateRoute>
-                <PrivateRoute exact path='/project/:id' userInfo={userInfo}>
+                <PrivateRoute
+                  exact
+                  path='/project/:id/:taskId?'
+                  userInfo={userInfo}
+                >
                   <Project />
                 </PrivateRoute>
                 <PrivateRoute
