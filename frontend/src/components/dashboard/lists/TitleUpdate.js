@@ -47,22 +47,25 @@ const TitleUpdate = ({ currentTitle, listIndex, projectId }) => {
       !e.shiftKey
     ) {
       e.preventDefault();
-
-      socket.emit(
-        'list-title-update',
-        {
-          title,
-          projectId,
-          listIndex,
-        },
-        () => {
-          dispatch({
-            type: PROJECT_DATA_LIST_TITLE_UPDATE,
-            payload: { title, listIndex },
-          });
-          titleRef.current.blur();
-        }
-      );
+      if (listIndex) {
+        socket.emit(
+          'list-title-update',
+          {
+            title,
+            projectId,
+            listIndex,
+          },
+          () => {
+            dispatch({
+              type: PROJECT_DATA_LIST_TITLE_UPDATE,
+              payload: { title, listIndex },
+            });
+            titleRef.current.blur();
+          }
+        );
+      } else {
+        console.log('task title update');
+      }
     }
   };
   const blurHandle = () => {
@@ -75,10 +78,12 @@ const TitleUpdate = ({ currentTitle, listIndex, projectId }) => {
   };
   return (
     <>
-      <div
-        className={!open && classes.dragFix}
-        onClick={() => titleRef.current.focus()}
-      />
+      {!isNaN(listIndex) && (
+        <div
+          className={!open && classes.dragFix}
+          onClick={() => titleRef.current.focus()}
+        />
+      )}
       <InputBase
         inputRef={titleRef}
         className={open ? classes.inputOpen : classes.input}
