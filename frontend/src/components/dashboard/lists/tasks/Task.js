@@ -24,6 +24,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#ececec',
     marginBottom: 8,
     wordBreak: 'break-word',
+    whiteSpace: 'break-spaces',
     '&:hover': {
       backgroundColor: '#f5f5f5 !important',
       '& svg': {
