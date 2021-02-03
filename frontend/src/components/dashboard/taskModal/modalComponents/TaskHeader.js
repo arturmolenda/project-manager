@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
   textContainer: {
     display: 'flex',
     justifyContent: 'space-between',
-    '& svg': {
+    '& > div > svg': {
       marginRight: 15,
     },
   },
@@ -26,6 +26,7 @@ const useStyles = makeStyles(() => ({
     alignItems: 'baseline',
     width: '20%',
     wordBreak: 'break-word',
+    paddingLeft: '8px',
   },
   caption: {
     color: '#979a9a',
@@ -38,7 +39,11 @@ const TaskHeader = ({ task }) => {
     <div className={classes.textContainer}>
       <div className={classes.text}>
         <LabelImportantIcon color='primary' style={{ marginTop: 4 }} />
-        <TitleUpdate currentTitle={task.title} projectId={task.projectId} />
+        <TitleUpdate
+          currentTitle={task.title}
+          projectId={task.projectId}
+          taskId={task._id}
+        />
       </div>
 
       <div className={classes.captionContainer}>
