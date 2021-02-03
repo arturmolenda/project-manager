@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { InputBase, makeStyles } from '@material-ui/core';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { PROJECT_DATA_LIST_TITLE_UPDATE } from '../../../redux/constants/projectConstants';
+import { taskFieldUpdate } from '../../../redux/actions/projectActions';
+
+import { InputBase, makeStyles } from '@material-ui/core';
+
+import Loader from '../../Loader';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -28,10 +33,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TitleUpdate = ({ currentTitle, listIndex, projectId }) => {
+const TitleUpdate = ({ currentTitle, listIndex, projectId, taskId }) => {
   const dispatch = useDispatch();
   const { socket } = useSelector((state) => state.socketConnection);
   const [title, setTitle] = useState(currentTitle);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const titleRef = useRef();
   const classes = useStyles();
@@ -40,36 +46,38 @@ const TitleUpdate = ({ currentTitle, listIndex, projectId }) => {
 
   const keyPressHandle = (e) => {
     if (e.key === 'Escape') titleRef.current.blur();
-    else if (
-      title !== currentTitle &&
-      title.trim() !== '' &&
-      e.key === 'Enter' &&
-      !e.shiftKey
-    ) {
+    else if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (listIndex) {
-        socket.emit(
-          'list-title-update',
-          {
-            title,
-            projectId,
-            listIndex,
-          },
-          () => {
-            dispatch({
-              type: PROJECT_DATA_LIST_TITLE_UPDATE,
-              payload: { title, listIndex },
-            });
-            titleRef.current.blur();
-          }
-        );
-      } else {
-        console.log('task title update');
+      if (title !== currentTitle && title.trim() !== '') {
+        if (listIndex) {
+          socket.emit(
+            'list-title-update',
+            {
+              title,
+              projectId,
+              listIndex,
+            },
+            () => {
+              dispatch({
+                type: PROJECT_DATA_LIST_TITLE_UPDATE,
+                payload: { title, listIndex },
+              });
+              titleRef.current.blur();
+            }
+          );
+        } else if (taskId) {
+          setLoading(true);
+          dispatch(
+            taskFieldUpdate(taskId, projectId, title, 'title', () =>
+              setLoading(false)
+            )
+          );
+        }
       }
     }
   };
   const blurHandle = () => {
-    setTitle(currentTitle);
+    if (!loading) setTitle(currentTitle);
     setOpen(false);
   };
   const focusHandle = () => {
@@ -84,20 +92,24 @@ const TitleUpdate = ({ currentTitle, listIndex, projectId }) => {
           onClick={() => titleRef.current.focus()}
         />
       )}
-      <InputBase
-        inputRef={titleRef}
-        className={open ? classes.inputOpen : classes.input}
-        inputProps={{ spellCheck: false }}
-        color='primary'
-        onBlur={blurHandle}
-        multiline
-        value={title}
-        fullWidth
-        onMouseDown={(e) => e.stopPropagation()}
-        onFocus={focusHandle}
-        onKeyDown={keyPressHandle}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+      <div style={{ position: 'relative', width: '100%' }}>
+        <InputBase
+          inputRef={titleRef}
+          className={open ? classes.inputOpen : classes.input}
+          inputProps={{ spellCheck: false }}
+          color='primary'
+          onBlur={blurHandle}
+          multiline
+          value={title}
+          fullWidth
+          onMouseDown={(e) => e.stopPropagation()}
+          onFocus={focusHandle}
+          onKeyDown={keyPressHandle}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={loading}
+        />
+        {loading && <Loader button />}
+      </div>
     </>
   );
 };
