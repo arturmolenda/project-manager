@@ -481,3 +481,20 @@ export const setTask = (projectId, taskId) => async (dispatch, getState) => {
     });
   }
 };
+
+export const taskFieldUpdate = (
+  taskId,
+  projectId,
+  updatedData,
+  fieldName,
+  callback
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+  socket.emit(
+    'task-field-update',
+    { taskId, projectId, updatedData, fieldName },
+    callback
+  );
+};

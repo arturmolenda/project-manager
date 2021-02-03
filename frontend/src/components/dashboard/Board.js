@@ -10,6 +10,7 @@ import {
   PROJECT_DATA_TITLE_UPDATE,
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_DATA_USERS_UPDATE,
+  PROJECT_SET_TASK_SUCCESS,
 } from '../../redux/constants/projectConstants';
 
 import { makeStyles } from '@material-ui/core';
@@ -38,6 +39,7 @@ const useStyles = makeStyles(() => ({
 
 const Board = () => {
   const { socket } = useSelector((state) => state.socketConnection);
+  const { task } = useSelector((state) => state.projectSetTask);
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -67,6 +69,12 @@ const Board = () => {
     socket.on('task-archived', (data) => {
       dispatch({ type: PROJECT_DATA_TASK_ARCHIVED, payload: data });
     });
+    socket.on('task-updated', (data) => {
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data.newLists });
+      if (task && task._id === data.task._id) {
+        dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: data.task });
+      }
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
@@ -76,8 +84,9 @@ const Board = () => {
       socket.off('project-join-link-updated');
       socket.off('project-users-updated');
       socket.off('task-archived');
+      socket.off('task-updated');
     };
-  }, [dispatch, socket]);
+  }, [dispatch, socket, task]);
 
   return (
     <div className={classes.boardContainer}>
