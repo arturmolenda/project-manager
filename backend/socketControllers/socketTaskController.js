@@ -199,4 +199,23 @@ export const socketTaskController = (io, socket) => {
       .populate('archivedTasks');
     socket.to(projectId).emit('lists-update', newLists);
   });
+
+  // @desc Update task's title, deadline or description
+  socket.on('task-field-update', async (data, callback) => {
+    const { projectId, taskId, updatedData, fieldName } = data;
+
+    const task = await Task.findOneAndUpdate(
+      { projectId, _id: taskId },
+      { $set: { [fieldName]: updatedData } },
+      { returnOriginal: false }
+    )
+      .populate('users')
+      .populate('labels');
+    const newLists = await List.findOne({ projectId })
+      .populate('lists.tasks')
+      .populate('archivedTasks');
+
+    io.to(projectId).emit('task-updated', { newLists, task });
+    if (callback) callback();
+  });
 };
