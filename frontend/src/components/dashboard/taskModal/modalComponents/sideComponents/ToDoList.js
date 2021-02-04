@@ -7,9 +7,7 @@ import SideButton from './SideButton';
 const ToDoList = () => {
   return (
     <>
-      <div>
-        <SideButton icon={<PlaylistAddCheckIcon />} text='To Do List' />
-      </div>
+      <SideButton icon={<PlaylistAddCheckIcon />} text='To Do List' />
     </>
   );
 };

@@ -19,14 +19,13 @@ const Transfer = ({ task, currentListId }) => {
   };
   return (
     <>
-      <div onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <SideButton
-          icon={
-            task.archived ? <SettingsBackupRestoreIcon /> : <ArrowForwardIcon />
-          }
-          text={task.archived ? 'Restore' : 'Transfer'}
-        />
-      </div>
+      <SideButton
+        icon={
+          task.archived ? <SettingsBackupRestoreIcon /> : <ArrowForwardIcon />
+        }
+        text={task.archived ? 'Restore' : 'Transfer'}
+        clickHandle={(e) => setAnchorEl(e.currentTarget)}
+      />
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

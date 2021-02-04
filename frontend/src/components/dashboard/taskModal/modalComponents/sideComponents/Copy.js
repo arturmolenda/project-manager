@@ -13,10 +13,12 @@ const Copy = ({ task }) => {
   };
 
   return (
-    <div>
-      <div onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <SideButton icon={<FileCopyIcon />} text='Copy' />
-      </div>
+    <>
+      <SideButton
+        icon={<FileCopyIcon />}
+        text='Copy'
+        clickHandle={(e) => setAnchorEl(e.currentTarget)}
+      />
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -37,7 +39,7 @@ const Copy = ({ task }) => {
           title={'Copy Task'}
         />
       </Menu>
-    </div>
+    </>
   );
 };
 

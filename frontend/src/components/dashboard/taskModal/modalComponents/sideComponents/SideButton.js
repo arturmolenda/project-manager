@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   btn: {
     height: 32,
     width: '100%',
@@ -12,6 +12,10 @@ const useStyles = makeStyles(() => ({
     marginBottom: 10,
     '&:hover': {
       background: '#d3d3d3',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(50% - 8px)',
+      marginRight: 8,
     },
   },
   secondaryBtn: {
@@ -25,10 +29,14 @@ const useStyles = makeStyles(() => ({
     '&:hover': {
       background: '#b22a00',
     },
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(50% - 8px)',
+      marginRight: 8,
+    },
   },
 }));
 
-const SideButton = ({ icon, text, secondary }) => {
+const SideButton = ({ icon, text, secondary, clickHandle }) => {
   const classes = useStyles();
   return (
     <Button
@@ -36,6 +44,7 @@ const SideButton = ({ icon, text, secondary }) => {
       variant='Contained'
       startIcon={icon}
       className={secondary ? classes.secondaryBtn : classes.btn}
+      onClick={clickHandle}
     >
       {text}
     </Button>

@@ -17,22 +17,21 @@ const Archive = ({ task }) => {
   };
 
   return (
-    <div>
-      <div
-        onClick={
-          task.archived
-            ? (e) => {
-                setAnchorEl(e.currentTarget);
-              }
-            : archiveHandle
-        }
-      >
-        {task.archived ? (
-          <SideButton icon={<HighlightOffIcon />} text={'Delete'} secondary />
-        ) : (
-          <SideButton icon={<DeleteIcon />} text={'Archive'} />
-        )}
-      </div>
+    <>
+      {task.archived ? (
+        <SideButton
+          icon={<HighlightOffIcon />}
+          text={'Delete'}
+          secondary
+          clickHandle={(e) => setAnchorEl(e.currentTarget)}
+        />
+      ) : (
+        <SideButton
+          icon={<DeleteIcon />}
+          text={'Archive'}
+          clickHandle={archiveHandle}
+        />
+      )}
       <DeleteItemMenu
         anchorEl={anchorEl}
         handleClose={() => setAnchorEl(null)}
@@ -40,7 +39,7 @@ const Archive = ({ task }) => {
         deleteHandle={deleteTaskHandle}
         text={'Deleting a task cannot be undone, are you sure?'}
       />
-    </div>
+    </>
   );
 };
 

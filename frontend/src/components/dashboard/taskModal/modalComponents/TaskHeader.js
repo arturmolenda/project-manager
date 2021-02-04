@@ -1,12 +1,12 @@
 import React from 'react';
 
-import LabelImportantIcon from '@material-ui/icons/LabelImportant';
 import { makeStyles, Typography } from '@material-ui/core';
+import LabelImportantIcon from '@material-ui/icons/LabelImportant';
 
 import TitleUpdate from '../../lists/TitleUpdate';
 import moment from 'moment';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   textContainer: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -19,6 +19,9 @@ const useStyles = makeStyles(() => ({
     width: '80%',
     wordBreak: 'break-word',
     alignItems: 'flex-start',
+    [theme.breakpoints.down('sm')]: {
+      marginRight: 8,
+    },
   },
   captionContainer: {
     display: 'flex',
@@ -27,7 +30,11 @@ const useStyles = makeStyles(() => ({
     width: '20%',
     wordBreak: 'break-word',
     paddingLeft: '8px',
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: 0,
+    },
   },
+
   caption: {
     color: '#979a9a',
   },
@@ -48,7 +55,7 @@ const TaskHeader = ({ task }) => {
 
       <div className={classes.captionContainer}>
         <Typography variant='caption' className={classes.caption}>
-          {moment(task.createdAt).format('MMMM Do YYYY')}
+          {moment(task.createdAt).format('MMM Do YYYY')}
         </Typography>
         <Typography variant='caption' className={classes.caption}>
           <Typography variant='caption' color='primary'>
