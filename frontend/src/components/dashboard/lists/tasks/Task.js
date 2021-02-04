@@ -7,9 +7,10 @@ import { PROJECT_SET_TASK_SUCCESS } from '../../../../redux/constants/projectCon
 
 import { Draggable } from 'react-smooth-dnd';
 
-import { makeStyles, Typography } from '@material-ui/core';
+import { Divider, makeStyles, Typography } from '@material-ui/core';
 
 import DeleteIcon from '@material-ui/icons/Delete';
+import SubjectIcon from '@material-ui/icons/Subject';
 
 const useStyles = makeStyles(() => ({
   taskContainer: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles(() => ({
     '&:hover': {
       backgroundColor: '#f5f5f5 !important',
       '& svg': {
-        display: 'block',
+        display: 'initial',
       },
     },
   },
@@ -55,18 +56,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Task = React.memo(({ task, projectId, index, listIndex }) => {
+const Task = React.memo(({ task, index, listIndex }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const archiveHandle = (e) => {
     e.preventDefault();
-    dispatch(projectTaskArchive(task._id, projectId, index, listIndex));
+    dispatch(projectTaskArchive(task._id, task.projectId, index, listIndex));
   };
 
   return (
     <Draggable draggableid={task._id} index={index}>
       <Link
-        to={`/project/${projectId}/${task._id}`}
+        to={`/project/${task.projectId}/${task._id}`}
         style={{ textDecoration: 'none', color: 'initial' }}
         onClick={() =>
           dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task })
@@ -82,6 +83,12 @@ const Task = React.memo(({ task, projectId, index, listIndex }) => {
                 className={classes.deleteIcon}
                 onClick={archiveHandle}
               />
+            )}
+            {task.description && (
+              <>
+                <Divider style={{ margin: '3px 0' }} />
+                <SubjectIcon />
+              </>
             )}
           </div>
         </div>
