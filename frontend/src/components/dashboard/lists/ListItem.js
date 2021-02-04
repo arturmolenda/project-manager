@@ -98,7 +98,6 @@ const ListItem = React.memo(
                     index={i}
                     listIndex={index}
                     task={task}
-                    projectId={projectId}
                   />
                 ))}
             </Container>

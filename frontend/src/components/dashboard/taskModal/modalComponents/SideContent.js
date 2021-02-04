@@ -13,7 +13,7 @@ import Transfer from './sideComponents/Transfer';
 import Users from './sideComponents/Users';
 import Watch from './sideComponents/Watch';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     width: 168,
     height: 500,
@@ -21,6 +21,18 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     paddingLeft: 10,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      height: 'auto',
+      padding: 0,
+    },
+  },
+  buttonsContainer: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      marginBottom: '0 !important',
+    },
   },
   caption: {
     fontWeight: 600,
@@ -48,7 +60,7 @@ const SideContent = ({ task }) => {
       <Typography variant='caption' className={classes.caption}>
         ADD TO TASK
       </Typography>
-      <div style={{ marginBottom: 20 }}>
+      <div className={classes.buttonsContainer} style={{ marginBottom: 20 }}>
         <Users task={task} />
         <Label task={task} />
         <ToDoList task={task} />
@@ -57,7 +69,7 @@ const SideContent = ({ task }) => {
       <Typography variant='caption' className={classes.caption}>
         ACTIONS
       </Typography>
-      <div>
+      <div className={classes.buttonsContainer}>
         <Copy task={task} />
         <Watch task={task} />
         <Transfer task={task} currentListId={currentListId} />

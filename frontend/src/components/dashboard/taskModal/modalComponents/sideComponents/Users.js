@@ -5,9 +5,7 @@ import PeopleIcon from '@material-ui/icons/People';
 const Users = () => {
   return (
     <>
-      <div>
-        <SideButton icon={<PeopleIcon />} text='Users' />
-      </div>
+      <SideButton icon={<PeopleIcon />} text='Users' />
     </>
   );
 };

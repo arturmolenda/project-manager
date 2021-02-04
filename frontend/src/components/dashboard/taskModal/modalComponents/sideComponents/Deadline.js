@@ -7,9 +7,7 @@ import SideButton from './SideButton';
 const Deadline = () => {
   return (
     <>
-      <div>
-        <SideButton icon={<ScheduleIcon />} text='Deadline' />
-      </div>
+      <SideButton icon={<ScheduleIcon />} text='Deadline' />
     </>
   );
 };

@@ -29,7 +29,7 @@ export const socketListController = (io, socket) => {
     const [list] = lists.lists.splice(removedIndex, 1);
     lists.lists.splice(addedIndex, 0, list);
     await lists.save();
-    socket.to(projectId).emit('lists-update', lists);
+    socket.to(projectId).emit('lists-update', { newLists: lists });
   });
 
   // @desc Update list title
@@ -61,6 +61,6 @@ export const socketListController = (io, socket) => {
     const newLists = await List.findOne({ projectId })
       .populate('lists.tasks')
       .populate('archivedTasks');
-    socket.to(projectId).emit('lists-update', newLists);
+    socket.to(projectId).emit('lists-update', { newLists });
   });
 };
