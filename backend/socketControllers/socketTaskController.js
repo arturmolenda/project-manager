@@ -81,7 +81,7 @@ export const socketTaskController = (io, socket) => {
         .populate('lists.tasks')
         .populate('archivedTasks');
     }
-    socket.to(projectId).emit('lists-update', lists);
+    socket.to(projectId).emit('lists-update', { newLists: lists });
   });
 
   // @desc Archive single task
@@ -120,7 +120,7 @@ export const socketTaskController = (io, socket) => {
       .populate('lists.tasks')
       .populate('archivedTasks');
 
-    socket.to(projectId).emit('lists-update', lists);
+    socket.to(projectId).emit('lists-update', { newLists: lists });
     await Task.findOneAndDelete({ _id: taskId });
   });
 
@@ -145,7 +145,7 @@ export const socketTaskController = (io, socket) => {
     const newLists = await List.findOne({ projectId })
       .populate('lists.tasks')
       .populate('archivedTasks');
-    socket.to(projectId).emit('lists-update', newLists);
+    socket.to(projectId).emit('lists-update', { newLists });
   });
 
   // @desc Transfer task to other list or within one list or from archive | available in archive or in task modal
@@ -176,7 +176,9 @@ export const socketTaskController = (io, socket) => {
     const newLists = await List.findOne({ projectId })
       .populate('lists.tasks')
       .populate('archivedTasks');
-    socket.to(projectId).emit('lists-update', newLists);
+    socket
+      .to(projectId)
+      .emit('lists-update', { newLists, restoredTaskId: !listIndex && taskId });
   });
 
   // @desc Transfer all tasks within particular list to other list
@@ -197,7 +199,7 @@ export const socketTaskController = (io, socket) => {
     const newLists = await List.findOne({ projectId })
       .populate('lists.tasks')
       .populate('archivedTasks');
-    socket.to(projectId).emit('lists-update', newLists);
+    socket.to(projectId).emit('lists-update', { newLists });
   });
 
   // @desc Update task's title, deadline or description

@@ -48,7 +48,13 @@ const Board = () => {
       dispatch({ type: PROJECT_DATA_ADD_TASK, payload: data });
     });
     socket.on('lists-update', (data) => {
-      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data });
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data.newLists });
+      if (data.restoredTaskId && task && task._id === data.restoredTaskId) {
+        dispatch({
+          type: PROJECT_SET_TASK_SUCCESS,
+          payload: { ...task, archived: false },
+        });
+      }
     });
     socket.on('list-added', (data) => {
       console.log(data);
@@ -68,6 +74,12 @@ const Board = () => {
     });
     socket.on('task-archived', (data) => {
       dispatch({ type: PROJECT_DATA_TASK_ARCHIVED, payload: data });
+      if (task && task._id === data.taskId) {
+        dispatch({
+          type: PROJECT_SET_TASK_SUCCESS,
+          payload: { ...task, archived: true },
+        });
+      }
     });
     socket.on('task-updated', (data) => {
       dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data.newLists });
