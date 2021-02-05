@@ -7,6 +7,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import TaskHeader from './modalComponents/TaskHeader';
 import TaskDescription from './modalComponents/TaskDescription';
 import SideContent from './modalComponents/SideContent';
+import Deadline from './modalComponents/Deadline';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -71,6 +72,7 @@ const TaskModal = ({ task, userPermissions }) => {
                   userPermissions={userPermissions}
                   task={task}
                 />
+                <Deadline task={task} />
               </div>
               <SideContent task={task} />
             </div>

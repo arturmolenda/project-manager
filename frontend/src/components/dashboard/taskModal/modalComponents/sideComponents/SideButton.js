@@ -10,6 +10,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     background: '#e7e7e7',
     marginBottom: 10,
+    '& svg': {
+      marginLeft: 6,
+    },
     '&:hover': {
       background: '#d3d3d3',
     },
@@ -26,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     background: '#ff3d00',
     marginBottom: 10,
+    '& svg': {
+      marginLeft: 6,
+    },
     '&:hover': {
       background: '#b22a00',
     },
@@ -40,8 +46,6 @@ const SideButton = ({ icon, text, secondary, clickHandle }) => {
   const classes = useStyles();
   return (
     <Button
-      color='primary'
-      variant='Contained'
       startIcon={icon}
       className={secondary ? classes.secondaryBtn : classes.btn}
       onClick={clickHandle}
