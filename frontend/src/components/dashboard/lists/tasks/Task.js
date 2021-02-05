@@ -12,6 +12,8 @@ import { Divider, makeStyles, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SubjectIcon from '@material-ui/icons/Subject';
 
+import TaskDeadlineIcon from './taskComponents/TaskDeadlineIcon';
+
 const useStyles = makeStyles(() => ({
   taskContainer: {
     display: 'flex',
@@ -40,6 +42,11 @@ const useStyles = makeStyles(() => ({
   titleContainer: {
     display: 'flex',
     alignItems: 'flex-start',
+  },
+  taskDetails: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: 5,
   },
   deleteIcon: {
     display: 'none',
@@ -90,6 +97,13 @@ const Task = React.memo(({ task, index, listIndex }) => {
                 <SubjectIcon />
               </>
             )}
+            <div className={classes.taskDetails}>
+              {task.deadline ? (
+                <TaskDeadlineIcon deadline={task.deadline} />
+              ) : (
+                <div />
+              )}
+            </div>
           </div>
         </div>
       </Link>
