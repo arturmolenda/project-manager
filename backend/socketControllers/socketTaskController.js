@@ -1,5 +1,7 @@
 import Task from '../models/task.js';
 import List from '../models/list.js';
+import Notification from '../models/notification.js';
+import Project from '../models/project.js';
 import mongoose from 'mongoose';
 
 export const socketTaskController = (io, socket) => {
@@ -219,5 +221,66 @@ export const socketTaskController = (io, socket) => {
 
     io.to(projectId).emit('task-updated', { newLists, task });
     if (callback) callback();
+  });
+
+  // @desc Update task's assigned users and send/delete notifications
+  socket.on('task-users-update', async (data, callback) => {
+    const { projectId, taskId, newUsers, removedUsers, addedUsers } = data;
+
+    const task = await Task.findOneAndUpdate(
+      { projectId, _id: taskId },
+      { $set: { users: newUsers } },
+      { returnOriginal: false }
+    )
+      .populate('users')
+      .populate('labels');
+
+    const newLists = await List.findOne({ projectId })
+      .populate('lists.tasks')
+      .populate('archivedTasks');
+
+    if (callback) callback();
+    io.to(projectId).emit('task-updated', { newLists, task });
+
+    const project = await Project.findById(projectId);
+
+    addedUsers.map(async (userId) => {
+      const userIndex = project.users.findIndex((x) =>
+        x.user._id.equals(userId)
+      );
+      if (userIndex !== -1) {
+        project.users[userIndex].tasksAssigned.push(taskId);
+        if (!socket.user._id.equals(userId)) {
+          const notification = new Notification({
+            type: 'Task Assignment',
+            project: projectId,
+            task: taskId,
+            seenDate: null,
+            sender: socket.user._id,
+            recipient: userId,
+          });
+          await notification.save();
+          io.to(userId).emit('notifications-updated');
+        }
+      }
+    });
+    removedUsers.map(async (userId) => {
+      const userIndex = project.users.findIndex((x) =>
+        x.user._id.equals(userId)
+      );
+      if (userIndex !== -1) {
+        const taskIndex = project.users[userIndex].tasksAssigned.indexOf(
+          taskId
+        );
+        if (taskIndex) {
+          project.users[userIndex].tasksAssigned.splice(taskIndex, 1);
+          await Notification.findOneAndDelete({
+            task: taskId,
+            type: 'Task Assignment',
+          });
+          io.to(userId).emit('notifications-updated');
+        }
+      }
+    });
   });
 };
