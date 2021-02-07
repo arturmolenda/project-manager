@@ -58,6 +58,7 @@ const Project = () => {
     } else {
       history.push('/boards');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, dispatch, id]);
 
   // Reset current project on component change and fix react-smooth-dnd drag bug
@@ -70,7 +71,8 @@ const Project = () => {
       socket.emit('disconnect-board', { room: id });
       document.removeEventListener('touchend', cleanClasses, false);
     };
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, socket]);
 
   // Set main loading and check if project bg is a image
   useEffect(() => {

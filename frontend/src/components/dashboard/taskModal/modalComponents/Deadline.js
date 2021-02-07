@@ -93,7 +93,6 @@ const Deadline = ({ task }) => {
           <div className={classes.datePicker}>
             <DatePicker
               clearable
-              disablePast
               disabled={loading}
               className={
                 loading

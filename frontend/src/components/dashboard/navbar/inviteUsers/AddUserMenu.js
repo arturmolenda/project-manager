@@ -81,7 +81,7 @@ const AddUserModal = ({ anchorEl, handleClose }) => {
         setSearchOpen(true);
       }, 200);
     return () => clearTimeout(timeout);
-  }, [userData]);
+  }, [dispatch, userData]);
 
   const changeHandle = (e) => {
     setUserData(e.target.value);
