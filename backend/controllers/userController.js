@@ -21,6 +21,7 @@ const authUser = asyncHandler(async (req, res) => {
     })
       .sort({ createdAt: -1 })
       .populate('project')
+      .populate('task')
       .populate({
         path: 'sender',
         select: 'username email profilePicture',
@@ -182,6 +183,7 @@ const getUserData = asyncHandler(async (req, res) => {
   })
     .sort({ createdAt: -1 })
     .populate('project')
+    .populate('task')
     .populate({
       path: 'sender',
       select: 'username email profilePicture',
@@ -247,6 +249,7 @@ const getNotifications = asyncHandler(async (req, res) => {
   })
     .sort({ createdAt: -1 })
     .populate('project')
+    .populate('task')
     .populate({
       path: 'sender',
       select: 'username email profilePicture',
