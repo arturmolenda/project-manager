@@ -8,6 +8,7 @@ import TaskHeader from './modalComponents/TaskHeader';
 import TaskDescription from './modalComponents/TaskDescription';
 import SideContent from './modalComponents/SideContent';
 import Deadline from './modalComponents/Deadline';
+import Users from './modalComponents/users/Users';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -68,6 +69,11 @@ const TaskModal = ({ task, userPermissions }) => {
             <TaskHeader task={task} initialDescription={task.description} />
             <div className={classes.innerContainer}>
               <div style={{ width: '100%' }}>
+                <Users
+                  selectedUsers={task.users}
+                  projectId={task.projectId}
+                  taskId={task._id}
+                />
                 <TaskDescription
                   userPermissions={userPermissions}
                   task={task}
