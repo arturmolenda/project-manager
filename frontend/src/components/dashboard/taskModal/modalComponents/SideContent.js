@@ -10,7 +10,7 @@ import Deadline from './sideComponents/Deadline';
 import Label from './sideComponents/Label';
 import ToDoList from './sideComponents/ToDoList';
 import Transfer from './sideComponents/Transfer';
-import Users from './sideComponents/Users';
+import Users from './sideComponents/users/Users';
 import Watch from './sideComponents/Watch';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideContent = ({ task }) => {
+const SideContent = ({ task, task: { archived, _id: taskId } }) => {
   const {
     lists: { lists },
   } = useSelector((state) => state.projectGetData);
@@ -48,12 +48,14 @@ const SideContent = ({ task }) => {
   const classes = useStyles();
 
   useEffect(() => {
-    const currentList = lists.find((list) => {
-      const foundList = list.tasks.find((x) => x._id === task._id);
-      return foundList && foundList._id;
-    });
-    if (currentList) setCurrentListId(currentList);
-  }, [lists, task]);
+    if (!archived) {
+      const currentList = lists.find((list) => {
+        const foundList = list.tasks.find((x) => x._id === taskId);
+        return foundList && foundList._id;
+      });
+      if (currentList) setCurrentListId(currentList);
+    }
+  }, [lists, archived, taskId]);
 
   return (
     <div className={classes.container}>
