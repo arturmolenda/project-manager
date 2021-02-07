@@ -52,6 +52,12 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
   const classes = useStyles();
   const history = useHistory();
 
+  // close notifications menu and "close" all of "opened" notifications
+  const closeHandle = () => {
+    handleClose();
+    setNotificationsIndexes([]);
+  };
+
   // Keeps track of which notifications are "opened", meaning have discard and accept buttons displayed
   const projectNotificationHandle = (index) => {
     // remove index from array
@@ -69,21 +75,24 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
   };
 
   const discardNotificationHandle = (notificationId, index) => {
-    dispatch(discardNotification(notificationId, index));
+    dispatch(discardNotification(notificationId, index, () => closeHandle()));
   };
 
   const actionHandle = (notification) => {
-    console.log('join project');
     if (notification.type === 'Project Invitation') {
       socket.emit(
         'project-join',
         { projectId: notification.project._id },
         () => {
-          handleClose();
+          closeHandle();
           history.push(`/project/${notification.project._id}`);
         }
       );
-    }
+    } else
+      history.push(
+        `/project/${notification.project._id}/${notification.task._id}`
+      );
+    closeHandle();
   };
 
   return (
@@ -91,7 +100,7 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
       anchorEl={anchorEl}
       keepMounted
       open={Boolean(anchorEl)}
-      onClose={handleClose}
+      onClose={closeHandle}
       getContentAnchorEl={null}
       anchorOrigin={{
         vertical: 'bottom',
