@@ -106,6 +106,13 @@ const NotificationItem = ({
                     {' invited you to join project: '}
                     <strong>{`"${notification.project.title}"`}</strong>
                   </span>
+                )) ||
+                (notification.type === 'Task Assignment' && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' assigned you to task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
                 ))}
             </Typography>
             <Typography
