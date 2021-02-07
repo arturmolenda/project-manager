@@ -30,8 +30,6 @@ const Deadline = ({ task }) => {
           <DatePicker
             id='date-picker'
             clearable={Boolean(task.deadline)}
-            disablePast
-            minDate={new Date()}
             label='Deadline'
             inputVariant='outlined'
             format='MM/dd/yyyy'
