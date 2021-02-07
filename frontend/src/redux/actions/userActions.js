@@ -190,7 +190,8 @@ export const getUpdatedNotifications = () => async (dispatch, getState) => {
 
 export const discardNotification = (
   notificationId,
-  notificationIndex
+  notificationIndex,
+  callback
 ) => async (dispatch, getState) => {
   const {
     userLogin: { userInfo, notifications },
@@ -203,6 +204,7 @@ export const discardNotification = (
   };
   notifications.items.splice(notificationIndex, 1);
   dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: notifications });
+  callback();
   await axios.delete(`/api/users/${notificationId}`, config);
 };
 

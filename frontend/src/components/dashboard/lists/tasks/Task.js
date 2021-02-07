@@ -13,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import SubjectIcon from '@material-ui/icons/Subject';
 
 import TaskDeadlineIcon from './taskComponents/TaskDeadlineIcon';
+import TaskUsers from './taskComponents/TaskUsers';
 
 const useStyles = makeStyles(() => ({
   taskContainer: {
@@ -26,8 +27,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 3,
     backgroundColor: '#ececec',
     marginBottom: 8,
-    wordBreak: 'break-word',
-    whiteSpace: 'break-spaces',
+
     '&:hover': {
       backgroundColor: '#f5f5f5 !important',
       '& svg': {
@@ -42,10 +42,14 @@ const useStyles = makeStyles(() => ({
   titleContainer: {
     display: 'flex',
     alignItems: 'flex-start',
+    wordBreak: 'break-word',
+    whiteSpace: 'break-spaces',
   },
   taskDetails: {
+    minHeight: 30,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 5,
   },
   deleteIcon: {
@@ -97,13 +101,16 @@ const Task = React.memo(({ task, index, listIndex }) => {
                 <SubjectIcon />
               </>
             )}
-            <div className={classes.taskDetails}>
-              {task.deadline ? (
-                <TaskDeadlineIcon deadline={task.deadline} />
-              ) : (
-                <div />
-              )}
-            </div>
+            {(task.deadline || task.users.length !== 0) && (
+              <div className={classes.taskDetails}>
+                {task.deadline ? (
+                  <TaskDeadlineIcon deadline={task.deadline} />
+                ) : (
+                  <div />
+                )}
+                {task.users ? <TaskUsers users={task.users} /> : <div />}
+              </div>
+            )}
           </div>
         </div>
       </Link>

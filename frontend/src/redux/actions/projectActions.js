@@ -498,3 +498,21 @@ export const taskFieldUpdate = (
     callback
   );
 };
+
+export const taskUsersUpdate = (
+  taskId,
+  projectId,
+  newUsers,
+  removedUsers,
+  addedUsers,
+  callback
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+  socket.emit(
+    'task-users-update',
+    { taskId, projectId, newUsers, removedUsers, addedUsers },
+    callback
+  );
+};
