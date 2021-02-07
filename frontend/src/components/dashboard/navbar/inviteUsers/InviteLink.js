@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import LinkIcon from '@material-ui/icons/Link';
 import { Button, makeStyles, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
@@ -28,7 +28,6 @@ const useStyles = makeStyles(() => ({
 const InviteLink = () => {
   const { project } = useSelector((state) => state.projectGetData);
   const { socket } = useSelector((state) => state.socketConnection);
-  const [linkOpen, setLinkOpen] = useState(false);
   const classes = useStyles();
   const linkBtnAction = () => {
     project.joinIdActive
