@@ -1,13 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
+import {
+  makeStyles,
+  Typography,
+  IconButton,
+  Avatar,
+  MenuItem,
+  Button,
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+
+import {
+  ProjectInvitation,
+  RemovedFromProject,
+  TaskAssignment,
+} from './NotificationConstants';
 
 import moment from 'moment';
 
@@ -99,19 +107,25 @@ const NotificationItem = ({
               variant='body2'
               className={classes.notificationDescription}
             >
-              {notification.description ||
-                (notification.type === 'Project Invitation' && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' invited you to join project: '}
-                    <strong>{`"${notification.project.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === 'Task Assignment' && (
+              {(notification.type === ProjectInvitation && (
+                <span>
+                  <strong>{notification.sender.username}</strong>
+                  {' invited you to join project: '}
+                  <strong>{`"${notification.project.title}"`}</strong>
+                </span>
+              )) ||
+                (notification.type === TaskAssignment && (
                   <span>
                     <strong>{notification.sender.username}</strong>
                     {' assigned you to task: '}
                     <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === RemovedFromProject && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {notification.description.split(':')[0]}
+                    <strong>{notification.description.split(':')[1]}</strong>
                   </span>
                 ))}
             </Typography>
@@ -129,16 +143,21 @@ const NotificationItem = ({
           <Button
             color='secondary'
             onClick={() => discardNotificationHandle(notification._id, index)}
+            style={{
+              marginRight: notification.type === RemovedFromProject && 0,
+            }}
           >
             Discard
           </Button>
-          <Button
-            variant='outlined'
-            color='primary'
-            onClick={() => actionHandle(notification)}
-          >
-            {notification.type === 'Project Invitation' ? 'Join' : 'Open'}
-          </Button>
+          {notification.type !== RemovedFromProject && (
+            <Button
+              variant='outlined'
+              color='primary'
+              onClick={() => actionHandle(notification)}
+            >
+              {notification.type === ProjectInvitation ? 'Join' : 'Open'}
+            </Button>
+          )}
           <IconButton
             color='secondary'
             className={classes.closeBtn}

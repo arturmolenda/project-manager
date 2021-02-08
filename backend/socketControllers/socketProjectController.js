@@ -203,6 +203,21 @@ export const socketProjectController = (io, socket) => {
         { _id: userId },
         { $pull: { projectsJoined: projectId } }
       );
+
+      // remove all notifications regarding this project and send notification about removal
+      await Notification.deleteOne({ recipient: userId, project: projectId });
+      if (!socket.user._id.equals(userId)) {
+        const removeNotification = new Notification({
+          type: 'Removed From Project',
+          description: ` removed you from project: ${projectData.title}`,
+          project: projectId,
+          seenDate: null,
+          sender: socket.user._id,
+          recipient: userId,
+        });
+        await removeNotification.save();
+      }
+      io.to(userId).emit('notifications-updated');
     }
   });
 };
