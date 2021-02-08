@@ -11,6 +11,7 @@ import Menu from '@material-ui/core/Menu';
 import LocalFloristIcon from '@material-ui/icons/LocalFlorist';
 
 import NotificationItem from './NotificationItem';
+import { ProjectInvitation } from './NotificationConstants';
 
 const useStyles = makeStyles((theme) => ({
   menuContainer: {
@@ -79,7 +80,7 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
   };
 
   const actionHandle = (notification) => {
-    if (notification.type === 'Project Invitation') {
+    if (notification.type === ProjectInvitation) {
       socket.emit(
         'project-join',
         { projectId: notification.project._id },
