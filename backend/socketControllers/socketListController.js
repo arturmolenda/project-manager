@@ -24,7 +24,13 @@ export const socketListController = (io, socket) => {
   socket.on('list-move', async (data) => {
     const { removedIndex, addedIndex, projectId } = data;
     const lists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
     const [list] = lists.lists.splice(removedIndex, 1);
     lists.lists.splice(addedIndex, 0, list);
@@ -59,7 +65,13 @@ export const socketListController = (io, socket) => {
     }
     await lists.save();
     const newLists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
     socket.to(projectId).emit('lists-update', { newLists });
   });
