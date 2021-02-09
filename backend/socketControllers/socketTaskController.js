@@ -62,7 +62,13 @@ export const socketTaskController = (io, socket) => {
         },
         { returnOriginal: false }
       )
-        .populate('lists.tasks')
+        .populate({
+          path: 'lists.tasks',
+          populate: {
+            path: 'users',
+            select: 'username email profilePicture',
+          },
+        })
         .populate('archivedTasks');
     } else {
       lists = await List.findOneAndUpdate(
@@ -80,7 +86,13 @@ export const socketTaskController = (io, socket) => {
         },
         { returnOriginal: false }
       )
-        .populate('lists.tasks')
+        .populate({
+          path: 'lists.tasks',
+          populate: {
+            path: 'users',
+            select: 'username email profilePicture',
+          },
+        })
         .populate('archivedTasks');
     }
     socket.to(projectId).emit('lists-update', { newLists: lists });
@@ -110,7 +122,7 @@ export const socketTaskController = (io, socket) => {
   // @desc Delete archived task
   socket.on('task-delete', async (data) => {
     const { projectId, taskId } = data;
-    const lists = await List.updateOne(
+    const lists = await List.findOneAndUpdate(
       { projectId },
       {
         $pull: {
@@ -119,11 +131,29 @@ export const socketTaskController = (io, socket) => {
       },
       { returnOriginal: false }
     )
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
 
     socket.to(projectId).emit('lists-update', { newLists: lists });
-    await Task.findOneAndDelete({ _id: taskId });
+    const task = await Task.findOneAndDelete({ _id: taskId });
+
+    // remove taskId from tasks assigned to users and update notifications
+    await Notification.deleteMany({ task: taskId });
+    if (task.users.length > 0) {
+      task.users.forEach(async (user, i) => {
+        await Project.updateOne(
+          { _id: projectId },
+          { $pull: { [`users.${i}.tasksAssigned`]: taskId } }
+        );
+        io.to(String(user)).emit('notifications-updated');
+      });
+    }
   });
 
   // @desc Archive all tasks within single list
@@ -145,7 +175,13 @@ export const socketTaskController = (io, socket) => {
     }
     await lists.save();
     const newLists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
     socket.to(projectId).emit('lists-update', { newLists });
   });
@@ -176,7 +212,13 @@ export const socketTaskController = (io, socket) => {
       );
     }
     const newLists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
     socket
       .to(projectId)
@@ -199,7 +241,13 @@ export const socketTaskController = (io, socket) => {
     }
     await lists.save();
     const newLists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
     socket.to(projectId).emit('lists-update', { newLists });
   });
@@ -216,7 +264,13 @@ export const socketTaskController = (io, socket) => {
       .populate('users')
       .populate('labels');
     const newLists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
 
     io.to(projectId).emit('task-updated', { newLists, task });
@@ -236,7 +290,13 @@ export const socketTaskController = (io, socket) => {
       .populate('labels');
 
     const newLists = await List.findOne({ projectId })
-      .populate('lists.tasks')
+      .populate({
+        path: 'lists.tasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
       .populate('archivedTasks');
 
     if (callback) callback();
@@ -264,6 +324,7 @@ export const socketTaskController = (io, socket) => {
         }
       }
     });
+    await project.save();
     removedUsers.map(async (userId) => {
       const userIndex = project.users.findIndex((x) =>
         x.user._id.equals(userId)

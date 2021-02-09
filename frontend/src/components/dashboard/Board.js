@@ -87,6 +87,15 @@ const Board = () => {
         dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: data.task });
       }
     });
+    socket.on('tasks-updated', ({ tasks }) => {
+      if (task) {
+        tasks.forEach(
+          (t) =>
+            t._id === task._id &&
+            dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: t })
+        );
+      }
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
@@ -97,6 +106,7 @@ const Board = () => {
       socket.off('project-users-updated');
       socket.off('task-archived');
       socket.off('task-updated');
+      socket.off('tasks-updated');
     };
   }, [dispatch, socket, task]);
 
