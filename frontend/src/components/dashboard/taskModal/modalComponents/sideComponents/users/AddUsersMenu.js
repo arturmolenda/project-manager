@@ -93,20 +93,23 @@ const AddUsersMenu = ({
     const addedUsers = newUsersArray.filter(
       (userId) => !selected.find((u) => u._id === userId)
     );
-
-    dispatch(
-      taskUsersUpdate(
-        taskId,
-        projectId,
-        newUsersArray,
-        removedUsers,
-        addedUsers,
-        () => {
-          setLoading(false);
-          handleClose();
-        }
-      )
-    );
+    if (removedUsers.length === 0 && addedUsers.length === 0) {
+      setLoading(false);
+      handleClose();
+    } else
+      dispatch(
+        taskUsersUpdate(
+          taskId,
+          projectId,
+          newUsersArray,
+          removedUsers,
+          addedUsers,
+          () => {
+            setLoading(false);
+            handleClose();
+          }
+        )
+      );
   };
 
   return (
