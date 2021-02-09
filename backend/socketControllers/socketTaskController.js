@@ -122,7 +122,7 @@ export const socketTaskController = (io, socket) => {
   // @desc Delete archived task
   socket.on('task-delete', async (data) => {
     const { projectId, taskId } = data;
-    const lists = await List.updateOne(
+    const lists = await List.findOneAndUpdate(
       { projectId },
       {
         $pull: {
@@ -141,7 +141,19 @@ export const socketTaskController = (io, socket) => {
       .populate('archivedTasks');
 
     socket.to(projectId).emit('lists-update', { newLists: lists });
-    await Task.findOneAndDelete({ _id: taskId });
+    const task = await Task.findOneAndDelete({ _id: taskId });
+
+    // remove taskId from tasks assigned to users and update notifications
+    await Notification.deleteMany({ task: taskId });
+    if (task.users.length > 0) {
+      task.users.forEach(async (user, i) => {
+        await Project.updateOne(
+          { _id: projectId },
+          { $pull: { [`users.${i}.tasksAssigned`]: taskId } }
+        );
+        io.to(String(user)).emit('notifications-updated');
+      });
+    }
   });
 
   // @desc Archive all tasks within single list
