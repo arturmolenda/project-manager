@@ -30,6 +30,7 @@ const Transfer = ({ task, currentListId }) => {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
+        getContentAnchorEl={null}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -40,12 +41,16 @@ const Transfer = ({ task, currentListId }) => {
         }}
         transitionDuration={0}
       >
-        <TransferTasks
-          listId={!task.archived && currentListId}
-          transferHandle={transferHandle}
-          handleClose={() => setAnchorEl(null)}
-          title={task.archived ? 'Restore task' : 'Transfer task to other list'}
-        />
+        <div style={{ outline: 'none' }}>
+          <TransferTasks
+            listId={!task.archived && currentListId}
+            transferHandle={transferHandle}
+            handleClose={() => setAnchorEl(null)}
+            title={
+              task.archived ? 'Restore task' : 'Transfer task to other list'
+            }
+          />
+        </div>
       </Menu>
     </>
   );

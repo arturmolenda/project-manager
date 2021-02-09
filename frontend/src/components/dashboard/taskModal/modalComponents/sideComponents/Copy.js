@@ -23,6 +23,7 @@ const Copy = ({ task }) => {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
+        getContentAnchorEl={null}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -33,11 +34,13 @@ const Copy = ({ task }) => {
         }}
         transitionDuration={0}
       >
-        <TransferTasks
-          transferHandle={transferHandle}
-          handleClose={() => setAnchorEl(null)}
-          title={'Copy Task'}
-        />
+        <div style={{ outline: 'none' }}>
+          <TransferTasks
+            transferHandle={transferHandle}
+            handleClose={() => setAnchorEl(null)}
+            title={'Copy Task'}
+          />
+        </div>
       </Menu>
     </>
   );

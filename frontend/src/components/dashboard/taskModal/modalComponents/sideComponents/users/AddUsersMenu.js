@@ -129,53 +129,55 @@ const AddUsersMenu = ({
       }}
       transitionDuration={0}
     >
-      <MenuHeader title='Users' handleClose={handleClose} />
-      <div className={classes.usersContainer}>
-        {users &&
-          users.map((user, i) => {
-            if (user.selected)
-              return (
-                <UserItem
-                  key={i}
-                  selected={true}
-                  src={user.profilePicture}
-                  username={user.username}
-                  clickHandle={() => unselectClick(i)}
-                />
-              );
-            else
-              return (
-                <UserItem
-                  key={i}
-                  selected={false}
-                  src={user.profilePicture}
-                  username={user.username}
-                  clickHandle={() => selectClick(i)}
-                />
-              );
-          })}
-      </div>
+      <div style={{ outline: 'none' }}>
+        <MenuHeader title='Users' handleClose={handleClose} />
+        <div className={classes.usersContainer}>
+          {users &&
+            users.map((user, i) => {
+              if (user.selected)
+                return (
+                  <UserItem
+                    key={i}
+                    selected={true}
+                    src={user.profilePicture}
+                    username={user.username}
+                    clickHandle={() => unselectClick(i)}
+                  />
+                );
+              else
+                return (
+                  <UserItem
+                    key={i}
+                    selected={false}
+                    src={user.profilePicture}
+                    username={user.username}
+                    clickHandle={() => selectClick(i)}
+                  />
+                );
+            })}
+        </div>
 
-      <div style={{ paddingTop: 5 }}>
-        <Button
-          color='secondary'
-          onClick={handleClose}
-          style={{ margin: '0 5px 0 10px' }}
-          size='small'
-          disabled={loading}
-        >
-          Cancel
-        </Button>
-        <Button
-          color='primary'
-          variant='contained'
-          onClick={saveUsers}
-          size='small'
-          disabled={loading}
-        >
-          Save
-          {loading && <Loader button />}
-        </Button>
+        <div style={{ paddingTop: 5 }}>
+          <Button
+            color='secondary'
+            onClick={handleClose}
+            style={{ margin: '0 5px 0 10px' }}
+            size='small'
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            color='primary'
+            variant='contained'
+            onClick={saveUsers}
+            size='small'
+            disabled={loading}
+          >
+            Save
+            {loading && <Loader button />}
+          </Button>
+        </div>
       </div>
     </Menu>
   );
