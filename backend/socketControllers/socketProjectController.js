@@ -1,6 +1,8 @@
 import Project from '../models/project.js';
 import Notification from '../models/notification.js';
 import User from '../models/user.js';
+import Task from '../models/task.js';
+import List from '../models/list.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
 
@@ -184,8 +186,7 @@ export const socketProjectController = (io, socket) => {
               user: userId,
             },
           },
-        },
-        { returnOriginal: false }
+        }
       ).populate({
         path: 'users.user',
         select: 'username email profilePicture',
@@ -198,6 +199,46 @@ export const socketProjectController = (io, socket) => {
           projectId,
         },
       });
+
+      const userIndex = projectData.users.findIndex((u) =>
+        u.user.equals(userId)
+      );
+
+      // remove user from assigned tasks and emit updated tasks
+      if (
+        userIndex !== -1 &&
+        projectData.users[userIndex].tasksAssigned.length > 0
+      ) {
+        let updatedTasks = [];
+        // delete remove user from task and store updated tasks in array
+        const promise = projectData.users[userIndex].tasksAssigned.map(
+          async (taskId) =>
+            updatedTasks.push(
+              await Task.findOneAndUpdate(
+                { _id: taskId },
+                { $pull: { users: userId } },
+                { returnOriginal: false }
+              )
+                .populate('users')
+                .populate('labels')
+            )
+        );
+
+        Promise.all(promise).then(async () => {
+          const newLists = await List.findOne({ projectId })
+            .populate({
+              path: 'lists.tasks',
+              populate: {
+                path: 'users',
+                select: 'username email profilePicture',
+              },
+            })
+            .populate('archivedTasks');
+          io.to(projectId).emit('lists-update', { newLists });
+          io.to(projectId).emit('tasks-updated', { tasks: updatedTasks });
+        });
+      }
+      projectData.users.splice(userIndex, 1);
       io.to(projectId).emit('project-users-updated', projectData.users);
       await User.updateOne(
         { _id: userId },
@@ -205,7 +246,7 @@ export const socketProjectController = (io, socket) => {
       );
 
       // remove all notifications regarding this project and send notification about removal
-      await Notification.deleteOne({ recipient: userId, project: projectId });
+      await Notification.deleteMany({ recipient: userId, project: projectId });
       if (!socket.user._id.equals(userId)) {
         const removeNotification = new Notification({
           type: 'Removed From Project',
