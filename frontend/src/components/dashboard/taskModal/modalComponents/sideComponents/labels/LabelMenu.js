@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { updateLabels } from '../../../../../../redux/actions/projectActions';
+import {
+  createLabel,
+  updateLabels,
+} from '../../../../../../redux/actions/projectActions';
 
 import { Button, makeStyles, Menu, Typography } from '@material-ui/core';
 
@@ -42,6 +45,7 @@ const useStyles = makeStyles(() => ({
 
 const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
   const { labels } = useSelector((state) => state.projectGetData);
+  const { socket } = useSelector((state) => state.socketConnection);
   const dispatch = useDispatch();
   const [creatorOpen, setCreatorOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -72,7 +76,21 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
     if (labelId) {
       console.log('edit action');
     } else {
-      console.log('create action');
+      socket.emit(
+        'create-label',
+        {
+          taskId: task._id,
+          projectId: task.projectId,
+          color: selectedColor,
+          title,
+        },
+        (label) =>
+          dispatch(
+            createLabel(listIndex, taskIndex, task._id, label, () =>
+              resetHandle()
+            )
+          )
+      );
     }
   };
   const selectHandle = (label, selected) => {
