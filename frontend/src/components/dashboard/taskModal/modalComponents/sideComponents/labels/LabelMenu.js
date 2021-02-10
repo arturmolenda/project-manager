@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { updateLabels } from '../../../../../../redux/actions/projectActions';
 
 import { Button, makeStyles, Menu, Typography } from '@material-ui/core';
 
@@ -74,8 +75,13 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
       console.log('create action');
     }
   };
-  const selectHandle = (label) => {
-    console.log('add active label');
+  const selectHandle = (label, selected) => {
+    let newLabels = [...task.labels];
+    if (selected) newLabels = newLabels.filter((x) => x._id !== label._id);
+    else newLabels.push(label);
+    dispatch(
+      updateLabels(task._id, task.projectId, newLabels, listIndex, taskIndex)
+    );
   };
   const deleteHandle = () => {
     console.log('delete action');
@@ -139,9 +145,9 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
                 LABELS
               </Typography>
               {labels &&
-                labels.map((label, i) => (
+                labels.map((label) => (
                   <LabelItem
-                    key={i}
+                    key={label._id}
                     label={label}
                     editHandle={editHandle}
                     taskLabels={task.labels}
