@@ -516,3 +516,57 @@ export const taskUsersUpdate = (
     callback
   );
 };
+
+export const updateLabels = (
+  taskId,
+  projectId,
+  newLabels,
+  listIndex,
+  taskIndex
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: { lists },
+    projectSetTask: { task },
+  } = getState();
+  const listsCopy = deepcopy(lists);
+  if (
+    listsCopy.lists[listIndex] &&
+    listsCopy.lists[listIndex].tasks[taskIndex] &&
+    listsCopy.lists[listIndex].tasks[taskIndex]._id === taskId
+  ) {
+    listsCopy.lists[listIndex].tasks[taskIndex].labels = newLabels;
+    dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+    dispatch({
+      type: PROJECT_SET_TASK_SUCCESS,
+      payload: { ...task, labels: newLabels },
+    });
+  } else {
+    // very rare case in which task or list index would change between updating labels
+    let taskIndex;
+    const listIndex = lists.lists.findIndex((list) => {
+      const innerTaskIndex = list.tasks.findIndex(
+        (task) => task._id === taskId
+      );
+      if (innerTaskIndex > -1) {
+        taskIndex = innerTaskIndex;
+        return true;
+      } else return false;
+    });
+    if (listIndex > -1 && taskIndex > -1) {
+      listsCopy.lists[listIndex].tasks[taskIndex].labels = newLabels;
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+      dispatch({
+        type: PROJECT_SET_TASK_SUCCESS,
+        payload: { ...task, labels: newLabels },
+      });
+    }
+  }
+  const labelsIds = newLabels.map((label) => label._id);
+  socket.emit('task-field-update', {
+    taskId,
+    projectId,
+    updatedData: labelsIds,
+    fieldName: 'labels',
+  });
+};
