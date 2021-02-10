@@ -31,7 +31,21 @@ export const socketListController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
     const [list] = lists.lists.splice(removedIndex, 1);
     lists.lists.splice(addedIndex, 0, list);
     await lists.save();
@@ -72,7 +86,21 @@ export const socketListController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
     socket.to(projectId).emit('lists-update', { newLists });
   });
 };

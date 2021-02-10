@@ -233,7 +233,21 @@ export const socketProjectController = (io, socket) => {
                 select: 'username email profilePicture',
               },
             })
-            .populate('archivedTasks');
+            .populate({
+              path: 'lists.tasks',
+              populate: { path: 'labels' },
+            })
+            .populate({
+              path: 'archivedTasks',
+              populate: {
+                path: 'users',
+                select: 'username email profilePicture',
+              },
+            })
+            .populate({
+              path: 'archivedTasks',
+              populate: { path: 'labels' },
+            });
           io.to(projectId).emit('lists-update', { newLists });
           io.to(projectId).emit('tasks-updated', { tasks: updatedTasks });
         });

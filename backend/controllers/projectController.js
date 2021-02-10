@@ -83,7 +83,21 @@ const getProjectData = asyncHandler(async (req, res) => {
         select: 'username email profilePicture',
       },
     })
-    .populate('archivedTasks');
+    .populate({
+      path: 'lists.tasks',
+      populate: { path: 'labels' },
+    })
+    .populate({
+      path: 'archivedTasks',
+      populate: {
+        path: 'users',
+        select: 'username email profilePicture',
+      },
+    })
+    .populate({
+      path: 'archivedTasks',
+      populate: { path: 'labels' },
+    });
 
   const userPermissions = project.users.find((user) =>
     req.user._id.equals(user.user._id)
@@ -101,10 +115,12 @@ const getProjectData = asyncHandler(async (req, res) => {
 // @access  Private, Project Permissions 1
 const getTask = asyncHandler(async (req, res) => {
   const { taskId, projectId } = req.params;
-  const task = await Task.findOne({ _id: taskId, projectId }).populate({
-    path: 'users',
-    select: 'username email profilePicture',
-  });
+  const task = await Task.findOne({ _id: taskId, projectId })
+    .populate({
+      path: 'users',
+      select: 'username email profilePicture',
+    })
+    .populate('labels');
   if (task) res.status(200).json(task);
   else {
     res.status(404);
