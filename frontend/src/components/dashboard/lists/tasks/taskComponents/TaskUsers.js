@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Users = ({ users }) => {
+const TaskUsers = ({ users }) => {
   const classes = useStyles();
   return (
     <AvatarGroup max={4} className={classes.avatarsContainer}>
@@ -28,4 +28,4 @@ const Users = ({ users }) => {
   );
 };
 
-export default Users;
+export default TaskUsers;
