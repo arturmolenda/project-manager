@@ -43,11 +43,12 @@ const useStyles = makeStyles(() => ({
 
 const LabelItem = ({ label, taskLabels, editHandle, selectHandle }) => {
   const classes = useStyles();
+  const labelSelected = taskLabels.some((l) => l._id === label._id);
   return (
     <div className={classes.container}>
       <div
         className={classes.label}
-        onClick={() => selectHandle(label)}
+        onClick={() => selectHandle(label, labelSelected)}
         style={{
           backgroundColor: label.color,
           border: label.color === '#FFF' && '1px solid #bec0c0',
@@ -57,7 +58,7 @@ const LabelItem = ({ label, taskLabels, editHandle, selectHandle }) => {
         <Typography variant='subtitle2' style={{ fontWeight: 600 }}>
           {label.title && label.title}
         </Typography>
-        {taskLabels.includes(label._id) && <DoneIcon fontSize='small' />}
+        {labelSelected && <DoneIcon fontSize='small' />}
       </div>
       <CreateIcon
         className={classes.createIcon}
