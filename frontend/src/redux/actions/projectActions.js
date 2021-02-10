@@ -6,6 +6,7 @@ import {
   PROJECT_DATA_MOVE_TASK,
   PROJECT_DATA_REQUEST,
   PROJECT_DATA_SUCCESS,
+  PROJECT_DATA_UPDATE_LABELS,
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_FIND_USERS_FAIL,
   PROJECT_FIND_USERS_REQUEST,
@@ -21,6 +22,7 @@ import { USER_DATA_UPDATE } from '../constants/userConstants';
 import { BACKGROUND_COLORS } from '../../util/colorsContants';
 import axios from 'axios';
 import deepcopy from 'deepcopy';
+import { getTaskIndexes } from '../../util/utilFunctions';
 
 export const createProject = (title, callback) => async (
   dispatch,
@@ -530,38 +532,21 @@ export const updateLabels = (
     projectSetTask: { task },
   } = getState();
   const listsCopy = deepcopy(lists);
-  if (
-    listsCopy.lists[listIndex] &&
-    listsCopy.lists[listIndex].tasks[taskIndex] &&
-    listsCopy.lists[listIndex].tasks[taskIndex]._id === taskId
-  ) {
-    listsCopy.lists[listIndex].tasks[taskIndex].labels = newLabels;
-    dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
-    dispatch({
-      type: PROJECT_SET_TASK_SUCCESS,
-      payload: { ...task, labels: newLabels },
-    });
-  } else {
-    // very rare case in which task or list index would change between updating labels
-    let taskIndex;
-    const listIndex = lists.lists.findIndex((list) => {
-      const innerTaskIndex = list.tasks.findIndex(
-        (task) => task._id === taskId
-      );
-      if (innerTaskIndex > -1) {
-        taskIndex = innerTaskIndex;
-        return true;
-      } else return false;
-    });
-    if (listIndex > -1 && taskIndex > -1) {
-      listsCopy.lists[listIndex].tasks[taskIndex].labels = newLabels;
+  getTaskIndexes(
+    listsCopy.lists,
+    listIndex,
+    taskIndex,
+    taskId,
+    (newListIndex, newTaskIndex) => {
+      listsCopy.lists[newListIndex].tasks[newTaskIndex].labels = newLabels;
       dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
       dispatch({
         type: PROJECT_SET_TASK_SUCCESS,
         payload: { ...task, labels: newLabels },
       });
     }
-  }
+  );
+
   const labelsIds = newLabels.map((label) => label._id);
   socket.emit('task-field-update', {
     taskId,
@@ -569,4 +554,34 @@ export const updateLabels = (
     updatedData: labelsIds,
     fieldName: 'labels',
   });
+};
+
+export const createLabel = (listIndex, taskIndex, taskId, label, callback) => (
+  dispatch,
+  getState
+) => {
+  const {
+    projectGetData: { lists, labels },
+    projectSetTask: { task },
+  } = getState();
+  const listsCopy = deepcopy(lists);
+  getTaskIndexes(
+    listsCopy.lists,
+    listIndex,
+    taskIndex,
+    taskId,
+    (newListIndex, newTaskIndex) => {
+      listsCopy.lists[newListIndex].tasks[newTaskIndex].labels.push(label);
+      labels.push(label);
+      dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: labels });
+      if (task._id === taskId) {
+        dispatch({
+          type: PROJECT_SET_TASK_SUCCESS,
+          payload: { ...task, labels: [...task.labels, label] },
+        });
+        callback();
+      }
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+    }
+  );
 };
