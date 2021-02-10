@@ -38,7 +38,7 @@ const GroupMenu = ({
   const goBackHandle = () => {
     setUser(null);
   };
-  console.log(user);
+
   return (
     <Menu
       anchorEl={anchorEl}
