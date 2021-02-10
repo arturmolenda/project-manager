@@ -1,6 +1,7 @@
 import Task from '../models/task.js';
 import List from '../models/list.js';
 import mongoose from 'mongoose';
+import { populateLists } from '../utils/utilFunctions.js';
 
 export const socketListController = (io, socket) => {
   // @desc Create new list
@@ -23,33 +24,12 @@ export const socketListController = (io, socket) => {
   // @desc Change list index by dragging
   socket.on('list-move', async (data) => {
     const { removedIndex, addedIndex, projectId } = data;
-    const lists = await List.findOne({ projectId })
-      .populate({
-        path: 'lists.tasks',
-        populate: {
-          path: 'users',
-          select: 'username email profilePicture',
-        },
-      })
-      .populate({
-        path: 'lists.tasks',
-        populate: { path: 'labels' },
-      })
-      .populate({
-        path: 'archivedTasks',
-        populate: {
-          path: 'users',
-          select: 'username email profilePicture',
-        },
-      })
-      .populate({
-        path: 'archivedTasks',
-        populate: { path: 'labels' },
-      });
-    const [list] = lists.lists.splice(removedIndex, 1);
-    lists.lists.splice(addedIndex, 0, list);
-    await lists.save();
-    socket.to(projectId).emit('lists-update', { newLists: lists });
+    const newLists = await populateLists(projectId);
+
+    const [list] = newLists.lists.splice(removedIndex, 1);
+    newLists.lists.splice(addedIndex, 0, list);
+    await newLists.save();
+    socket.to(projectId).emit('lists-update', { newLists });
   });
 
   // @desc Update list title
@@ -78,29 +58,8 @@ export const socketListController = (io, socket) => {
       lists.archivedTasks = [...lists.archivedTasks, ...deletedList.tasks];
     }
     await lists.save();
-    const newLists = await List.findOne({ projectId })
-      .populate({
-        path: 'lists.tasks',
-        populate: {
-          path: 'users',
-          select: 'username email profilePicture',
-        },
-      })
-      .populate({
-        path: 'lists.tasks',
-        populate: { path: 'labels' },
-      })
-      .populate({
-        path: 'archivedTasks',
-        populate: {
-          path: 'users',
-          select: 'username email profilePicture',
-        },
-      })
-      .populate({
-        path: 'archivedTasks',
-        populate: { path: 'labels' },
-      });
+    const newLists = await populateLists(projectId);
+
     socket.to(projectId).emit('lists-update', { newLists });
   });
 };

@@ -6,6 +6,7 @@ import User from '../models/user.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import initialLabels from '../utils/labelsData.js';
+import { populateLists } from '../utils/utilFunctions.js';
 
 // @desc    Create Project
 // @route   POST /api/projects/
@@ -75,29 +76,7 @@ const getProjectData = asyncHandler(async (req, res) => {
     select: 'username email profilePicture',
   });
   const labels = await Label.find({ projectId });
-  const lists = await List.findOne({ projectId })
-    .populate({
-      path: 'lists.tasks',
-      populate: {
-        path: 'users',
-        select: 'username email profilePicture',
-      },
-    })
-    .populate({
-      path: 'lists.tasks',
-      populate: { path: 'labels' },
-    })
-    .populate({
-      path: 'archivedTasks',
-      populate: {
-        path: 'users',
-        select: 'username email profilePicture',
-      },
-    })
-    .populate({
-      path: 'archivedTasks',
-      populate: { path: 'labels' },
-    });
+  const lists = await populateLists(projectId);
 
   const userPermissions = project.users.find((user) =>
     req.user._id.equals(user.user._id)
