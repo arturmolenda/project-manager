@@ -2,6 +2,7 @@ import Task from '../models/task.js';
 import List from '../models/list.js';
 import Notification from '../models/notification.js';
 import Project from '../models/project.js';
+import Label from '../models/label.js';
 import mongoose from 'mongoose';
 
 export const socketTaskController = (io, socket) => {
@@ -69,7 +70,21 @@ export const socketTaskController = (io, socket) => {
             select: 'username email profilePicture',
           },
         })
-        .populate('archivedTasks');
+        .populate({
+          path: 'lists.tasks',
+          populate: { path: 'labels' },
+        })
+        .populate({
+          path: 'archivedTasks',
+          populate: {
+            path: 'users',
+            select: 'username email profilePicture',
+          },
+        })
+        .populate({
+          path: 'archivedTasks',
+          populate: { path: 'labels' },
+        });
     } else {
       lists = await List.findOneAndUpdate(
         { projectId },
@@ -93,7 +108,21 @@ export const socketTaskController = (io, socket) => {
             select: 'username email profilePicture',
           },
         })
-        .populate('archivedTasks');
+        .populate({
+          path: 'lists.tasks',
+          populate: { path: 'labels' },
+        })
+        .populate({
+          path: 'archivedTasks',
+          populate: {
+            path: 'users',
+            select: 'username email profilePicture',
+          },
+        })
+        .populate({
+          path: 'archivedTasks',
+          populate: { path: 'labels' },
+        });
     }
     socket.to(projectId).emit('lists-update', { newLists: lists });
   });
@@ -138,7 +167,21 @@ export const socketTaskController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
 
     socket.to(projectId).emit('lists-update', { newLists: lists });
     const task = await Task.findOneAndDelete({ _id: taskId });
@@ -182,7 +225,21 @@ export const socketTaskController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
     socket.to(projectId).emit('lists-update', { newLists });
   });
 
@@ -219,7 +276,21 @@ export const socketTaskController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
     socket
       .to(projectId)
       .emit('lists-update', { newLists, restoredTaskId: !listIndex && taskId });
@@ -248,7 +319,21 @@ export const socketTaskController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
     socket.to(projectId).emit('lists-update', { newLists });
   });
 
@@ -271,9 +356,25 @@ export const socketTaskController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
 
-    io.to(projectId).emit('task-updated', { newLists, task });
+    if (fieldName === 'labels') {
+      socket.to(projectId).emit('task-updated', { newLists, task });
+    } else io.to(projectId).emit('task-updated', { newLists, task });
     if (callback) callback();
   });
 
@@ -297,7 +398,21 @@ export const socketTaskController = (io, socket) => {
           select: 'username email profilePicture',
         },
       })
-      .populate('archivedTasks');
+      .populate({
+        path: 'lists.tasks',
+        populate: { path: 'labels' },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'users',
+          select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: { path: 'labels' },
+      });
 
     if (callback) callback();
     io.to(projectId).emit('task-updated', { newLists, task });
