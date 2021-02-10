@@ -14,6 +14,7 @@ import SubjectIcon from '@material-ui/icons/Subject';
 
 import TaskDeadlineIcon from './taskComponents/TaskDeadlineIcon';
 import TaskUsers from './taskComponents/TaskUsers';
+import LabelItem from '../../shared/LabelItem';
 
 const useStyles = makeStyles(() => ({
   taskContainer: {
@@ -52,6 +53,11 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     marginTop: 5,
   },
+  labels: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    padding: '5px 5px 0',
+  },
   deleteIcon: {
     display: 'none',
     position: 'absolute',
@@ -85,6 +91,12 @@ const Task = React.memo(({ task, index, listIndex }) => {
         }
       >
         <div className={classes.taskContainer}>
+          <div className={classes.labels}>
+            {task.labels.length > 0 &&
+              task.labels.map((label) => (
+                <LabelItem key={label._id} label={label} small />
+              ))}
+          </div>
           <div className={classes.task}>
             <div className={classes.titleContainer}>
               <Typography variant='subtitle2'>{task.title}</Typography>
