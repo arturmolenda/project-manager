@@ -585,3 +585,15 @@ export const createLabel = (listIndex, taskIndex, taskId, label, callback) => (
     }
   );
 };
+
+export const deleteLabel = (labelId, callback) => (dispatch, getState) => {
+  const {
+    projectGetData: { labels },
+    socketConnection: { socket },
+  } = getState();
+  delete labels.labels[labelId];
+  labels.labelIds = labels.labelIds.filter((id) => id !== labelId);
+  dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: labels });
+  callback();
+  socket.emit('label-delete', { projectId: labels.projectId, labelId });
+};
