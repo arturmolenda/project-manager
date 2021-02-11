@@ -10,7 +10,7 @@ const taskSchema = mongoose.Schema(
     archived: { type: Boolean, required: false, default: false },
     comments: [{ type: Object, required: true }],
     users: [{ type: mongoose.Types.ObjectId, required: false, ref: 'User' }],
-    labels: [{ type: mongoose.Types.ObjectId, required: false, ref: 'Label' }],
+    labels: [{ type: mongoose.Types.ObjectId, required: false }],
     creatorId: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
     projectId: {
       type: mongoose.Types.ObjectId,
