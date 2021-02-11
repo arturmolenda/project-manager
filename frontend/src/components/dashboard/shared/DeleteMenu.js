@@ -4,7 +4,7 @@ import { Menu, Typography, Button } from '@material-ui/core';
 
 import MenuHeader from './MenuHeader';
 
-const DeleteItemMenu = ({
+const DeleteMenu = ({
   Header,
   headerTitle,
   anchorEl,
@@ -71,4 +71,4 @@ const DeleteItemMenu = ({
   );
 };
 
-export default DeleteItemMenu;
+export default DeleteMenu;

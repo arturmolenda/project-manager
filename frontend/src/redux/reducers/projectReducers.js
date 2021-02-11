@@ -28,6 +28,7 @@ import {
   PROJECT_SET_TASK_SUCCESS,
   PROJECT_SET_TASK_FAIL,
   PROJECT_SET_TASK_RESET,
+  PROJECT_DATA_UPDATE_LABELS,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -141,6 +142,9 @@ export const projectGetDataReducer = (state = { loading: true }, action) => {
       );
       stateClone.lists.lists[listIndex].tasks.splice(taskIndex, 1);
       return stateClone;
+    }
+    case PROJECT_DATA_UPDATE_LABELS: {
+      return { ...state, labels: action.payload };
     }
     case PROJECT_DATA_FAIL:
       return { loading: false, error: action.payload };

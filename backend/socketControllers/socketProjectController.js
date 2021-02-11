@@ -2,9 +2,9 @@ import Project from '../models/project.js';
 import Notification from '../models/notification.js';
 import User from '../models/user.js';
 import Task from '../models/task.js';
-import List from '../models/list.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
+import { populateLists } from '../utils/utilFunctions.js';
 
 export const socketProjectController = (io, socket) => {
   // @desc Update project title
@@ -225,15 +225,7 @@ export const socketProjectController = (io, socket) => {
         );
 
         Promise.all(promise).then(async () => {
-          const newLists = await List.findOne({ projectId })
-            .populate({
-              path: 'lists.tasks',
-              populate: {
-                path: 'users',
-                select: 'username email profilePicture',
-              },
-            })
-            .populate('archivedTasks');
+          const newLists = await populateLists(projectId);
           io.to(projectId).emit('lists-update', { newLists });
           io.to(projectId).emit('tasks-updated', { tasks: updatedTasks });
         });

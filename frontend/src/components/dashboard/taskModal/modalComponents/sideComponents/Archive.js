@@ -4,7 +4,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import SideButton from './SideButton';
-import DeleteItemMenu from '../../../shared/DeleteMenu';
+import DeleteMenu from '../../../shared/DeleteMenu';
 
 const Archive = ({ task }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -32,7 +32,7 @@ const Archive = ({ task }) => {
           clickHandle={archiveHandle}
         />
       )}
-      <DeleteItemMenu
+      <DeleteMenu
         anchorEl={anchorEl}
         handleClose={() => setAnchorEl(null)}
         headerTitle='Delete task?'

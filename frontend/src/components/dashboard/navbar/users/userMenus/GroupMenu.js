@@ -38,7 +38,7 @@ const GroupMenu = ({
   const goBackHandle = () => {
     setUser(null);
   };
-  console.log(user);
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -55,35 +55,36 @@ const GroupMenu = ({
         horizontal: 'left',
       }}
     >
-      {user ? (
-        userPermissions === 2 ? (
-          <AdminInnerMenu
-            user={user.user}
-            permissions={user.permissions}
-            projectOwner={user.user._id === creatorId}
-            projectId={projectId}
-            handleClose={closeHandle}
-            goBackHandle={goBackHandle}
-          />
+      <div style={{ outline: 'none' }}>
+        {user ? (
+          userPermissions === 2 ? (
+            <AdminInnerMenu
+              user={user.user}
+              permissions={user.permissions}
+              projectOwner={user.user._id === creatorId}
+              projectId={projectId}
+              handleClose={closeHandle}
+              goBackHandle={goBackHandle}
+            />
+          ) : (
+            <NormalInnerMenu
+              user={user.user}
+              permissions={user.permissions}
+              projectId={projectId}
+              handleClose={closeHandle}
+              goBackHandle={goBackHandle}
+            />
+          )
         ) : (
-          <NormalInnerMenu
-            user={user.user}
-            permissions={user.permissions}
-            projectId={projectId}
+          <UsersGroupInnerMenu
+            administrators={administrators}
+            normalUsers={normalUsers}
+            invitedUsers={invitedUsers}
             handleClose={closeHandle}
-            goBackHandle={goBackHandle}
+            handleUserClick={handleUserClick}
           />
-        )
-      ) : (
-        <UsersGroupInnerMenu
-          administrators={administrators}
-          normalUsers={normalUsers}
-          invitedUsers={invitedUsers}
-          handleClose={closeHandle}
-          handleUserClick={handleUserClick}
-        />
-      )}
-      <div />
+        )}
+      </div>
     </Menu>
   );
 };
