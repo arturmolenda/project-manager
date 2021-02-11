@@ -597,3 +597,27 @@ export const deleteLabel = (labelId, callback) => (dispatch, getState) => {
   callback();
   socket.emit('label-delete', { projectId: labels.projectId, labelId });
 };
+
+export const editLabel = (labelId, title, color, callback) => (
+  dispatch,
+  getState
+) => {
+  const {
+    projectGetData: { labels },
+    socketConnection: { socket },
+  } = getState();
+  labels.labels[labelId] = {
+    ...labels.labels[labelId],
+    title,
+    color,
+  };
+  dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: labels });
+  callback();
+  console.log(labelId, title, color);
+  socket.emit('label-edit', {
+    projectId: labels.projectId,
+    title,
+    color,
+    labelId,
+  });
+};
