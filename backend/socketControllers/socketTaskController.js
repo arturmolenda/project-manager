@@ -370,4 +370,20 @@ export const socketTaskController = (io, socket) => {
 
     socket.to(projectId).emit('labels-updated', { newLabels });
   });
+
+  // @desc Edit label
+  socket.on('label-edit', async (data) => {
+    const { projectId, title, color, labelId } = data;
+
+    const newLabels = await Label.findOneAndUpdate(
+      { projectId },
+      {
+        $set: { [`labels.${[labelId]}.title`]: title },
+        $set: { [`labels.${[labelId]}.color`]: color },
+      },
+      { returnOriginal: false }
+    );
+
+    socket.to(projectId).emit('labels-updated', { newLabels });
+  });
 };
