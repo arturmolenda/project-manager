@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   createLabel,
   deleteLabel,
+  editLabel,
   updateLabels,
 } from '../../../../../../redux/actions/projectActions';
 
@@ -75,7 +76,7 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
   };
   const saveHandle = () => {
     if (labelId) {
-      console.log('edit action');
+      dispatch(editLabel(labelId, title, selectedColor, () => resetHandle()));
     } else {
       socket.emit(
         'create-label',
