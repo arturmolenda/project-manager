@@ -10,19 +10,11 @@ export const populateLists = async (projectId) => {
       },
     })
     .populate({
-      path: 'lists.tasks',
-      populate: { path: 'labels' },
-    })
-    .populate({
       path: 'archivedTasks',
       populate: {
         path: 'users',
         select: 'username email profilePicture',
       },
-    })
-    .populate({
-      path: 'archivedTasks',
-      populate: { path: 'labels' },
     });
 
   return newLists;

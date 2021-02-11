@@ -72,19 +72,11 @@ export const socketTaskController = (io, socket) => {
           },
         })
         .populate({
-          path: 'lists.tasks',
-          populate: { path: 'labels' },
-        })
-        .populate({
           path: 'archivedTasks',
           populate: {
             path: 'users',
             select: 'username email profilePicture',
           },
-        })
-        .populate({
-          path: 'archivedTasks',
-          populate: { path: 'labels' },
         });
     } else {
       lists = await List.findOneAndUpdate(
@@ -110,19 +102,11 @@ export const socketTaskController = (io, socket) => {
           },
         })
         .populate({
-          path: 'lists.tasks',
-          populate: { path: 'labels' },
-        })
-        .populate({
           path: 'archivedTasks',
           populate: {
             path: 'users',
             select: 'username email profilePicture',
           },
-        })
-        .populate({
-          path: 'archivedTasks',
-          populate: { path: 'labels' },
         });
     }
     socket.to(projectId).emit('lists-update', { newLists: lists });
@@ -169,19 +153,11 @@ export const socketTaskController = (io, socket) => {
         },
       })
       .populate({
-        path: 'lists.tasks',
-        populate: { path: 'labels' },
-      })
-      .populate({
         path: 'archivedTasks',
         populate: {
           path: 'users',
           select: 'username email profilePicture',
         },
-      })
-      .populate({
-        path: 'archivedTasks',
-        populate: { path: 'labels' },
       });
 
     socket.to(projectId).emit('lists-update', { newLists: lists });
@@ -280,9 +256,7 @@ export const socketTaskController = (io, socket) => {
       { projectId, _id: taskId },
       { $set: { [fieldName]: updatedData } },
       { returnOriginal: false }
-    )
-      .populate('users')
-      .populate('labels');
+    ).populate('users');
 
     const newLists = await populateLists(projectId);
 
@@ -300,9 +274,7 @@ export const socketTaskController = (io, socket) => {
       { projectId, _id: taskId },
       { $set: { users: newUsers } },
       { returnOriginal: false }
-    )
-      .populate('users')
-      .populate('labels');
+    ).populate('users');
 
     const newLists = await populateLists(projectId);
 
@@ -355,27 +327,33 @@ export const socketTaskController = (io, socket) => {
   // @desc Create new label
   socket.on('create-label', async (data, callback) => {
     const { projectId, taskId, color, title } = data;
-    const createdLabel = new Label({
-      color: color,
-      title: title,
-      taskIds: [taskId],
-      projectId,
-    });
 
+    const labelId = new mongoose.Types.ObjectId();
+    const createdLabel = {
+      color,
+      title,
+      _id: labelId,
+    };
     callback(createdLabel);
-    await createdLabel.save();
+
+    const newLabels = await Label.findOneAndUpdate(
+      { projectId },
+      {
+        $set: { [`labels.${labelId}`]: createdLabel },
+        $push: { labelIds: labelId },
+      },
+      { returnOriginal: false }
+    );
     const task = await Task.findOneAndUpdate(
       { _id: taskId },
       {
-        $push: { labels: createdLabel._id },
+        $push: { labels: labelId },
       },
       { returnOriginal: false }
-    )
-      .populate('users')
-      .populate('labels');
+    ).populate('users');
 
     const newLists = await populateLists(projectId);
-
+    socket.to(projectId).emit('labels-updated', { newLabels });
     socket.to(projectId).emit('task-updated', { newLists, task });
   });
 };

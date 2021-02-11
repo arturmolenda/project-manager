@@ -53,10 +53,22 @@ const createProject = asyncHandler(async (req, res) => {
     projectId: createdProject._id,
     archivedTasks: [],
   });
-  const labelsData = initialLabels.map((label) => {
-    return { ...label, projectId: createdProject._id };
+
+  const labelIds = [];
+  const labelsData = initialLabels.reduce((acc, label) => {
+    const labelId = new mongoose.Types.ObjectId();
+    label._id = labelId;
+    labelIds.push(labelId);
+    acc[labelId] = label;
+    return acc;
+  }, {});
+
+  await Label.create({
+    labels: labelsData,
+    labelIds: labelIds,
+    projectId: createdProject._id,
   });
-  await Label.insertMany(labelsData);
+
   await User.findOneAndUpdate(
     { _id: req.user._id },
     { $push: { projectsCreated: createdProject._id } }
@@ -75,7 +87,7 @@ const getProjectData = asyncHandler(async (req, res) => {
     path: 'users.user',
     select: 'username email profilePicture',
   });
-  const labels = await Label.find({ projectId });
+  const labels = await Label.findOne({ projectId });
   const lists = await populateLists(projectId);
 
   const userPermissions = project.users.find((user) =>
@@ -94,12 +106,10 @@ const getProjectData = asyncHandler(async (req, res) => {
 // @access  Private, Project Permissions 1
 const getTask = asyncHandler(async (req, res) => {
   const { taskId, projectId } = req.params;
-  const task = await Task.findOne({ _id: taskId, projectId })
-    .populate({
-      path: 'users',
-      select: 'username email profilePicture',
-    })
-    .populate('labels');
+  const task = await Task.findOne({ _id: taskId, projectId }).populate({
+    path: 'users',
+    select: 'username email profilePicture',
+  });
   if (task) res.status(200).json(task);
   else {
     res.status(404);
