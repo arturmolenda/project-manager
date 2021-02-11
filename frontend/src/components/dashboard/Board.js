@@ -8,6 +8,7 @@ import {
   PROJECT_DATA_LIST_TITLE_UPDATE,
   PROJECT_DATA_TASK_ARCHIVED,
   PROJECT_DATA_TITLE_UPDATE,
+  PROJECT_DATA_UPDATE_LABELS,
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_DATA_USERS_UPDATE,
   PROJECT_SET_TASK_SUCCESS,
@@ -96,6 +97,9 @@ const Board = () => {
         );
       }
     });
+    socket.on('labels-updated', (data) => {
+      dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: data.newLabels });
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
@@ -107,6 +111,7 @@ const Board = () => {
       socket.off('task-archived');
       socket.off('task-updated');
       socket.off('tasks-updated');
+      socket.off('labels-updated');
     };
   }, [dispatch, socket, task]);
 
