@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createLabel,
+  deleteLabel,
   updateLabels,
 } from '../../../../../../redux/actions/projectActions';
 
@@ -102,7 +103,7 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
     );
   };
   const deleteHandle = () => {
-    console.log('delete action');
+    dispatch(deleteLabel(labelId, () => resetHandle()));
   };
 
   return (
