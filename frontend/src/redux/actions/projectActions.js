@@ -547,11 +547,10 @@ export const updateLabels = (
     }
   );
 
-  const labelsIds = newLabels.map((label) => label._id);
   socket.emit('task-field-update', {
     taskId,
     projectId,
-    updatedData: labelsIds,
+    updatedData: newLabels,
     fieldName: 'labels',
   });
 };
@@ -571,13 +570,14 @@ export const createLabel = (listIndex, taskIndex, taskId, label, callback) => (
     taskIndex,
     taskId,
     (newListIndex, newTaskIndex) => {
-      listsCopy.lists[newListIndex].tasks[newTaskIndex].labels.push(label);
-      labels.push(label);
+      listsCopy.lists[newListIndex].tasks[newTaskIndex].labels.push(label._id);
+      labels.labels[label._id] = label;
+      labels.labelIds.push(label._id);
       dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: labels });
       if (task._id === taskId) {
         dispatch({
           type: PROJECT_SET_TASK_SUCCESS,
-          payload: { ...task, labels: [...task.labels, label] },
+          payload: { ...task, labels: [...task.labels, label._id] },
         });
         callback();
       }
