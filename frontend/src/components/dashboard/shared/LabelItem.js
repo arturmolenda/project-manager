@@ -26,24 +26,28 @@ const useStyles = makeStyles(() => ({
 const LabelItem = ({ label, small }) => {
   const classes = useStyles();
   return (
-    <div
-      className={classes.labelItem}
-      style={{
-        backgroundColor: label.color,
-        color: label.color === '#FFF' ? '#000' : '#fff',
-        minWidth: small && 50,
-        borderRadius: small && 5,
-        justifyContent: small && 'flex-start',
-        minHeight: small ? 8 : 25,
-      }}
-    >
-      <Typography
-        variant='subtitle2'
-        style={{ fontSize: small && '0.7rem', lineHeight: small && 1.2 }}
-      >
-        {label.title}
-      </Typography>
-    </div>
+    <>
+      {label && (
+        <div
+          className={classes.labelItem}
+          style={{
+            backgroundColor: label.color,
+            color: label.color === '#FFF' ? '#000' : '#fff',
+            minWidth: small && 50,
+            borderRadius: small && 5,
+            justifyContent: small && 'flex-start',
+            minHeight: small ? 8 : 25,
+          }}
+        >
+          <Typography
+            variant='subtitle2'
+            style={{ fontSize: small && '0.7rem', lineHeight: small && 1.2 }}
+          >
+            {label.title}
+          </Typography>
+        </div>
+      )}
+    </>
   );
 };
 

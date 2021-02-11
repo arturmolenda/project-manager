@@ -1,4 +1,7 @@
 import React from 'react';
+
+import { useSelector } from 'react-redux';
+
 import { makeStyles, Typography } from '@material-ui/core';
 import LabelItem from '../../shared/LabelItem';
 
@@ -17,18 +20,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Labels = ({ labels }) => {
+const Labels = ({ labels: taskLabels }) => {
+  const {
+    labels: { labels },
+  } = useSelector((state) => state.projectGetData);
   const classes = useStyles();
 
   return (
-    labels && (
+    taskLabels && (
       <div>
         <Typography className={classes.caption} variant='body1'>
           Labels
         </Typography>
         <div className={classes.container}>
-          {labels.map((label) => (
-            <LabelItem key={label._id} label={label} />
+          {taskLabels.map((labelId) => (
+            <LabelItem key={labelId} label={labels[labelId]} />
           ))}
         </div>
       </div>

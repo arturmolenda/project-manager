@@ -43,12 +43,12 @@ const useStyles = makeStyles(() => ({
 
 const LabelItem = ({ label, taskLabels, editHandle, selectHandle }) => {
   const classes = useStyles();
-  const labelSelected = taskLabels.some((l) => l._id === label._id);
+  const labelSelected = taskLabels.includes(label._id);
   return (
     <div className={classes.container}>
       <div
         className={classes.label}
-        onClick={() => selectHandle(label, labelSelected)}
+        onClick={() => selectHandle(label._id, labelSelected)}
         style={{
           backgroundColor: label.color,
           border: label.color === '#FFF' && '1px solid #bec0c0',

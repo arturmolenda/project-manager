@@ -93,10 +93,10 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
       );
     }
   };
-  const selectHandle = (label, selected) => {
+  const selectHandle = (labelId, selected) => {
     let newLabels = [...task.labels];
-    if (selected) newLabels = newLabels.filter((x) => x._id !== label._id);
-    else newLabels.push(label);
+    if (selected) newLabels = newLabels.filter((id) => id !== labelId);
+    else newLabels.push(labelId);
     dispatch(
       updateLabels(task._id, task.projectId, newLabels, listIndex, taskIndex)
     );
@@ -163,10 +163,10 @@ const LabelMenu = ({ task, anchorEl, handleClose, listIndex, taskIndex }) => {
                 LABELS
               </Typography>
               {labels &&
-                labels.map((label) => (
+                labels.labelIds.map((labelId) => (
                   <LabelItem
-                    key={label._id}
-                    label={label}
+                    key={labelId}
+                    label={labels.labels[labelId]}
                     editHandle={editHandle}
                     taskLabels={task.labels}
                     selectHandle={selectHandle}

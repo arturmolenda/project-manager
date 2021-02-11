@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { projectTaskArchive } from '../../../../redux/actions/projectActions';
 import { PROJECT_SET_TASK_SUCCESS } from '../../../../redux/constants/projectConstants';
 
@@ -74,6 +74,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Task = React.memo(({ task, index, listIndex }) => {
+  const {
+    labels: { labels },
+  } = useSelector((state) => state.projectGetData);
   const classes = useStyles();
   const dispatch = useDispatch();
   const archiveHandle = (e) => {
@@ -93,8 +96,8 @@ const Task = React.memo(({ task, index, listIndex }) => {
         <div className={classes.taskContainer}>
           <div className={classes.labels}>
             {task.labels.length > 0 &&
-              task.labels.map((label) => (
-                <LabelItem key={label._id} label={label} small />
+              task.labels.map((labelId) => (
+                <LabelItem key={labelId} label={labels[labelId]} small />
               ))}
           </div>
           <div className={classes.task}>
