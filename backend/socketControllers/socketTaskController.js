@@ -356,4 +356,18 @@ export const socketTaskController = (io, socket) => {
     socket.to(projectId).emit('labels-updated', { newLabels });
     socket.to(projectId).emit('task-updated', { newLists, task });
   });
+
+  // @desc Delete label
+  socket.on('label-delete', async (data) => {
+    const { projectId, labelId } = data;
+
+    await Task.updateMany({ projectId }, { $pull: { labels: labelId } });
+    const newLabels = await Label.findOneAndUpdate(
+      { projectId },
+      { $unset: { [`labels.${[labelId]}`]: '' }, $pull: { labelIds: labelId } },
+      { returnOriginal: false }
+    );
+
+    socket.to(projectId).emit('labels-updated', { newLabels });
+  });
 };
