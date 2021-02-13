@@ -9,7 +9,7 @@ import Archive from './sideComponents/Archive';
 import Copy from './sideComponents/Copy';
 import Deadline from './sideComponents/Deadline';
 import Label from './sideComponents/labels/Label';
-import ToDoList from './sideComponents/ToDoList';
+import ToDoList from './sideComponents/toDoList/ToDoList';
 import Transfer from './sideComponents/Transfer';
 import Users from './sideComponents/users/Users';
 import Watch from './sideComponents/Watch';
