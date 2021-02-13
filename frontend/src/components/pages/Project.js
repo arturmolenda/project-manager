@@ -126,7 +126,11 @@ const Project = () => {
         project && (
           <>
             <Board taskId={taskId} />
-            <TaskModal task={task} userPermissions={project.permissions} />
+            <TaskModal
+              task={task}
+              userPermissions={project.permissions}
+              userId={userInfo._id}
+            />
           </>
         )
       )}

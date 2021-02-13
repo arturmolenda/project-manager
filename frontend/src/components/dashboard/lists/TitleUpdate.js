@@ -48,7 +48,8 @@ const TitleUpdate = ({ currentTitle, listIndex, projectId, taskId }) => {
     if (e.key === 'Escape') titleRef.current.blur();
     else if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (title !== currentTitle && title.trim() !== '') {
+      if (title === currentTitle) titleRef.current.blur();
+      else if (title !== currentTitle && title.trim() !== '') {
         if (listIndex) {
           socket.emit(
             'list-title-update',
