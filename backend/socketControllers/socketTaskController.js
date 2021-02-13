@@ -3,6 +3,7 @@ import List from '../models/list.js';
 import Notification from '../models/notification.js';
 import Project from '../models/project.js';
 import Label from '../models/label.js';
+import ToDoList from '../models/toDoList.js';
 import mongoose from 'mongoose';
 import { populateLists } from '../utils/utilFunctions.js';
 
@@ -77,6 +78,12 @@ export const socketTaskController = (io, socket) => {
             path: 'users',
             select: 'username email profilePicture',
           },
+        })
+        .populate({
+          path: 'archivedTasks',
+          populate: {
+            path: 'toDoLists.lists',
+          },
         });
     } else {
       lists = await List.findOneAndUpdate(
@@ -106,6 +113,12 @@ export const socketTaskController = (io, socket) => {
           populate: {
             path: 'users',
             select: 'username email profilePicture',
+          },
+        })
+        .populate({
+          path: 'archivedTasks',
+          populate: {
+            path: 'toDoLists.lists',
           },
         });
     }
@@ -157,6 +170,12 @@ export const socketTaskController = (io, socket) => {
         populate: {
           path: 'users',
           select: 'username email profilePicture',
+        },
+      })
+      .populate({
+        path: 'archivedTasks',
+        populate: {
+          path: 'toDoLists.lists',
         },
       });
 
@@ -385,5 +404,30 @@ export const socketTaskController = (io, socket) => {
     );
 
     socket.to(projectId).emit('labels-updated', { newLabels });
+  });
+
+  // @desc Add To Do List to task
+  socket.on('add-to-do-list', async (data, callback) => {
+    const { projectId, taskId, title } = data;
+    const createdList = await ToDoList.create({
+      title: title,
+      usersWithHiddenTasks: [],
+      tasks: [],
+      creatorId: socket.user._id,
+      taskId,
+    });
+
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId },
+      { $push: { 'toDoLists.lists': createdList._id } },
+      { returnOriginal: false }
+    )
+      .populate('users')
+      .populate('toDoLists.lists');
+
+    const newLists = await populateLists(projectId);
+
+    callback();
+    io.to(projectId).emit('task-updated', { newLists, task });
   });
 };
