@@ -613,11 +613,30 @@ export const editLabel = (labelId, title, color, callback) => (
   };
   dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: labels });
   callback();
-  console.log(labelId, title, color);
+
   socket.emit('label-edit', {
     projectId: labels.projectId,
     title,
     color,
     labelId,
   });
+};
+
+export const createToDoList = (taskId, projectId, title, callback) => (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+
+  socket.emit(
+    'add-to-do-list',
+    {
+      projectId,
+      title,
+      taskId,
+    },
+    callback
+  );
 };
