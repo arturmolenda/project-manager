@@ -222,7 +222,7 @@ export const socketTaskController = (io, socket) => {
     const { projectId, taskId, listIndex, newListIndex } = data;
     // if listIndex is undefined then function is called from archived tasks
     if (listIndex) {
-      await List.findOneAndUpdate(
+      await List.updateOne(
         { projectId },
         {
           $pull: { [`lists.${listIndex}.tasks`]: taskId },
@@ -230,17 +230,14 @@ export const socketTaskController = (io, socket) => {
         }
       );
     } else {
-      await List.findOneAndUpdate(
+      await List.updateOne(
         { projectId },
         {
           $pull: { archivedTasks: taskId },
           $push: { [`lists.${newListIndex}.tasks`]: taskId },
         }
       );
-      await Task.findOneAndUpdate(
-        { _id: taskId },
-        { $set: { archived: false } }
-      );
+      await Task.updateOne({ _id: taskId }, { $set: { archived: false } });
     }
     const newLists = await populateLists(projectId);
     socket
@@ -275,7 +272,12 @@ export const socketTaskController = (io, socket) => {
       { projectId, _id: taskId },
       { $set: { [fieldName]: updatedData } },
       { returnOriginal: false }
-    ).populate('users');
+    )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
 
     const newLists = await populateLists(projectId);
 
@@ -293,7 +295,12 @@ export const socketTaskController = (io, socket) => {
       { projectId, _id: taskId },
       { $set: { users: newUsers } },
       { returnOriginal: false }
-    ).populate('users');
+    )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
 
     const newLists = await populateLists(projectId);
 
@@ -369,7 +376,12 @@ export const socketTaskController = (io, socket) => {
         $push: { labels: labelId },
       },
       { returnOriginal: false }
-    ).populate('users');
+    )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
 
     const newLists = await populateLists(projectId);
     socket.to(projectId).emit('labels-updated', { newLabels });
@@ -422,7 +434,10 @@ export const socketTaskController = (io, socket) => {
       { $push: { 'toDoLists.lists': createdList._id } },
       { returnOriginal: false }
     )
-      .populate('users')
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
       .populate('toDoLists.lists');
 
     const newLists = await populateLists(projectId);

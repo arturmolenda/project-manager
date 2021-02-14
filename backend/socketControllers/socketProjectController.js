@@ -211,16 +211,20 @@ export const socketProjectController = (io, socket) => {
       ) {
         let updatedTasks = [];
         // delete remove user from task and store updated tasks in array
-        const promise = projectData.users[
-          userIndex
-        ].tasksAssigned.map(async (taskId) =>
-          updatedTasks.push(
-            await Task.findOneAndUpdate(
-              { _id: taskId },
-              { $pull: { users: userId } },
-              { returnOriginal: false }
-            ).populate('users')
-          )
+        const promise = projectData.users[userIndex].tasksAssigned.map(
+          async (taskId) =>
+            updatedTasks.push(
+              await Task.findOneAndUpdate(
+                { _id: taskId },
+                { $pull: { users: userId } },
+                { returnOriginal: false }
+              )
+                .populate({
+                  path: 'users',
+                  select: 'username email profilePicture',
+                })
+                .populate('toDoLists.lists')
+            )
         );
 
         Promise.all(promise).then(async () => {
