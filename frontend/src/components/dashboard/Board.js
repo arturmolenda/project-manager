@@ -83,7 +83,9 @@ const Board = () => {
       }
     });
     socket.on('task-updated', (data) => {
-      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data.newLists });
+      if (data.newLists) {
+        dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: data.newLists });
+      }
       if (task && task._id === data.task._id) {
         dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: data.task });
       }
