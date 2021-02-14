@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useDispatch } from 'react-redux';
-import { addToDoTask } from '../../../../../redux/actions/projectActions';
+import {
+  addToDoTask,
+  updateToDoTaskProgress,
+} from '../../../../../redux/actions/projectActions';
 
 import { makeStyles } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
@@ -42,19 +45,24 @@ const useStyles = makeStyles((theme) => ({
 const ToDoList = ({ index, projectId, taskId, list, userId }) => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [tasksFinished, setTasksFinished] = useState(0);
   const classes = useStyles();
   const hideTasks = list.usersWithHiddenTasks.includes(userId);
-
-  useEffect(() => {
-    setTasksFinished(list.tasks.reduce((a, task) => a + task.finished, 0));
-  }, [list.tasks]);
 
   const updateTitleHandle = (title, callback) => {
     console.log('title updated');
   };
-  const taskCheckHandle = (check, taskId) => {
-    console.log('check/uncheck task');
+  const updateTaskCheckHandle = (check, toDoTaskId, toDoTaskIndex) => {
+    dispatch(
+      updateToDoTaskProgress(
+        taskId,
+        list._id,
+        index,
+        toDoTaskId,
+        toDoTaskIndex,
+        projectId,
+        check
+      )
+    );
   };
   const hideHandle = () => {
     console.log('hide handle');
@@ -93,16 +101,15 @@ const ToDoList = ({ index, projectId, taskId, list, userId }) => {
         </div>
         <TasksProgress
           totalTasks={list.tasks.length}
-          finishedTasks={tasksFinished}
+          finishedTasks={list.tasksFinished}
         />
-        {list.tasks.map((task) =>
-          task.finished ? (
-            hideTasks && null
-          ) : (
+        {list.tasks.map((task, taskIndex) =>
+          task.finished && hideTasks ? null : (
             <ToDoItem
               key={task._id}
+              taskIndex={taskIndex}
               task={task}
-              taskCheckHandle={taskCheckHandle}
+              updateTaskCheckHandle={updateTaskCheckHandle}
               deleteTaskHandle={deleteTaskHandle}
               updateTaskTitleHandle={updateTaskTitleHandle}
             />
@@ -114,7 +121,7 @@ const ToDoList = ({ index, projectId, taskId, list, userId }) => {
       <ToDoMenu
         hideHandle={hideHandle}
         showHandle={showHandle}
-        tasksFinished={tasksFinished}
+        tasksFinished={list.tasksFinished}
         hideTasks={hideTasks}
         anchorEl={anchorEl}
         closeHandle={() => setAnchorEl(null)}
