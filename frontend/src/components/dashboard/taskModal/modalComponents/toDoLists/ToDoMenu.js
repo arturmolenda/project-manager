@@ -56,13 +56,13 @@ const ToDoMenu = ({
             <div style={{ width: 270, padding: '6px 9px 0 9px' }}>
               <MenuItem
                 style={{ marginTop: 5 }}
-                onClick={hideTasks ? hideHandle() : showHandle()}
+                onClick={() => (hideTasks ? hideHandle() : showHandle())}
               >
                 {hideTasks
-                  ? 'Hide Finished Tasks'
-                  : tasksFinished === 0
-                  ? 'Show Finished Tasks'
-                  : `Show Finished Tasks (${tasksFinished})`}
+                  ? tasksFinished === 0
+                    ? 'Show Finished Tasks'
+                    : `Show Finished Tasks (${tasksFinished})`
+                  : 'Hide Finished Tasks'}
               </MenuItem>
               <MenuItem onClick={() => setDeleteOpen(true)}>Delete</MenuItem>
             </div>
