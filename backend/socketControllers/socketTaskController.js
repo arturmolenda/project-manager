@@ -425,6 +425,7 @@ export const socketTaskController = (io, socket) => {
       title,
       usersWithHiddenTasks: [],
       tasks: [],
+      tasksFinished: 0,
       creatorId: socket.user._id,
       taskId,
     });
@@ -464,6 +465,35 @@ export const socketTaskController = (io, socket) => {
     const task = await Task.findOneAndUpdate(
       { _id: taskId },
       { $inc: { 'toDoLists.totalTasks': 1 } },
+      { returnOriginal: false }
+    )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
+  });
+
+  // @desc Check or uncheck to-do task
+  socket.on('update-to-do-task-progress', async (data) => {
+    const { projectId, taskId, toDoListId, toDoTaskId, completed } = data;
+
+    await ToDoList.updateOne(
+      { _id: toDoListId, 'tasks._id': toDoTaskId },
+      {
+        $set: { 'tasks.$.finished': completed },
+        $inc: { tasksFinished: completed ? 1 : -1 },
+      }
+    );
+
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId },
+      { $inc: { 'toDoLists.tasksCompleted': completed ? 1 : -1 } },
       { returnOriginal: false }
     )
       .populate({
