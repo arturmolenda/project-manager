@@ -640,3 +640,36 @@ export const createToDoList = (taskId, projectId, title, callback) => (
     callback
   );
 };
+
+export const addToDoTask = (
+  taskId,
+  toDoListId,
+  toDoListIndex,
+  projectId,
+  title,
+  callback
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  socket.emit(
+    'add-to-do-task',
+    {
+      taskId,
+      projectId,
+      title,
+      toDoListId,
+    },
+    (toDoTask) => {
+      if (task && task._id === taskId) {
+        console.log(toDoTask);
+        task.toDoLists.lists[toDoListIndex].tasks.push(toDoTask);
+        task.toDoLists.totalTasks += 1;
+        dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+        callback();
+      }
+    }
+  );
+};

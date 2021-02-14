@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
+import { useDispatch } from 'react-redux';
+import { addToDoTask } from '../../../../../redux/actions/projectActions';
+
 import { makeStyles } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -36,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ToDoList = ({ list, userId }) => {
+const ToDoList = ({ index, projectId, taskId, list, userId }) => {
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [tasksFinished, setTasksFinished] = useState(0);
   const classes = useStyles();
@@ -64,8 +68,8 @@ const ToDoList = ({ list, userId }) => {
   const deleteTaskHandle = (taskId) => {
     console.log('delete task handle');
   };
-  const addTaskHandle = (title) => {
-    console.log('add task handle');
+  const addTaskHandle = (title, callback) => {
+    dispatch(addToDoTask(taskId, list._id, index, projectId, title, callback));
   };
   const updateTaskTitleHandle = (taskId, title) => {
     console.log('update task title handle');

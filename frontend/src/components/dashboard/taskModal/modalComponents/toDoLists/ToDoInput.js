@@ -66,10 +66,22 @@ const ToDoInput = ({
     if (initialTitle) setTitle(initialTitle);
   };
 
+  const addTaskCallback = () => {
+    setOpen(false);
+    setTitle('');
+  };
+
   const focusInput = () => {
     setFocused(true);
     setOpen(true);
     setTimeout(() => inputRef.current.select(), 1);
+  };
+
+  const actionHandle = () => {
+    if (title.trim() !== '')
+      taskId
+        ? updateTaskTitleHandle(taskId, title, () => setOpen(false))
+        : addTaskHandle(title, addTaskCallback);
   };
 
   const keyPressHandle = (e) => {
@@ -78,7 +90,7 @@ const ToDoInput = ({
       closeHandle();
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      taskId ? updateTaskTitleHandle(taskId, title) : addTaskHandle(title);
+      actionHandle();
     }
   };
 
@@ -128,12 +140,7 @@ const ToDoInput = ({
                 color='primary'
                 variant='contained'
                 size='small'
-                onClick={() =>
-                  taskId
-                    ? updateTaskTitleHandle(taskId, title)
-                    : addTaskHandle(title)
-                }
-                disableRipple
+                onClick={actionHandle}
               >
                 {taskId ? 'Save' : 'Add'}
               </Button>

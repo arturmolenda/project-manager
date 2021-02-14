@@ -422,7 +422,7 @@ export const socketTaskController = (io, socket) => {
   socket.on('add-to-do-list', async (data, callback) => {
     const { projectId, taskId, title } = data;
     const createdList = await ToDoList.create({
-      title: title,
+      title,
       usersWithHiddenTasks: [],
       tasks: [],
       creatorId: socket.user._id,
@@ -444,5 +444,37 @@ export const socketTaskController = (io, socket) => {
 
     callback();
     io.to(projectId).emit('task-updated', { newLists, task });
+  });
+
+  // @desc Add To Do task
+  socket.on('add-to-do-task', async (data, callback) => {
+    const { projectId, taskId, toDoListId, title } = data;
+    const createdTask = {
+      _id: mongoose.Types.ObjectId(),
+      title,
+      finished: false,
+    };
+    callback(createdTask);
+
+    await ToDoList.updateOne(
+      { _id: toDoListId },
+      { $push: { tasks: createdTask } }
+    );
+
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId },
+      { $inc: { 'toDoLists.totalTasks': 1 } },
+      { returnOriginal: false }
+    )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
   });
 };
