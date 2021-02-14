@@ -7,7 +7,7 @@ import { PROJECT_SET_TASK_SUCCESS } from '../../../../redux/constants/projectCon
 
 import { Draggable } from 'react-smooth-dnd';
 
-import { Divider, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SubjectIcon from '@material-ui/icons/Subject';
@@ -15,6 +15,7 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import TaskDeadlineIcon from './taskComponents/TaskDeadlineIcon';
 import TaskUsers from './taskComponents/TaskUsers';
 import LabelItem from '../../shared/LabelItem';
+import TaskTasksCompleted from './taskComponents/TaskTasksCompleted';
 
 const useStyles = makeStyles(() => ({
   taskContainer: {
@@ -71,6 +72,14 @@ const useStyles = makeStyles(() => ({
       backgroundColor: '#cccccc2b',
     },
   },
+  taskIconIndicators: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      marginRight: 5,
+    },
+  },
 }));
 
 const Task = React.memo(({ task, index, listIndex }) => {
@@ -104,27 +113,22 @@ const Task = React.memo(({ task, index, listIndex }) => {
             <div className={classes.titleContainer}>
               <Typography variant='subtitle2'>{task.title}</Typography>
             </div>
+            <div className={classes.taskIconIndicators}>
+              {task.description && <SubjectIcon />}
+              {task.deadline && <TaskDeadlineIcon deadline={task.deadline} />}
+              {task.toDoLists.totalTasks > 0 && (
+                <TaskTasksCompleted
+                  total={task.toDoLists.totalTasks}
+                  completed={task.toDoLists.tasksCompleted}
+                />
+              )}
+              {task.users && <TaskUsers users={task.users} />}
+            </div>
             {!task.archived && (
               <DeleteIcon
                 className={classes.deleteIcon}
                 onClick={archiveHandle}
               />
-            )}
-            {task.description && (
-              <>
-                <Divider style={{ margin: '3px 0' }} />
-                <SubjectIcon />
-              </>
-            )}
-            {(task.deadline || task.users.length !== 0) && (
-              <div className={classes.taskDetails}>
-                {task.deadline ? (
-                  <TaskDeadlineIcon deadline={task.deadline} />
-                ) : (
-                  <div />
-                )}
-                {task.users ? <TaskUsers users={task.users} /> : <div />}
-              </div>
             )}
           </div>
         </div>
