@@ -664,7 +664,6 @@ export const addToDoTask = (
     },
     (toDoTask) => {
       if (task && task._id === taskId) {
-        console.log(toDoTask);
         task.toDoLists.lists[toDoListIndex].tasks.push(toDoTask);
         task.toDoLists.totalTasks += 1;
         dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
@@ -672,4 +671,41 @@ export const addToDoTask = (
       }
     }
   );
+};
+
+export const updateToDoTaskProgress = (
+  taskId,
+  toDoListId,
+  toDoListIndex,
+  toDoTaskId,
+  toDoTaskIndex,
+  projectId,
+  completed
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  if (task && task._id === taskId) {
+    task.toDoLists.lists[toDoListIndex].tasks[
+      toDoTaskIndex
+    ].finished = completed;
+    if (completed) {
+      task.toDoLists.tasksFinished++;
+      task.toDoLists.lists[toDoListIndex].tasksFinished++;
+    } else {
+      task.toDoLists.tasksFinished--;
+      task.toDoLists.lists[toDoListIndex].tasksFinished--;
+    }
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+  }
+
+  socket.emit('update-to-do-task-progress', {
+    taskId,
+    toDoTaskId,
+    toDoListId,
+    projectId,
+    completed,
+  });
 };
