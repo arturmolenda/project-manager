@@ -10,6 +10,7 @@ const toDoListSchema = mongoose.Schema(
   {
     title: { type: String, required: true },
     usersWithHiddenTasks: [{ type: mongoose.Types.ObjectId, required: false }],
+    tasksFinished: { type: Number, default: 0 },
     tasks: [taskSchema],
     creatorId: { type: mongoose.Types.ObjectId, required: true },
     taskId: { type: mongoose.Types.ObjectId, required: true },
