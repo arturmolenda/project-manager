@@ -43,7 +43,8 @@ const useStyles = makeStyles(() => ({
 
 const TaskItem = ({
   task,
-  taskCheckHandle,
+  taskIndex,
+  updateTaskCheckHandle,
   deleteTaskHandle,
   updateTaskTitleHandle,
 }) => {
@@ -54,7 +55,7 @@ const TaskItem = ({
 
   const updateHandle = (e) => {
     setChecked(e.target.checked);
-    taskCheckHandle(e.target.checked, task._id);
+    updateTaskCheckHandle(e.target.checked, task._id, taskIndex);
   };
 
   return (
