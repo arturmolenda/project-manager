@@ -106,10 +106,12 @@ const getProjectData = asyncHandler(async (req, res) => {
 // @access  Private, Project Permissions 1
 const getTask = asyncHandler(async (req, res) => {
   const { taskId, projectId } = req.params;
-  const task = await Task.findOne({ _id: taskId, projectId }).populate({
-    path: 'users',
-    select: 'username email profilePicture',
-  });
+  const task = await Task.findOne({ _id: taskId, projectId })
+    .populate({
+      path: 'users',
+      select: 'username email profilePicture',
+    })
+    .populate('toDoLists.lists');
   if (task) res.status(200).json(task);
   else {
     res.status(404);

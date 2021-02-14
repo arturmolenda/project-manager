@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { PROJECT_DATA_PERMISSIONS_UPDATE } from '../../../../redux/constants/projectConstants';
-import { USER_REMOVED } from '../../../../redux/constants/userConstants';
 
 import UserMenu from './userMenus/UserMenu';
 import UsersGroup from './UsersGroup';

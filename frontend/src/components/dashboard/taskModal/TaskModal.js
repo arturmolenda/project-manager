@@ -10,6 +10,7 @@ import SideContent from './modalComponents/SideContent';
 import Deadline from './modalComponents/Deadline';
 import Users from './modalComponents/users/Users';
 import Labels from './modalComponents/Labels';
+import ToDoList from './modalComponents/toDoLists/ToDoList';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -51,20 +52,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TaskModal = ({ task, userPermissions }) => {
+const TaskModal = ({ task, userPermissions, userId }) => {
   const history = useHistory();
   const classes = useStyles();
 
   const closeHandle = () => history.push(`/project/${task.projectId}`);
-
+  const keyPressHandle = (e) => {
+    if (document.activeElement.id === 'task-modal' && e.key === 'Escape')
+      closeHandle();
+  };
   return (
     <Modal
       disableEnforceFocus
       open={Boolean(task)}
       disableScrollLock
       onClose={closeHandle}
+      onKeyDown={keyPressHandle}
     >
-      <div className={classes.container}>
+      <div className={classes.container} id='task-modal'>
         {task && (
           <>
             <TaskHeader task={task} initialDescription={task.description} />
@@ -81,6 +86,9 @@ const TaskModal = ({ task, userPermissions }) => {
                   task={task}
                 />
                 <Deadline task={task} />
+                {task.toDoLists.lists.map((list) => (
+                  <ToDoList key={list._id} list={list} userId={userId} />
+                ))}
               </div>
               <SideContent task={task} />
             </div>

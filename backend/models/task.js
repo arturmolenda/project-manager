@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const taskSchema = mongoose.Schema(
   {
-    _id: { type: mongoose.Types.ObjectId, required: true },
     title: { type: String, required: true },
     description: { type: String, required: false, default: '' },
     deadline: { type: Date, required: false },
@@ -11,6 +10,13 @@ const taskSchema = mongoose.Schema(
     comments: [{ type: Object, required: true }],
     users: [{ type: mongoose.Types.ObjectId, required: false, ref: 'User' }],
     labels: [{ type: mongoose.Types.ObjectId, required: false }],
+    toDoLists: {
+      totalTasks: { type: Number, default: 0 },
+      tasksCompleted: { type: Number, default: 0 },
+      lists: [
+        { type: mongoose.Types.ObjectId, required: false, ref: 'ToDoList' },
+      ],
+    },
     creatorId: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
     projectId: {
       type: mongoose.Types.ObjectId,

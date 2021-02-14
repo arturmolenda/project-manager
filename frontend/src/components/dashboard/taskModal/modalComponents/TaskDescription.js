@@ -45,13 +45,20 @@ const useStyles = makeStyles(() => ({
   actions: {
     marginTop: 10,
     textAlign: 'right',
+    '& >button:first-child': {
+      marginRight: 5,
+    },
+  },
+  fixEditorClosing: {
+    width: '100%',
+    display: 'flex',
   },
   caption: {
     color: '#979a9a',
   },
 }));
 
-const TaskDescription = ({ taskId, task, projectId, userPermissions }) => {
+const TaskDescription = ({ task, userPermissions }) => {
   const dispatch = useDispatch();
   const [descriptionEditOpen, setDescriptionEditOpen] = useState(false);
   const [description, setDescription] = useState('');
@@ -75,14 +82,25 @@ const TaskDescription = ({ taskId, task, projectId, userPermissions }) => {
           }
         )
       );
+    } else setDescriptionEditOpen(false);
+  };
+
+  const escBlurHandle = (e) => {
+    if (e.key === 'Escape') {
+      setDescriptionEditOpen(false);
+      const [editor] = document.getElementsByClassName('ck-content');
+      if (editor) editor.blur();
     }
   };
+
   return (
     <ClickAwayListener
       mouseEvent={'onMouseDown'}
-      onClickAway={() => !loading && setDescriptionEditOpen(false)}
+      onClickAway={() =>
+        !loading && descriptionEditOpen && setDescriptionEditOpen(false)
+      }
     >
-      <div className={classes.root}>
+      <div className={classes.root} onKeyDown={escBlurHandle}>
         <CKEditor
           editor={ClassicEditor}
           config={{
@@ -118,7 +136,7 @@ const TaskDescription = ({ taskId, task, projectId, userPermissions }) => {
             <Button
               color='primary'
               variant='outlined'
-              disabled={description === task.description || loading}
+              disabled={loading}
               onClick={updateHandle}
             >
               Save
