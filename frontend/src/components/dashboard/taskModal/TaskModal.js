@@ -86,8 +86,15 @@ const TaskModal = ({ task, userPermissions, userId }) => {
                   task={task}
                 />
                 <Deadline task={task} />
-                {task.toDoLists.lists.map((list) => (
-                  <ToDoList key={list._id} list={list} userId={userId} />
+                {task.toDoLists.lists.map((list, index) => (
+                  <ToDoList
+                    key={list._id}
+                    projectId={task.projectId}
+                    taskId={task._id}
+                    index={index}
+                    list={list}
+                    userId={userId}
+                  />
                 ))}
               </div>
               <SideContent task={task} />
