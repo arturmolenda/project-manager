@@ -5,6 +5,8 @@ import AvatarGroup from '@material-ui/lab/AvatarGroup';
 
 const useStyles = makeStyles(() => ({
   avatarsContainer: {
+    display: 'flex',
+    width: '100%',
     justifyContent: 'flex-end',
     '& > div': {
       height: 30,
