@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addToDoTask,
   deleteToDoList,
+  deleteToDoTask,
   updateToDoListTitle,
   updateToDoListVisibility,
   updateToDoTaskProgress,
@@ -82,8 +83,18 @@ const ToDoList = ({ index, projectId, taskId, list }) => {
       )
     );
   };
-  const deleteTaskHandle = (taskId) => {
-    console.log('delete task handle');
+  const deleteTaskHandle = (toDoTaskId, taskIndex, completed) => {
+    dispatch(
+      deleteToDoTask(
+        taskId,
+        list._id,
+        index,
+        toDoTaskId,
+        taskIndex,
+        projectId,
+        completed
+      )
+    );
   };
   const addTaskHandle = (title, callback) => {
     dispatch(addToDoTask(taskId, list._id, index, projectId, title, callback));

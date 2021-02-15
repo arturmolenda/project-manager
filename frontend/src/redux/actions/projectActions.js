@@ -810,3 +810,36 @@ export const updateToDoTaskTitle = (
     title,
   });
 };
+
+export const deleteToDoTask = (
+  taskId,
+  toDoListId,
+  toDoListIndex,
+  toDoTaskId,
+  toDoTaskIndex,
+  projectId,
+  completed
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  if (task && task._id === taskId) {
+    task.toDoLists.lists[toDoListIndex].tasks.splice(toDoTaskIndex, 1);
+    task.toDoLists.lists.totalTasks -= 1;
+    if (completed) {
+      task.toDoLists.lists.tasksCompleted -= 1;
+      task.toDoLists.lists[toDoListIndex].tasksFinished -= 1;
+    }
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+  }
+
+  socket.emit('delete-to-do-task', {
+    taskId,
+    toDoTaskId,
+    toDoListId,
+    projectId,
+    completed,
+  });
+};

@@ -77,7 +77,7 @@ const TaskItem = ({
         />
         <DeleteIcon
           className={classes.deleteIcon}
-          onClick={() => deleteTaskHandle(task._id)}
+          onClick={() => deleteTaskHandle(task._id, taskIndex, task.finished)}
         />
       </div>
     </div>
