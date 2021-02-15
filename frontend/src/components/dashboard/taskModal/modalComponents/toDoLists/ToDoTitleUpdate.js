@@ -32,7 +32,8 @@ const ToDoTitleUpdate = ({ currentTitle, updateHandle }) => {
       e.preventDefault();
       if (title === currentTitle || title.trim() === '') {
         titleRef.current.blur();
-      } else updateHandle(title, () => titleRef.current.blur());
+      } else
+        updateHandle(title, () => setTimeout(() => titleRef.current.blur(), 1));
     }
   };
   const blurHandle = () => {
