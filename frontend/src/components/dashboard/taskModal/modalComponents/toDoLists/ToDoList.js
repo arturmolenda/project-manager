@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addToDoTask,
+  deleteToDoList,
   updateToDoListTitle,
   updateToDoListVisibility,
   updateToDoTaskProgress,
@@ -74,7 +75,11 @@ const ToDoList = ({ index, projectId, taskId, list }) => {
     dispatch(updateToDoListVisibility(list._id, visibility));
   };
   const deleteListHandle = () => {
-    console.log('delete list handle');
+    dispatch(
+      deleteToDoList(taskId, projectId, list._id, index, () =>
+        setAnchorEl(null)
+      )
+    );
   };
   const deleteTaskHandle = (taskId) => {
     console.log('delete task handle');
