@@ -59,6 +59,11 @@ const ToDoMenu = ({ anchorEl, handleClose, projectId, taskId }) => {
       );
     }
   };
+
+  const keyPressHandle = (e) => {
+    if (e.key === 'Enter') saveHandle();
+  };
+
   return (
     <Popover
       anchorEl={anchorEl}
@@ -87,6 +92,7 @@ const ToDoMenu = ({ anchorEl, handleClose, projectId, taskId }) => {
               variant='outlined'
               className={classes.textfield}
               value={title}
+              onKeyDown={keyPressHandle}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
