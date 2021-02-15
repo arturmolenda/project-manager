@@ -73,7 +73,6 @@ const ToDoInput = ({
   };
 
   const addTaskCallback = () => {
-    setOpen(false);
     setTitle('');
   };
 
@@ -126,14 +125,17 @@ const ToDoInput = ({
                   ? classes.finishedText
                   : ''
               }
-              style={{ fontSize: 14 }}
+              style={{ fontSize: 14, cursor: !open && taskId && 'pointer' }}
               fullWidth
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               variant='outlined'
               onFocus={focusInput}
               onClick={() => setOpen(true)}
-              inputProps={{ spellCheck: false }}
+              inputProps={{
+                spellCheck: false,
+                style: { cursor: !open && taskId && 'pointer' },
+              }}
               onBlur={() => setFocused(false)}
               multiline
               onKeyDown={keyPressHandle}

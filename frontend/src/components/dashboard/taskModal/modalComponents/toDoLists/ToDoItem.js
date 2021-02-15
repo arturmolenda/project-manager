@@ -21,7 +21,6 @@ const useStyles = makeStyles(() => ({
   },
   textContainer: {
     marginLeft: 13,
-    cursor: 'pointer',
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
