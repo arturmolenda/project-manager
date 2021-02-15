@@ -7,6 +7,7 @@ import {
   updateToDoListTitle,
   updateToDoListVisibility,
   updateToDoTaskProgress,
+  updateToDoTaskTitle,
 } from '../../../../../redux/actions/projectActions';
 
 import { makeStyles } from '@material-ui/core';
@@ -87,8 +88,24 @@ const ToDoList = ({ index, projectId, taskId, list }) => {
   const addTaskHandle = (title, callback) => {
     dispatch(addToDoTask(taskId, list._id, index, projectId, title, callback));
   };
-  const updateTaskTitleHandle = (taskId, title) => {
-    console.log('update task title handle');
+  const updateTaskTitleHandle = (
+    toDoTaskId,
+    title,
+    toDoTaskIndex,
+    callback
+  ) => {
+    dispatch(
+      updateToDoTaskTitle(
+        taskId,
+        list._id,
+        index,
+        toDoTaskId,
+        toDoTaskIndex,
+        projectId,
+        title,
+        callback
+      )
+    );
   };
 
   return (

@@ -70,6 +70,7 @@ const TaskItem = ({
       <div className={classes.textContainer}>
         <ToDoInput
           taskId={task._id}
+          taskIndex={taskIndex}
           initialTitle={task.title}
           taskFinished={task.finished}
           updateTaskTitleHandle={updateTaskTitleHandle}
