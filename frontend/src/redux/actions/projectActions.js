@@ -686,6 +686,32 @@ export const updateToDoListVisibility = (listId, visibility) => (
   localStorage.setItem('toDoListIds', JSON.stringify(listIds));
 };
 
+export const deleteToDoList = (
+  taskId,
+  projectId,
+  listId,
+  listIndex,
+  callback
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  if (task && task._id === taskId) {
+    const [toDoList] = task.toDoLists.lists.splice(listIndex, 1);
+    task.toDoLists.totalTasks -= toDoList.tasks.length;
+    task.toDoLists.tasksCompleted -= toDoList.tasksCompleted;
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+    callback();
+  }
+  socket.emit('delete-to-do-list', {
+    taskId,
+    projectId,
+    listId,
+  });
+};
+
 export const addToDoTask = (
   taskId,
   toDoListId,
