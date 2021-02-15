@@ -29,6 +29,7 @@ import {
   PROJECT_SET_TASK_FAIL,
   PROJECT_SET_TASK_RESET,
   PROJECT_DATA_UPDATE_LABELS,
+  PROJECT_TODO_VISIBILITY_UPDATE,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -204,6 +205,19 @@ export const projectSetTaskReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case PROJECT_SET_TASK_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+
+export const projectToDoVisibilityReducer = (
+  state = { listIds: [] },
+  action
+) => {
+  switch (action.type) {
+    case PROJECT_TODO_VISIBILITY_UPDATE: {
+      return { listIds: action.payload };
+    }
     default:
       return state;
   }

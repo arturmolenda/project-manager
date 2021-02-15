@@ -18,6 +18,7 @@ import {
   projectTaskMoveReducer,
   projectFindUsersReducer,
   projectSetTaskReducer,
+  projectToDoVisibilityReducer,
 } from './reducers/projectReducers';
 import { socketConnectionReducer } from './reducers/socketReducers';
 
@@ -32,18 +33,23 @@ const reducer = combineReducers({
   projectTaskMove: projectTaskMoveReducer,
   projectFindUsers: projectFindUsersReducer,
   projectSetTask: projectSetTaskReducer,
+  projectToDoVisibility: projectToDoVisibilityReducer,
   socketConnection: socketConnectionReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
   : null;
+const toDoListVisibilityFromStorage = localStorage.getItem('toDoListIds')
+  ? JSON.parse(localStorage.getItem('toDoListIds'))
+  : [];
 
 const initialState = {
   userLogin: {
     userInfo: userInfoFromStorage,
     loading: userInfoFromStorage && userInfoFromStorage.token ? true : false,
   },
+  projectToDoVisibility: { listIds: toDoListVisibilityFromStorage },
 };
 
 const middleware = [thunk];
