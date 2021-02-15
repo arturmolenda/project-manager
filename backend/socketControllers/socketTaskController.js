@@ -525,7 +525,7 @@ export const socketTaskController = (io, socket) => {
     socket.to(projectId).emit('task-updated', { task });
   });
 
-  // @desc Check or uncheck to-do task
+  // @desc Mark tast as finished or unfinished
   socket.on('update-to-do-task-progress', async (data) => {
     const { projectId, taskId, toDoListId, toDoTaskId, completed } = data;
 
@@ -542,6 +542,30 @@ export const socketTaskController = (io, socket) => {
       { $inc: { 'toDoLists.tasksCompleted': completed ? 1 : -1 } },
       { returnOriginal: false }
     )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
+  });
+
+  // @desc Update to-do task's title
+  socket.on('update-to-do-task-title', async (data) => {
+    const { projectId, taskId, toDoListId, toDoTaskId, title } = data;
+
+    await ToDoList.updateOne(
+      { _id: toDoListId, 'tasks._id': toDoTaskId },
+      {
+        $set: { 'tasks.$.title': title },
+      }
+    );
+
+    const task = await Task.findById(taskId)
       .populate({
         path: 'users',
         select: 'username email profilePicture',
