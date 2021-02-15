@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -52,6 +52,7 @@ const ToDoInput = ({
   initialTitle = '',
   taskFinished = false,
   taskId = false,
+  taskIndex,
   updateTaskTitleHandle,
   addTaskHandle,
 }) => {
@@ -61,9 +62,14 @@ const ToDoInput = ({
   const inputRef = useRef();
   const classes = useStyles();
 
+  useEffect(() => !open && setTitle(initialTitle), [open, initialTitle]);
+
   const closeHandle = () => {
     setOpen(false);
-    if (initialTitle) setTitle(initialTitle);
+    if (initialTitle) {
+      setTitle(initialTitle);
+      focused && inputRef.current.blur();
+    }
   };
 
   const addTaskCallback = () => {
@@ -80,7 +86,7 @@ const ToDoInput = ({
   const actionHandle = () => {
     if (title.trim() !== '')
       taskId
-        ? updateTaskTitleHandle(taskId, title, () => setOpen(false))
+        ? updateTaskTitleHandle(taskId, title, taskIndex, () => setOpen(false))
         : addTaskHandle(title, addTaskCallback);
   };
 
