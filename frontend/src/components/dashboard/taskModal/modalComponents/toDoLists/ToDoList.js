@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   addToDoTask,
+  updateToDoListTitle,
   updateToDoTaskProgress,
 } from '../../../../../redux/actions/projectActions';
 
@@ -49,7 +50,9 @@ const ToDoList = ({ index, projectId, taskId, list, userId }) => {
   const hideTasks = list.usersWithHiddenTasks.includes(userId);
 
   const updateTitleHandle = (title, callback) => {
-    console.log('title updated');
+    dispatch(
+      updateToDoListTitle(taskId, projectId, list._id, index, title, callback)
+    );
   };
   const updateTaskCheckHandle = (check, toDoTaskId, toDoTaskIndex) => {
     dispatch(
