@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   addToDoTask,
   updateToDoListTitle,
+  updateToDoListVisibility,
   updateToDoTaskProgress,
 } from '../../../../../redux/actions/projectActions';
 
@@ -43,11 +44,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ToDoList = ({ index, projectId, taskId, list, userId }) => {
+const ToDoList = ({ index, projectId, taskId, list }) => {
+  const { listIds } = useSelector((state) => state.projectToDoVisibility);
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-  const hideTasks = list.usersWithHiddenTasks.includes(userId);
+  //  check if user has hidden tasks in this list
+  const tasksHidden = listIds.includes(list._id);
 
   const updateTitleHandle = (title, callback) => {
     dispatch(
@@ -67,11 +70,8 @@ const ToDoList = ({ index, projectId, taskId, list, userId }) => {
       )
     );
   };
-  const hideHandle = () => {
-    console.log('hide handle');
-  };
-  const showHandle = () => {
-    console.log('show handle');
+  const tasksVisibilityHandle = (visibility) => {
+    dispatch(updateToDoListVisibility(list._id, visibility));
   };
   const deleteListHandle = () => {
     console.log('delete list handle');
@@ -105,9 +105,10 @@ const ToDoList = ({ index, projectId, taskId, list, userId }) => {
         <TasksProgress
           totalTasks={list.tasks.length}
           finishedTasks={list.tasksFinished}
+          tasksHidden={tasksHidden}
         />
         {list.tasks.map((task, taskIndex) =>
-          task.finished && hideTasks ? null : (
+          task.finished && tasksHidden ? null : (
             <ToDoItem
               key={task._id}
               taskIndex={taskIndex}
@@ -122,10 +123,9 @@ const ToDoList = ({ index, projectId, taskId, list, userId }) => {
       </div>
 
       <ToDoMenu
-        hideHandle={hideHandle}
-        showHandle={showHandle}
+        tasksVisibilityHandle={tasksVisibilityHandle}
         tasksFinished={list.tasksFinished}
-        hideTasks={hideTasks}
+        tasksHidden={tasksHidden}
         anchorEl={anchorEl}
         closeHandle={() => setAnchorEl(null)}
         deleteListHandle={deleteListHandle}

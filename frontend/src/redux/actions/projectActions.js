@@ -17,6 +17,7 @@ import {
   PROJECT_SET_TASK_SUCCESS,
   PROJECT_TASK_MOVE,
   PROJECT_TASK_MOVE_RESET,
+  PROJECT_TODO_VISIBILITY_UPDATE,
 } from '../constants/projectConstants';
 import { USER_DATA_UPDATE } from '../constants/userConstants';
 import { BACKGROUND_COLORS } from '../../util/colorsContants';
@@ -666,6 +667,23 @@ export const updateToDoListTitle = (
     listId,
     taskId,
   });
+};
+
+export const updateToDoListVisibility = (listId, visibility) => (
+  dispatch,
+  getState
+) => {
+  const {
+    projectToDoVisibility: { listIds },
+  } = getState();
+
+  if (visibility) listIds.push(listId);
+  else {
+    const idIndex = listIds.indexOf(listId);
+    listIds.splice(idIndex, 1);
+  }
+  dispatch({ type: PROJECT_TODO_VISIBILITY_UPDATE, payload: listIds });
+  localStorage.setItem('toDoListIds', JSON.stringify(listIds));
 };
 
 export const addToDoTask = (

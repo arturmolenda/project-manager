@@ -423,7 +423,6 @@ export const socketTaskController = (io, socket) => {
     const { projectId, taskId, title } = data;
     const createdList = await ToDoList.create({
       title,
-      usersWithHiddenTasks: [],
       tasks: [],
       tasksFinished: 0,
       creatorId: socket.user._id,
