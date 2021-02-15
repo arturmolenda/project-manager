@@ -7,10 +7,9 @@ import MenuHeader from '../../../shared/MenuHeader';
 
 const ToDoMenu = ({
   deleteListHandle,
-  hideHandle,
-  showHandle,
+  tasksVisibilityHandle,
   tasksFinished,
-  hideTasks,
+  tasksHidden,
   anchorEl,
   closeHandle,
 }) => {
@@ -56,9 +55,9 @@ const ToDoMenu = ({
             <div style={{ width: 270, padding: '6px 9px 0 9px' }}>
               <MenuItem
                 style={{ marginTop: 5 }}
-                onClick={() => (hideTasks ? hideHandle() : showHandle())}
+                onClick={() => tasksVisibilityHandle(!tasksHidden)}
               >
-                {hideTasks
+                {tasksHidden
                   ? tasksFinished === 0
                     ? 'Show Finished Tasks'
                     : `Show Finished Tasks (${tasksFinished})`
