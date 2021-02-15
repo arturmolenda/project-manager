@@ -465,6 +465,34 @@ export const socketTaskController = (io, socket) => {
     socket.to(projectId).emit('task-updated', { task });
   });
 
+  // @desc Delete to-do list
+  socket.on('delete-to-do-list', async (data) => {
+    const { projectId, taskId, listId } = data;
+
+    const toDoList = await ToDoList.findOneAndDelete({ _id: listId });
+
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId },
+      {
+        $inc: {
+          'toDoLists.totalTasks': -toDoList.tasks.length,
+          'toDoLists.tasksCompleted': -toDoList.tasksFinished,
+        },
+      },
+      { returnOriginal: false }
+    )
+      .populate({
+        path: 'users',
+        select: 'username email profilePicture',
+      })
+      .populate('toDoLists.lists');
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
+  });
+
   // @desc Add To Do task
   socket.on('add-to-do-task', async (data, callback) => {
     const { projectId, taskId, toDoListId, title } = data;
