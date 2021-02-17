@@ -843,3 +843,88 @@ export const deleteToDoTask = (
     completed,
   });
 };
+
+export const addComment = (taskId, projectId, comment, callback) => (
+  dispatch,
+  getState
+) => {
+  const {
+    userLogin: { userInfo },
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  socket.emit(
+    'add-comment',
+    {
+      taskId,
+      projectId,
+      comment,
+    },
+    (createdComment) => {
+      if (task && task._id === taskId) {
+        createdComment.user = {
+          _id: userInfo._id,
+          username: userInfo.username,
+          profilePicture: userInfo.profilePicture,
+        };
+        task.comments.unshift(createdComment);
+        dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+        callback();
+      }
+    }
+  );
+};
+
+export const editComment = (
+  taskId,
+  projectId,
+  commentId,
+  newComment,
+  commentIndex,
+  callback
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  if (task && task._id === taskId) {
+    task.comments[commentIndex].comment = newComment;
+    task.comments[commentIndex].updatedAt = new Date();
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+    callback();
+  }
+
+  socket.emit('edit-comment', {
+    taskId,
+    projectId,
+    commentId,
+    newComment,
+  });
+};
+
+export const deleteComment = (
+  taskId,
+  projectId,
+  commentId,
+  commentIndex,
+  callback
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+  } = getState();
+
+  if (task && task._id === taskId) {
+    task.comments.splice(commentIndex, 1);
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+    callback();
+  }
+
+  socket.emit('delete-comment', {
+    taskId,
+    projectId,
+    commentId,
+  });
+};
