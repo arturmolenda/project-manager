@@ -11,6 +11,7 @@ import Deadline from './modalComponents/Deadline';
 import Users from './modalComponents/users/Users';
 import Labels from './modalComponents/Labels';
 import ToDoList from './modalComponents/toDoLists/ToDoList';
+import Comments from './modalComponents/comments/Comments';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -63,7 +64,6 @@ const TaskModal = ({ task, userPermissions, userId }) => {
   };
   return (
     <Modal
-      disableEnforceFocus
       open={Boolean(task)}
       disableScrollLock
       onClose={closeHandle}
@@ -96,6 +96,11 @@ const TaskModal = ({ task, userPermissions, userId }) => {
                     userId={userId}
                   />
                 ))}
+                <Comments
+                  comments={task.comments}
+                  projectId={task.projectId}
+                  taskId={task._id}
+                />
               </div>
               <SideContent task={task} />
             </div>

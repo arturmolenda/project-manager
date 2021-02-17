@@ -6,7 +6,7 @@ import User from '../models/user.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import initialLabels from '../utils/labelsData.js';
-import { populateLists } from '../utils/utilFunctions.js';
+import { populateLists, taskPopulation } from '../utils/utilFunctions.js';
 
 // @desc    Create Project
 // @route   POST /api/projects/
@@ -106,12 +106,8 @@ const getProjectData = asyncHandler(async (req, res) => {
 // @access  Private, Project Permissions 1
 const getTask = asyncHandler(async (req, res) => {
   const { taskId, projectId } = req.params;
-  const task = await Task.findOne({ _id: taskId, projectId })
-    .populate({
-      path: 'users',
-      select: 'username email profilePicture',
-    })
-    .populate('toDoLists.lists');
+  const task = await taskPopulation(Task.findOne({ _id: taskId, projectId }));
+
   if (task) res.status(200).json(task);
   else {
     res.status(404);

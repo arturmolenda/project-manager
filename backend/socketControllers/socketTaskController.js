@@ -5,7 +5,7 @@ import Project from '../models/project.js';
 import Label from '../models/label.js';
 import ToDoList from '../models/toDoList.js';
 import mongoose from 'mongoose';
-import { populateLists } from '../utils/utilFunctions.js';
+import { populateLists, taskPopulation } from '../utils/utilFunctions.js';
 
 export const socketTaskController = (io, socket) => {
   // @desc Create new task
@@ -268,17 +268,13 @@ export const socketTaskController = (io, socket) => {
   socket.on('task-field-update', async (data, callback) => {
     const { projectId, taskId, updatedData, fieldName } = data;
 
-    const task = await Task.findOneAndUpdate(
-      { projectId, _id: taskId },
-      { $set: { [fieldName]: updatedData } },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
-
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { projectId, _id: taskId },
+        { $set: { [fieldName]: updatedData } },
+        { returnOriginal: false }
+      )
+    );
     const newLists = await populateLists(projectId);
 
     if (fieldName === 'labels') {
@@ -291,16 +287,13 @@ export const socketTaskController = (io, socket) => {
   socket.on('task-users-update', async (data, callback) => {
     const { projectId, taskId, newUsers, removedUsers, addedUsers } = data;
 
-    const task = await Task.findOneAndUpdate(
-      { projectId, _id: taskId },
-      { $set: { users: newUsers } },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { projectId, _id: taskId },
+        { $set: { users: newUsers } },
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
 
@@ -370,18 +363,15 @@ export const socketTaskController = (io, socket) => {
       },
       { returnOriginal: false }
     );
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId },
-      {
-        $push: { labels: labelId },
-      },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        {
+          $push: { labels: labelId },
+        },
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
     socket.to(projectId).emit('labels-updated', { newLabels });
@@ -429,16 +419,13 @@ export const socketTaskController = (io, socket) => {
       taskId,
     });
 
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId },
-      { $push: { 'toDoLists.lists': createdList._id } },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        { $push: { 'toDoLists.lists': createdList._id } },
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
 
@@ -452,12 +439,7 @@ export const socketTaskController = (io, socket) => {
 
     await ToDoList.updateOne({ _id: listId }, { $set: { title } });
 
-    const task = await Task.findById(taskId)
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(Task.findById(taskId));
 
     const newLists = await populateLists(projectId);
 
@@ -471,21 +453,18 @@ export const socketTaskController = (io, socket) => {
 
     const toDoList = await ToDoList.findOneAndDelete({ _id: listId });
 
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId },
-      {
-        $inc: {
-          'toDoLists.totalTasks': -toDoList.tasks.length,
-          'toDoLists.tasksCompleted': -toDoList.tasksFinished,
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        {
+          $inc: {
+            'toDoLists.totalTasks': -toDoList.tasks.length,
+            'toDoLists.tasksCompleted': -toDoList.tasksFinished,
+          },
         },
-      },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
 
@@ -508,16 +487,13 @@ export const socketTaskController = (io, socket) => {
       { $push: { tasks: createdTask } }
     );
 
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId },
-      { $inc: { 'toDoLists.totalTasks': 1 } },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        { $inc: { 'toDoLists.totalTasks': 1 } },
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
 
@@ -537,16 +513,13 @@ export const socketTaskController = (io, socket) => {
       }
     );
 
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId },
-      { $inc: { 'toDoLists.tasksCompleted': completed ? 1 : -1 } },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        { $inc: { 'toDoLists.tasksCompleted': completed ? 1 : -1 } },
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
 
@@ -565,12 +538,7 @@ export const socketTaskController = (io, socket) => {
       }
     );
 
-    const task = await Task.findById(taskId)
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+    const task = await taskPopulation(Task.findById(taskId));
 
     const newLists = await populateLists(projectId);
 
@@ -585,28 +553,94 @@ export const socketTaskController = (io, socket) => {
     await ToDoList.updateOne(
       { _id: toDoListId },
       {
-        $pull: {
-          tasks: { _id: toDoTaskId },
-        },
         $inc: { tasksFinished: completed ? -1 : 0 },
       }
     );
 
-    const task = await Task.findOneAndUpdate(
-      { _id: taskId },
-      {
-        $inc: {
-          'toDoLists.tasksCompleted': completed ? -1 : 0,
-          'toDoLists.totalTasks': -1,
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        {
+          $inc: {
+            'toDoLists.tasksCompleted': completed ? -1 : 0,
+            'toDoLists.totalTasks': -1,
+          },
         },
-      },
-      { returnOriginal: false }
-    )
-      .populate({
-        path: 'users',
-        select: 'username email profilePicture',
-      })
-      .populate('toDoLists.lists');
+        { returnOriginal: false }
+      )
+    );
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
+  });
+
+  // @desc Add comment to task
+  socket.on('add-comment', async (data, callback) => {
+    const { projectId, taskId, comment } = data;
+    const currentDate = new Date();
+    const createdComment = {
+      _id: mongoose.Types.ObjectId(),
+      comment,
+      user: socket.user._id,
+      createdAt: currentDate,
+      updatedAt: currentDate,
+    };
+
+    callback(createdComment);
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        {
+          // workaround to push at the start of an array
+          $push: { comments: { $each: [createdComment], $position: 0 } },
+        },
+        { returnOriginal: false }
+      )
+    );
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
+  });
+
+  // @desc Edit comment
+  socket.on('edit-comment', async (data) => {
+    const { projectId, taskId, commentId, newComment } = data;
+
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId, 'comments._id': commentId },
+        {
+          $set: { 'comments.$.comment': newComment },
+        },
+        { returnOriginal: false }
+      )
+    );
+
+    const newLists = await populateLists(projectId);
+
+    io.to(projectId).emit('lists-update', { newLists });
+    socket.to(projectId).emit('task-updated', { task });
+  });
+
+  // @desc Delete comment
+  socket.on('delete-comment', async (data) => {
+    const { projectId, taskId, commentId } = data;
+
+    const task = await taskPopulation(
+      Task.findOneAndUpdate(
+        { _id: taskId },
+        {
+          $pull: {
+            comments: { _id: commentId },
+          },
+        },
+        { returnOriginal: false }
+      )
+    );
 
     const newLists = await populateLists(projectId);
 

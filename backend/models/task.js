@@ -1,5 +1,14 @@
 import mongoose from 'mongoose';
 
+const commentSchema = mongoose.Schema(
+  {
+    _id: { type: mongoose.Types.ObjectId, required: true },
+    comment: { type: String, required: true },
+    user: { type: mongoose.Types.ObjectId, required: false, ref: 'User' },
+  },
+  { timestamps: true }
+);
+
 const taskSchema = mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -7,7 +16,7 @@ const taskSchema = mongoose.Schema(
     deadline: { type: Date, required: false },
     author: { type: String, required: true },
     archived: { type: Boolean, required: false, default: false },
-    comments: [{ type: Object, required: true }],
+    comments: [commentSchema],
     users: [{ type: mongoose.Types.ObjectId, required: false, ref: 'User' }],
     labels: [{ type: mongoose.Types.ObjectId, required: false }],
     toDoLists: {
