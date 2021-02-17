@@ -27,7 +27,34 @@ export const populateLists = async (projectId) => {
       populate: {
         path: 'toDoLists.lists',
       },
+    })
+    .populate({
+      path: 'lists.tasks',
+      populate: {
+        path: 'comments.user',
+        select: 'username email profilePicture',
+      },
+    })
+    .populate({
+      path: 'archivedTasks',
+      populate: {
+        path: 'comments.user',
+        select: 'username email profilePicture',
+      },
     });
 
   return newLists;
+};
+
+export const taskPopulation = (task) => {
+  return task
+    .populate({
+      path: 'users',
+      select: 'username email profilePicture',
+    })
+    .populate('toDoLists.lists')
+    .populate({
+      path: 'comments.user',
+      select: 'username profilePicture',
+    });
 };
