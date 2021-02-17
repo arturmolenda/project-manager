@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles, Avatar, Typography } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -8,6 +8,11 @@ import ChatIcon from '@material-ui/icons/Chat';
 import CommentItem from './CommentItem';
 import CommentInput from './CommentInput';
 import DeleteMenu from '../../../shared/DeleteMenu';
+import {
+  addComment,
+  deleteComment,
+  editComment,
+} from '../../../../../redux/actions/projectActions';
 
 const useStyles = makeStyles(() => ({
   header: {
@@ -34,25 +39,37 @@ const useStyles = makeStyles(() => ({
 
 const Comments = ({ comments, projectId, taskId }) => {
   const { userInfo } = useSelector((state) => state.userLogin);
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [commentToDelete, setCommentToDelete] = useState(null);
   const classes = useStyles();
 
-  const openDeleteMenu = (id, anchor) => {
-    setCommentToDelete(id);
+  const openDeleteMenu = (id, index, anchor) => {
+    setCommentToDelete({ id, index });
     setAnchorEl(anchor);
   };
-  const deleteComment = () => {
-    console.log('delete comment action');
-    setCommentToDelete(null);
-    setAnchorEl(null);
+  const deleteCommentHandle = () => {
+    dispatch(
+      deleteComment(
+        taskId,
+        projectId,
+        commentToDelete.id,
+        commentToDelete.index,
+        () => {
+          setCommentToDelete(null);
+          setAnchorEl(null);
+        }
+      )
+    );
   };
 
-  const editCommentHandle = (commentId, comment) => {
-    console.log('edit comment action');
+  const editCommentHandle = (commentId, comment, commentIndex, callback) => {
+    dispatch(
+      editComment(taskId, projectId, commentId, comment, commentIndex, callback)
+    );
   };
-  const addCommentHandle = (comment) => {
-    console.log('add comment action');
+  const addCommentHandle = (comment, callback) => {
+    dispatch(addComment(taskId, projectId, comment, callback));
   };
 
   return (
@@ -67,12 +84,14 @@ const Comments = ({ comments, projectId, taskId }) => {
       </div>
       <div className={classes.commentsContainer}>
         {comments &&
-          comments.map((comment) => (
+          comments.map((comment, index) => (
             <CommentItem
               key={comment._id}
+              commentIndex={index}
               comment={comment}
               openDeleteMenu={openDeleteMenu}
               editCommentHandle={editCommentHandle}
+              userId={userInfo._id}
             />
           ))}
       </div>
@@ -80,7 +99,7 @@ const Comments = ({ comments, projectId, taskId }) => {
         anchorEl={anchorEl}
         handleClose={() => setAnchorEl(null)}
         headerTitle='Delete comment?'
-        deleteHandle={deleteComment}
+        deleteHandle={deleteCommentHandle}
         text={'Deleting a comment cannot be undone, are you sure?'}
       />
     </>

@@ -44,25 +44,31 @@ const CommentItem = ({
   openDeleteMenu,
   editCommentHandle,
   userId,
+  commentIndex,
 }) => {
   const [editOpen, setEditOpen] = useState(false);
   const classes = useStyles();
+
   return (
     <div className={classes.commentContainer}>
       <Avatar className={classes.avatar} src={comment.user.profilePicture} />
-      <div>
-        <Typography className={classes.username} variant='caption'>
-          {comment.user.username}
-        </Typography>
-        <Typography className={classes.date} variant='caption'>
-          {moment(comment.date).fromNow()} {comment.edited && ' (edited)'}
-        </Typography>
+      <div style={{ width: '100%' }}>
+        <div>
+          <Typography className={classes.username} variant='caption'>
+            {comment.user.username}
+          </Typography>
+          <Typography className={classes.date} variant='caption'>
+            {moment(comment.createdAt).fromNow()}{' '}
+            {comment.createdAt !== comment.updatedAt && ' (edited)'}
+          </Typography>
+        </div>
 
         {editOpen ? (
           <CommentInput
             initialComment={comment.comment}
             editCommentHandle={editCommentHandle}
             commentId={comment._id}
+            commentIndex={commentIndex}
             editCloseHandle={() => setEditOpen(false)}
           />
         ) : (
@@ -77,7 +83,9 @@ const CommentItem = ({
             </p>
             <p
               className={classes.actionText}
-              onClick={(e) => openDeleteMenu(comment._id, e.currentTarget)}
+              onClick={(e) =>
+                openDeleteMenu(comment._id, commentIndex, e.currentTarget)
+              }
             >
               Delete
             </p>

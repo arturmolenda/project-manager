@@ -35,6 +35,7 @@ const useStyles = makeStyles(() => ({
 
 const CommentInput = ({
   commentId,
+  commentIndex,
   editCommentHandle,
   addCommentHandle,
   initialComment,
@@ -58,16 +59,21 @@ const CommentInput = ({
     if (comment.trim() === '') inputRef.current.select();
     else {
       initialComment
-        ? editCommentHandle(commentId, comment)
-        : addCommentHandle(comment);
+        ? editCommentHandle(commentId, comment, commentIndex, editCloseHandle)
+        : addCommentHandle(comment, () => {
+            inputRef.current.blur();
+            cancelHandle();
+          });
     }
   };
   const keyPressHandle = (e) => {
-    console.log(e.key);
     if (e.key === 'Escape') {
       inputRef.current.blur();
       cancelHandle();
-    } else if (e.key === 'Enter') commentOnTask();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      commentOnTask();
+    }
   };
 
   const openCommentHandle = () => {
@@ -84,7 +90,7 @@ const CommentInput = ({
         placeholder='Write a comment'
         multiline
         variant='outlined'
-        value={comment || initialComment}
+        value={comment ? comment : addCommentHandle ? comment : initialComment}
         onChange={(e) => setComment(e.target.value)}
         className={classes.inputField}
         onKeyDown={keyPressHandle}
