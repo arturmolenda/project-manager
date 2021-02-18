@@ -660,4 +660,31 @@ export const socketTaskController = (io, socket) => {
     io.to(projectId).emit('lists-update', { newLists });
     socket.to(projectId).emit('task-updated', { task });
   });
+
+  // @desc Copy task
+  socket.on('copy-task', async (data, callback) => {
+    const { projectId, taskId, newListId } = data;
+
+    const task = {
+      ...(await Task.findById(taskId))._doc,
+      _id: mongoose.Types.ObjectId(),
+      comments: [],
+      users: [],
+      author: socket.user.username,
+      creatorId: socket.user._id,
+      archived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    await Task.create(task);
+    await List.updateOne(
+      { projectId, 'lists._id': newListId },
+      { $push: { 'lists.$.tasks': task._id } }
+    );
+    const newLists = await populateLists(projectId);
+
+    callback();
+    io.to(projectId).emit('lists-update', { newLists });
+  });
 };
