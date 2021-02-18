@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+import { useDispatch } from 'react-redux';
+import { projectTaskTransfer } from '../../../../../redux/actions/projectActions';
+
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
 import { Menu } from '@material-ui/core';
@@ -7,14 +10,35 @@ import { Menu } from '@material-ui/core';
 import SideButton from './SideButton';
 import TransferTasks from '../../../lists/listMore/TransferTasks';
 
-const Transfer = ({ task, currentListId }) => {
+const Transfer = ({ task, listIndex, taskIndex, currentListId }) => {
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const transferHandle = (listIndex) => {
+  const transferHandle = (newListIndex, newListId, callback) => {
     if (task.archived) {
-      console.log('transfer');
+      dispatch(
+        projectTaskTransfer(
+          task._id,
+          taskIndex,
+          null,
+          newListIndex,
+          null,
+          newListId,
+          callback
+        )
+      );
     } else {
-      console.log('transfer');
+      dispatch(
+        projectTaskTransfer(
+          task._id,
+          taskIndex,
+          listIndex,
+          newListIndex,
+          currentListId,
+          newListId,
+          callback
+        )
+      );
     }
   };
   return (
