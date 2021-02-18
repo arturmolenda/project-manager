@@ -298,9 +298,12 @@ export const projectTaskDelete = (taskId, taskIndex, callback) => (
 };
 
 export const projectTaskTransfer = (
+  taskId,
   taskIndex,
   listIndex,
   newListIndex,
+  currentListId,
+  newListId,
   callback
 ) => (dispatch, getState) => {
   const {
@@ -311,7 +314,7 @@ export const projectTaskTransfer = (
   const listsCopy = deepcopy(lists);
   let task;
   // if listIndex is undefined then function is called from archived tasks
-  if (listIndex) {
+  if (listIndex !== null) {
     [task] = listsCopy.lists[listIndex].tasks.splice(taskIndex, 1);
   } else {
     [task] = listsCopy.archivedTasks.splice(taskIndex, 1);
@@ -320,11 +323,12 @@ export const projectTaskTransfer = (
   listsCopy.lists[newListIndex].tasks.push(task);
   dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
   callback();
+
   socket.emit('task-transfer', {
     projectId: lists.projectId,
-    taskId: task._id,
-    listIndex,
-    newListIndex,
+    taskId,
+    currentListId,
+    newListId,
   });
 };
 
