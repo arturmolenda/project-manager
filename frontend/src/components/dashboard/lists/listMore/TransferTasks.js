@@ -5,11 +5,12 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 
 import MenuHeader from '../../shared/MenuHeader';
+import Loader from '../../../Loader';
 
 const useStyles = makeStyles(() => ({
   container: {
     width: 270,
-    maxHeight: 450,
+    maxHeight: 250,
     overflowY: 'auto',
   },
   menuItem: {
@@ -38,7 +39,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const TransferTasks = ({ handleClose, transferHandle, listId, title }) => {
+const TransferTasks = ({
+  handleClose,
+  transferHandle,
+  listId,
+  title,
+  loading,
+}) => {
   const { lists } = useSelector((state) => state.projectGetData);
   const classes = useStyles();
   return (
@@ -53,18 +60,27 @@ const TransferTasks = ({ handleClose, transferHandle, listId, title }) => {
         {lists.lists &&
           lists.lists.length > 0 &&
           lists.lists.map((list, listIndex) => (
-            <p
+            <div
+              style={{ position: 'relative', overflow: 'hidden' }}
               key={list._id}
-              className={
-                list._id === listId ? classes.disabledItem : classes.menuItem
-              }
-              onClick={() =>
-                list._id !== listId &&
-                transferHandle(listIndex, list._id, handleClose)
-              }
             >
-              {list._id === listId ? `${list.title} (current)` : list.title}
-            </p>
+              <p
+                className={
+                  loading
+                    ? classes.disabledItem
+                    : list._id === listId
+                    ? classes.disabledItem
+                    : classes.menuItem
+                }
+                onClick={() =>
+                  list._id !== listId &&
+                  transferHandle(listIndex, list._id, handleClose)
+                }
+              >
+                {list._id === listId ? `${list.title} (current)` : list.title}
+              </p>
+              {loading === list._id && <Loader button />}
+            </div>
           ))}
       </div>
     </>
