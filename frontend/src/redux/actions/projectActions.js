@@ -203,19 +203,35 @@ export const projectTaskArchive = (taskId, projectId, taskIndex, listIndex) => (
   const {
     socketConnection: { socket },
     projectGetData: { lists },
+    projectSetTask: { task: taskOpened },
   } = getState();
 
-  const listsCopy = deepcopy(lists);
-  const [task] = listsCopy.lists[listIndex].tasks.splice(taskIndex, 1);
-  task.archived = true;
-  listsCopy.archivedTasks.unshift(task);
-  dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
-
-  socket.emit('task-archive', {
-    taskId,
-    projectId,
+  getTaskIndexes(
+    lists.lists,
+    taskIndex,
     listIndex,
-  });
+    taskId,
+    (currentListIndex, currentTaskIndex) => {
+      const listsCopy = deepcopy(lists);
+      const [task] = listsCopy.lists[currentListIndex].tasks.splice(
+        currentTaskIndex,
+        1
+      );
+      task.archived = true;
+      listsCopy.archivedTasks.unshift(task);
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: listsCopy });
+      if (taskOpened && taskOpened._id === taskId)
+        dispatch({
+          type: PROJECT_SET_TASK_SUCCESS,
+          payload: { ...taskOpened, archived: true },
+        });
+      socket.emit('task-archive', {
+        taskId,
+        projectId,
+        listIndex: currentListIndex,
+      });
+    }
+  );
 };
 
 export const projectTasksArchive = (listIndex, callback) => (
@@ -309,6 +325,7 @@ export const projectTaskTransfer = (
   const {
     socketConnection: { socket },
     projectGetData: { lists },
+    projectSetTask: { task: taskOpened },
   } = getState();
 
   const listsCopy = deepcopy(lists);
@@ -317,6 +334,11 @@ export const projectTaskTransfer = (
   if (listIndex !== null) {
     [task] = listsCopy.lists[listIndex].tasks.splice(taskIndex, 1);
   } else {
+    if (taskOpened && taskOpened._id === taskId)
+      dispatch({
+        type: PROJECT_SET_TASK_SUCCESS,
+        payload: { ...taskOpened, archived: false },
+      });
     [task] = listsCopy.archivedTasks.splice(taskIndex, 1);
     task.archived = false;
   }
