@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { makeStyles, Modal } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -58,10 +58,12 @@ const TaskModal = ({ task, userPermissions, userId }) => {
   const classes = useStyles();
 
   const closeHandle = () => history.push(`/project/${task.projectId}`);
+
   const keyPressHandle = (e) => {
     if (document.activeElement.id === 'task-modal' && e.key === 'Escape')
       closeHandle();
   };
+
   return (
     <Modal
       open={Boolean(task)}
@@ -72,6 +74,7 @@ const TaskModal = ({ task, userPermissions, userId }) => {
       <div className={classes.container} id='task-modal'>
         {task && (
           <>
+            {task.deleted && <Redirect to={`/project/${task.projectId}`} />}
             <TaskHeader task={task} initialDescription={task.description} />
             <div className={classes.innerContainer}>
               <div style={{ width: '100%' }}>
