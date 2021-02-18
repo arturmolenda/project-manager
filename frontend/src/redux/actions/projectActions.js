@@ -932,3 +932,21 @@ export const deleteComment = (
     commentId,
   });
 };
+
+export const copyTask = (projectId, taskId, newListId, callback) => (
+  dispatch,
+  getState
+) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+  socket.emit(
+    'copy-task',
+    {
+      taskId,
+      projectId,
+      newListId,
+    },
+    callback
+  );
+};
