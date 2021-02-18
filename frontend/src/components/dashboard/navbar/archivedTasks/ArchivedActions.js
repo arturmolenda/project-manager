@@ -33,7 +33,7 @@ const ArchivedActions = ({
     <div className={classes.container}>
       <p
         className={classes.text}
-        onClick={(e) => openTransferMenu(e.currentTarget, taskIndex)}
+        onClick={(e) => openTransferMenu(e.currentTarget, taskIndex, taskId)}
       >
         Transfer to list
       </p>

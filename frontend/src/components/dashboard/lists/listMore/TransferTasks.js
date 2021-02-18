@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core';
 
 import MenuHeader from '../../shared/MenuHeader';
-import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -37,20 +38,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const TransferTasks = ({
-  handleClose,
-  goBackHandle,
-  transferHandle,
-  listId,
-  title,
-}) => {
+const TransferTasks = ({ handleClose, transferHandle, listId, title }) => {
   const { lists } = useSelector((state) => state.projectGetData);
   const classes = useStyles();
   return (
-    <div>
+    <>
       <div style={{ marginBottom: 5 }}>
         <MenuHeader
-          goBackHandle={goBackHandle}
           handleClose={handleClose}
           title={title ? title : 'Transfer tasks to other list'}
         />
@@ -59,19 +53,21 @@ const TransferTasks = ({
         {lists.lists &&
           lists.lists.length > 0 &&
           lists.lists.map((list, listIndex) => (
-            <li
+            <p
               key={list._id}
-              disabled
               className={
                 list._id === listId ? classes.disabledItem : classes.menuItem
               }
-              onClick={() => list._id !== listId && transferHandle(listIndex)}
+              onClick={() =>
+                list._id !== listId &&
+                transferHandle(listIndex, list._id, handleClose)
+              }
             >
               {list._id === listId ? `${list.title} (current)` : list.title}
-            </li>
+            </p>
           ))}
       </div>
-    </div>
+    </>
   );
 };
 

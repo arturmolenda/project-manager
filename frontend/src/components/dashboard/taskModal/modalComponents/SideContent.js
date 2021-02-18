@@ -86,7 +86,12 @@ const SideContent = React.memo(
         <div className={classes.buttonsContainer}>
           <Copy task={task} />
           <Watch task={task} />
-          <Transfer task={task} currentListId={currentListId} />
+          <Transfer
+            task={task}
+            currentListId={currentListId}
+            taskIndex={taskIndex}
+            listIndex={listIndex}
+          />
           <Archive task={task} />
         </div>
       </div>

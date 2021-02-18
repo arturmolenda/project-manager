@@ -50,7 +50,7 @@ const TransferMenu = ({ anchorEl, closeHandle, transferActionHandle }) => {
           lists.lists.map((list, listIndex) => (
             <p
               key={list._id}
-              onClick={() => transferActionHandle(listIndex)}
+              onClick={() => transferActionHandle(listIndex, list._id)}
               className={classes.menuItem}
             >
               {list.title}

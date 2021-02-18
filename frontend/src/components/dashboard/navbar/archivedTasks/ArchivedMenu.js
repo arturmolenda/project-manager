@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ArchivedMenu = ({ anchorEl, handleClose, projectId }) => {
+const ArchivedMenu = ({ anchorEl, handleClose }) => {
   const dispatch = useDispatch();
   const { lists } = useSelector((state) => state.projectGetData);
   const [transferAnchorEl, setTransferAnchorEl] = useState(null);
@@ -54,19 +54,27 @@ const ArchivedMenu = ({ anchorEl, handleClose, projectId }) => {
   const classes = useStyles();
 
   // Transfer menu actions | open, close, restore
-  const openTransferMenu = (target, index) => {
+  const openTransferMenu = (target, index, id) => {
     setTransferAnchorEl(target);
     setTaskIndex(index);
+    setTaskId(id);
   };
   const closeTransferMenu = () => {
     setTransferAnchorEl(null);
     setTaskIndex(null);
+    setTaskId(null);
   };
 
-  const transferActionHandle = (newListIndex) => {
+  const transferActionHandle = (newListIndex, newListId) => {
     dispatch(
-      projectTaskTransfer(taskIndex, null, newListIndex, () =>
-        closeTransferMenu()
+      projectTaskTransfer(
+        taskId,
+        taskIndex,
+        null,
+        newListIndex,
+        null,
+        newListId,
+        closeTransferMenu
       )
     );
   };
@@ -113,7 +121,7 @@ const ArchivedMenu = ({ anchorEl, handleClose, projectId }) => {
               lists.archivedTasks.length > 0 &&
               lists.archivedTasks.map((task, taskIndex) => (
                 <div key={task._id}>
-                  <Task task={task} projectId={projectId} archived={true} />
+                  <Task task={task} />
                   <ArchivedActions
                     taskId={task._id}
                     taskIndex={taskIndex}

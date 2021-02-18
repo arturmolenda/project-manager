@@ -218,31 +218,44 @@ export const socketTaskController = (io, socket) => {
   });
 
   // @desc Transfer task to other list or within one list or from archive | available in archive or in task modal
-  socket.on('task-transfer', async (data) => {
-    const { projectId, taskId, listIndex, newListIndex } = data;
+  socket.on('task-transfer', async (data, callback) => {
+    const { projectId, taskId, currentListId, newListId } = data;
+
     // if listIndex is undefined then function is called from archived tasks
-    if (listIndex) {
-      await List.updateOne(
-        { projectId },
-        {
-          $pull: { [`lists.${listIndex}.tasks`]: taskId },
-          $push: { [`lists.${newListIndex}.tasks`]: taskId },
-        }
+    if (currentListId !== null) {
+      let taskIndex;
+      const lists = await List.findOne({ projectId });
+      const listIndex = lists.lists.findIndex((list) =>
+        list._id.equals(currentListId)
       );
+      const newListIndex = lists.lists.findIndex((list) =>
+        list._id.equals(newListId)
+      );
+      if (listIndex > -1) {
+        taskIndex = lists.lists[listIndex].tasks.indexOf(taskId);
+      }
+
+      if (taskIndex > -1 && newListIndex > -1) {
+        lists.lists[listIndex].tasks.splice(taskIndex, 1);
+        lists.lists[newListIndex].tasks.push(taskId);
+        await lists.updateOne(lists);
+      }
     } else {
       await List.updateOne(
-        { projectId },
+        { projectId, 'lists._id': newListId },
         {
           $pull: { archivedTasks: taskId },
-          $push: { [`lists.${newListIndex}.tasks`]: taskId },
+          $push: { 'lists.$.tasks': taskId },
         }
       );
       await Task.updateOne({ _id: taskId }, { $set: { archived: false } });
     }
     const newLists = await populateLists(projectId);
-    socket
-      .to(projectId)
-      .emit('lists-update', { newLists, restoredTaskId: !listIndex && taskId });
+    if (callback) callback();
+    io.to(projectId).emit('lists-update', {
+      newLists,
+      restoredTaskId: !currentListId && taskId,
+    });
   });
 
   // @desc Transfer all tasks within particular list to other list
