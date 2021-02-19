@@ -18,6 +18,9 @@ const taskSchema = mongoose.Schema(
     archived: { type: Boolean, required: false, default: false },
     comments: [commentSchema],
     users: [{ type: mongoose.Types.ObjectId, required: false, ref: 'User' }],
+    usersWatching: [
+      { type: mongoose.Types.ObjectId, required: false, ref: 'User' },
+    ],
     labels: [{ type: mongoose.Types.ObjectId, required: false }],
     toDoLists: {
       totalTasks: { type: Number, default: 0 },
