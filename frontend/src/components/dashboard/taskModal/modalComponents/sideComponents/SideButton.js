@@ -3,6 +3,7 @@ import { Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   btn: {
+    border: '1px solid transparent',
     height: 32,
     width: '100%',
     textTransform: 'none',
@@ -22,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   secondaryBtn: {
+    border: '1px solid transparent',
     height: 32,
     width: '100%',
     textTransform: 'none',
@@ -42,13 +44,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideButton = ({ icon, text, secondary, clickHandle }) => {
+const SideButton = ({ icon, text, secondary, clickHandle, styleProps }) => {
   const classes = useStyles();
   return (
     <Button
       startIcon={icon}
       className={secondary ? classes.secondaryBtn : classes.btn}
       onClick={clickHandle}
+      style={{ ...styleProps }}
     >
       {text}
     </Button>

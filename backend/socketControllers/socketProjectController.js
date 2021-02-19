@@ -4,7 +4,7 @@ import User from '../models/user.js';
 import Task from '../models/task.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
-import { populateLists } from '../utils/utilFunctions.js';
+import { populateLists, taskPopulation } from '../utils/utilFunctions.js';
 
 export const socketProjectController = (io, socket) => {
   // @desc Update project title
