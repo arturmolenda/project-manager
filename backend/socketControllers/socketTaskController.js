@@ -255,10 +255,17 @@ export const socketTaskController = (io, socket) => {
   socket.on('task-users-update', async (data, callback) => {
     const { projectId, taskId, newUsers, removedUsers, addedUsers } = data;
 
+    await Task.updateOne(
+      { _id: taskId },
+      { $pull: { usersWatching: { $in: removedUsers } } }
+    );
     const task = await taskPopulation(
       Task.findOneAndUpdate(
         { projectId, _id: taskId },
-        { $set: { users: newUsers } },
+        {
+          $set: { users: newUsers },
+          $push: { usersWatching: { $each: addedUsers } },
+        },
         { returnOriginal: false }
       )
     );
@@ -641,5 +648,17 @@ export const socketTaskController = (io, socket) => {
 
     callback();
     io.to(projectId).emit('lists-update', { newLists });
+  });
+
+  // @desc Copy task
+  socket.on('task-watch', async (data) => {
+    const { taskId, isWatching } = data;
+    const userId = socket.user._id;
+    await Task.updateOne(
+      { _id: taskId },
+      isWatching
+        ? { $pull: { usersWatching: userId } }
+        : { $push: { usersWatching: userId } }
+    );
   });
 };
