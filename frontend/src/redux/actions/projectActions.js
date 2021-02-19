@@ -972,3 +972,49 @@ export const copyTask = (projectId, taskId, newListId, callback) => (
     callback
   );
 };
+
+export const updateTaskWatch = (
+  taskId,
+  userId,
+  isWatching,
+  taskIndex,
+  listIndex
+) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectSetTask: { task },
+    projectGetData: { lists },
+  } = getState();
+
+  getTaskIndexes(
+    lists.lists,
+    taskIndex,
+    listIndex,
+    taskId,
+    (currentListIndex, currentTaskIndex) => {
+      const taskClone = deepcopy(task);
+      if (isWatching) {
+        const userIndex = taskClone.usersWatching.indexOf(userId);
+        if (userIndex > -1) {
+          taskClone.usersWatching.splice(userIndex, 1);
+          lists.lists[currentListIndex].tasks[
+            currentTaskIndex
+          ].usersWatching.splice(userIndex, 1);
+        }
+      } else {
+        taskClone.usersWatching.push(userId);
+        lists.lists[currentListIndex].tasks[
+          currentTaskIndex
+        ].usersWatching.push(userId);
+      }
+
+      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: lists });
+      dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: taskClone });
+    }
+  );
+
+  socket.emit('task-watch', {
+    taskId,
+    isWatching,
+  });
+};
