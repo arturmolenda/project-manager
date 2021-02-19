@@ -58,3 +58,47 @@ export const taskPopulation = (task) => {
       select: 'username profilePicture',
     });
 };
+
+export const listPopulation = (list) => {
+  return list
+    .populate({
+      path: 'lists.tasks',
+      populate: {
+        path: 'users',
+        select: 'username email profilePicture',
+      },
+    })
+    .populate({
+      path: 'lists.tasks',
+      populate: {
+        path: 'toDoLists.lists',
+      },
+    })
+    .populate({
+      path: 'archivedTasks',
+      populate: {
+        path: 'users',
+        select: 'username email profilePicture',
+      },
+    })
+    .populate({
+      path: 'archivedTasks',
+      populate: {
+        path: 'toDoLists.lists',
+      },
+    })
+    .populate({
+      path: 'lists.tasks',
+      populate: {
+        path: 'comments.user',
+        select: 'username email profilePicture',
+      },
+    })
+    .populate({
+      path: 'archivedTasks',
+      populate: {
+        path: 'comments.user',
+        select: 'username email profilePicture',
+      },
+    });
+};

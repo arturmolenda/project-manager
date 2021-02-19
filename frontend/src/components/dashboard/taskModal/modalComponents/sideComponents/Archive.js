@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 
+import { useDispatch } from 'react-redux';
+import {
+  projectTaskArchive,
+  projectTaskDelete,
+} from '../../../../../redux/actions/projectActions';
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import SideButton from './SideButton';
 import DeleteMenu from '../../../shared/DeleteMenu';
 
-const Archive = ({ task }) => {
+const Archive = ({ task, listIndex, taskIndex }) => {
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const archiveHandle = () => {
-    console.log('archive');
+    dispatch(
+      projectTaskArchive(task._id, task.projectId, taskIndex, listIndex, () =>
+        setAnchorEl(null)
+      )
+    );
   };
   const deleteTaskHandle = () => {
-    console.log('delete');
+    dispatch(projectTaskDelete(task._id, taskIndex, () => setAnchorEl(null)));
   };
 
   return (

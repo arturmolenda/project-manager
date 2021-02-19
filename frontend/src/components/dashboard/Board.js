@@ -102,6 +102,13 @@ const Board = () => {
     socket.on('labels-updated', (data) => {
       dispatch({ type: PROJECT_DATA_UPDATE_LABELS, payload: data.newLabels });
     });
+    socket.on('task-deleted', ({ taskId }) => {
+      if (task && task._id === taskId)
+        dispatch({
+          type: PROJECT_SET_TASK_SUCCESS,
+          payload: { ...task, deleted: true },
+        });
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
@@ -114,6 +121,7 @@ const Board = () => {
       socket.off('task-updated');
       socket.off('tasks-updated');
       socket.off('labels-updated');
+      socket.off('task-deleted');
     };
   }, [dispatch, socket, task]);
 

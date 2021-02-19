@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { makeStyles, Modal } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -12,6 +12,7 @@ import Users from './modalComponents/users/Users';
 import Labels from './modalComponents/Labels';
 import ToDoList from './modalComponents/toDoLists/ToDoList';
 import Comments from './modalComponents/comments/Comments';
+import ArchivedHeader from './modalComponents/ArchivedHeader';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    padding: '25px 10px 20px 20px',
     backgroundColor: '#f4f5f7',
     [theme.breakpoints.down(720)]: {
       margin: '5vh 10px',
@@ -58,10 +58,12 @@ const TaskModal = ({ task, userPermissions, userId }) => {
   const classes = useStyles();
 
   const closeHandle = () => history.push(`/project/${task.projectId}`);
+
   const keyPressHandle = (e) => {
     if (document.activeElement.id === 'task-modal' && e.key === 'Escape')
       closeHandle();
   };
+
   return (
     <Modal
       open={Boolean(task)}
@@ -70,44 +72,49 @@ const TaskModal = ({ task, userPermissions, userId }) => {
       onKeyDown={keyPressHandle}
     >
       <div className={classes.container} id='task-modal'>
-        {task && (
-          <>
-            <TaskHeader task={task} initialDescription={task.description} />
-            <div className={classes.innerContainer}>
-              <div style={{ width: '100%' }}>
-                <Labels labels={task.labels} />
-                <Users
-                  selectedUsers={task.users}
-                  projectId={task.projectId}
-                  taskId={task._id}
-                />
-                <TaskDescription
-                  userPermissions={userPermissions}
-                  task={task}
-                />
-                <Deadline task={task} />
-                {task.toDoLists.lists.map((list, index) => (
-                  <ToDoList
-                    key={list._id}
+        {task && task.archived && <ArchivedHeader />}
+
+        <div style={{ padding: '25px 10px 20px 20px' }}>
+          {task && (
+            <>
+              {task.deleted && <Redirect to={`/project/${task.projectId}`} />}
+              <TaskHeader task={task} initialDescription={task.description} />
+              <div className={classes.innerContainer}>
+                <div style={{ width: '100%' }}>
+                  <Labels labels={task.labels} />
+                  <Users
+                    selectedUsers={task.users}
                     projectId={task.projectId}
                     taskId={task._id}
-                    index={index}
-                    list={list}
-                    userId={userId}
                   />
-                ))}
-                <Comments
-                  comments={task.comments}
-                  projectId={task.projectId}
-                  taskId={task._id}
-                />
+                  <TaskDescription
+                    userPermissions={userPermissions}
+                    task={task}
+                  />
+                  <Deadline task={task} />
+                  {task.toDoLists.lists.map((list, index) => (
+                    <ToDoList
+                      key={list._id}
+                      projectId={task.projectId}
+                      taskId={task._id}
+                      index={index}
+                      list={list}
+                      userId={userId}
+                    />
+                  ))}
+                  <Comments
+                    comments={task.comments}
+                    projectId={task.projectId}
+                    taskId={task._id}
+                  />
+                </div>
+                <SideContent task={task} />
               </div>
-              <SideContent task={task} />
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        <CloseIcon className={classes.closeIcon} onClick={closeHandle} />
+          <CloseIcon className={classes.closeIcon} onClick={closeHandle} />
+        </div>
       </div>
     </Modal>
   );

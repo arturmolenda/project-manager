@@ -44,9 +44,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SideContent = React.memo(
   ({ task, task: { archived, _id: taskId } }) => {
-    const {
-      lists: { lists },
-    } = useSelector((state) => state.projectGetData);
+    const { lists } = useSelector((state) => state.projectGetData);
     const [currentListId, setCurrentListId] = useState(false);
     const [listIndex, setListIndex] = useState(false);
     const [taskIndex, setTaskIndex] = useState(false);
@@ -55,16 +53,21 @@ const SideContent = React.memo(
     useEffect(() => {
       if (!archived) {
         getTaskIndexes(
-          lists,
+          lists.lists,
           taskIndex,
           listIndex,
           taskId,
           (foundListIndex, foundTaskIndex) => {
             setListIndex(foundListIndex);
             setTaskIndex(foundTaskIndex);
-            setCurrentListId(lists[foundListIndex]._id);
+            setCurrentListId(lists.lists[foundListIndex]._id);
           }
         );
+      } else {
+        const archivedIndex = lists.archivedTasks.findIndex(
+          (task) => task._id === taskId
+        );
+        if (archivedIndex > -1) setTaskIndex(archivedIndex);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lists, archived, taskId]);
@@ -92,7 +95,7 @@ const SideContent = React.memo(
             taskIndex={taskIndex}
             listIndex={listIndex}
           />
-          <Archive task={task} />
+          <Archive task={task} taskIndex={taskIndex} listIndex={listIndex} />
         </div>
       </div>
     );
