@@ -114,7 +114,26 @@ export const socketTaskController = (io, socket) => {
     );
     const newLists = await populateLists(projectId);
     socket.to(projectId).emit('lists-update', { newLists });
-    await Task.updateOne({ _id: taskId }, { $set: { archived: true } });
+    const task = await Task.findOneAndUpdate(
+      { _id: taskId },
+      { $set: { archived: true } }
+    );
+
+    // Send notifications
+    task.usersWatching.forEach(async (userId) => {
+      if (!socket.user._id.equals(userId)) {
+        const notification = new Notification({
+          type: 'Task Archived',
+          project: projectId,
+          task: taskId,
+          seenDate: null,
+          sender: socket.user._id,
+          recipient: userId,
+        });
+        await notification.save();
+        io.to(String(userId)).emit('notifications-updated');
+      }
+    });
   });
 
   // @desc Delete archived task
@@ -145,9 +164,24 @@ export const socketTaskController = (io, socket) => {
           { _id: projectId },
           { $pull: { [`users.${i}.tasksAssigned`]: taskId } }
         );
-        io.to(String(user)).emit('notifications-updated');
       });
     }
+    // Send notifications
+    task.usersWatching.forEach(async (userId) => {
+      if (!socket.user._id.equals(userId)) {
+        const notification = new Notification({
+          type: 'Task Deleted',
+          description: task.title,
+          project: projectId,
+          task: taskId,
+          seenDate: null,
+          sender: socket.user._id,
+          recipient: userId,
+        });
+        await notification.save();
+        io.to(String(userId)).emit('notifications-updated');
+      }
+    });
   });
 
   // @desc Archive all tasks within single list
@@ -170,12 +204,33 @@ export const socketTaskController = (io, socket) => {
     await lists.save();
     const newLists = await populateLists(projectId);
     socket.to(projectId).emit('lists-update', { newLists });
+
+    // Send notifications
+    tasks.forEach(async (task) => {
+      const foundTask = await Task.findById(task);
+      if (foundTask) {
+        foundTask.usersWatching.forEach(async (userId) => {
+          if (!socket.user._id.equals(userId)) {
+            const notification = new Notification({
+              type: 'Task Archived',
+              project: projectId,
+              task: foundTask._id,
+              seenDate: null,
+              sender: socket.user._id,
+              recipient: userId,
+            });
+            await notification.save();
+            io.to(String(userId)).emit('notifications-updated');
+          }
+        });
+      }
+    });
   });
 
   // @desc Transfer task to other list or within one list or from archive | available in archive or in task modal
   socket.on('task-transfer', async (data, callback) => {
     const { projectId, taskId, currentListId, newListId } = data;
-
+    let task;
     // if listIndex is undefined then function is called from archived tasks
     if (currentListId !== null) {
       let taskIndex;
@@ -203,7 +258,10 @@ export const socketTaskController = (io, socket) => {
           $push: { 'lists.$.tasks': taskId },
         }
       );
-      await Task.updateOne({ _id: taskId }, { $set: { archived: false } });
+      task = await Task.findOneAndUpdate(
+        { _id: taskId },
+        { $set: { archived: false } }
+      );
     }
     const newLists = await populateLists(projectId);
     if (callback) callback();
@@ -211,6 +269,24 @@ export const socketTaskController = (io, socket) => {
       newLists,
       restoredTaskId: !currentListId && taskId,
     });
+
+    if (!currentListId) {
+      // Send notifications
+      task.usersWatching.forEach(async (userId) => {
+        if (!socket.user._id.equals(userId)) {
+          const notification = new Notification({
+            type: 'Task Restored',
+            project: projectId,
+            task: taskId,
+            seenDate: null,
+            sender: socket.user._id,
+            recipient: userId,
+          });
+          await notification.save();
+          io.to(String(userId)).emit('notifications-updated');
+        }
+      });
+    }
   });
 
   // @desc Transfer all tasks within particular list to other list
@@ -249,6 +325,24 @@ export const socketTaskController = (io, socket) => {
       socket.to(projectId).emit('task-updated', { newLists, task });
     } else io.to(projectId).emit('task-updated', { newLists, task });
     if (callback) callback();
+
+    // Send notifications
+    task.usersWatching.forEach(async (userId) => {
+      if (!socket.user._id.equals(userId)) {
+        const type = `Task ${fieldName} Update`;
+        await Notification.deleteOne({ task: taskId, type, recipient: userId });
+        const notification = new Notification({
+          type,
+          project: projectId,
+          task: taskId,
+          seenDate: null,
+          sender: socket.user._id,
+          recipient: userId,
+        });
+        await notification.save();
+        io.to(String(userId)).emit('notifications-updated');
+      }
+    });
   });
 
   // @desc Update task's assigned users and send/delete notifications
@@ -406,6 +500,48 @@ export const socketTaskController = (io, socket) => {
 
     callback();
     io.to(projectId).emit('task-updated', { newLists, task });
+
+    // Send notifications
+    task.usersWatching.forEach(async (userId) => {
+      if (!socket.user._id.equals(userId)) {
+        const currentDate = new Date();
+        const existingNotification = await Notification.findOne({
+          type: 'New To-Do List',
+          task: taskId,
+          recipient: userId,
+          seenDate: null,
+        });
+        if (existingNotification) {
+          existingNotification.type = 'New To-Do Lists Added';
+          existingNotification.createdAt = currentDate;
+          existingNotification.updatedAt = currentDate;
+          await existingNotification.save();
+        } else {
+          const secondCheck = await Notification.findOne({
+            type: 'New To-Do Lists Added',
+            task: taskId,
+            recipient: userId,
+            seenDate: null,
+          });
+          if (secondCheck) {
+            secondCheck.createdAt = currentDate;
+            secondCheck.updatedAt = currentDate;
+            await secondCheck.save();
+          } else {
+            const notification = new Notification({
+              type: 'New To-Do List',
+              project: projectId,
+              task: taskId,
+              seenDate: null,
+              sender: socket.user._id,
+              recipient: userId,
+            });
+            await notification.save();
+          }
+        }
+        io.to(String(userId)).emit('notifications-updated');
+      }
+    });
   });
 
   // @desc Update to-do list's title
@@ -445,6 +581,48 @@ export const socketTaskController = (io, socket) => {
 
     io.to(projectId).emit('lists-update', { newLists });
     socket.to(projectId).emit('task-updated', { task });
+
+    // Send notifications
+    task.usersWatching.forEach(async (userId) => {
+      if (!socket.user._id.equals(userId)) {
+        const currentDate = new Date();
+        const existingNotification = await Notification.findOne({
+          type: 'To-Do List Deleted',
+          task: taskId,
+          recipient: userId,
+          seenDate: null,
+        });
+        if (existingNotification) {
+          existingNotification.type = 'To-Do Lists Deleted';
+          existingNotification.createdAt = currentDate;
+          existingNotification.updatedAt = currentDate;
+          await existingNotification.save();
+        } else {
+          const secondCheck = await Notification.findOne({
+            type: 'To-Do Lists Deleted',
+            task: taskId,
+            recipient: userId,
+            seenDate: null,
+          });
+          if (secondCheck) {
+            secondCheck.createdAt = currentDate;
+            secondCheck.updatedAt = currentDate;
+            await secondCheck.save();
+          } else {
+            const notification = new Notification({
+              type: 'To-Do List Deleted',
+              project: projectId,
+              task: taskId,
+              seenDate: null,
+              sender: socket.user._id,
+              recipient: userId,
+            });
+            await notification.save();
+          }
+        }
+        io.to(String(userId)).emit('notifications-updated');
+      }
+    });
   });
 
   // @desc Add To Do task
@@ -579,6 +757,48 @@ export const socketTaskController = (io, socket) => {
 
     io.to(projectId).emit('lists-update', { newLists });
     socket.to(projectId).emit('task-updated', { task });
+
+    // Send notifications
+    task.usersWatching.forEach(async (userId) => {
+      if (!socket.user._id.equals(userId)) {
+        const currentDate = new Date();
+        const existingNotification = await Notification.findOne({
+          type: 'New Comment',
+          task: taskId,
+          recipient: userId,
+          seenDate: null,
+        });
+        if (existingNotification) {
+          existingNotification.type = 'New Comments Added';
+          existingNotification.createdAt = currentDate;
+          existingNotification.updatedAt = currentDate;
+          await existingNotification.save();
+        } else {
+          const secondCheck = await Notification.findOne({
+            type: 'New Comments Added',
+            task: taskId,
+            recipient: userId,
+            seenDate: null,
+          });
+          if (secondCheck) {
+            secondCheck.createdAt = currentDate;
+            secondCheck.updatedAt = currentDate;
+            await secondCheck.save();
+          } else {
+            const notification = new Notification({
+              type: 'New Comment',
+              project: projectId,
+              task: taskId,
+              seenDate: null,
+              sender: socket.user._id,
+              recipient: userId,
+            });
+            await notification.save();
+          }
+        }
+        io.to(String(userId)).emit('notifications-updated');
+      }
+    });
   });
 
   // @desc Edit comment
@@ -621,6 +841,23 @@ export const socketTaskController = (io, socket) => {
 
     io.to(projectId).emit('lists-update', { newLists });
     socket.to(projectId).emit('task-updated', { task });
+
+    // Update Notifications
+    const notifications = await Notification.find({
+      type: 'New Comment',
+      task: taskId,
+      sender: socket.user._id,
+      seenDate: null,
+    });
+    await Notification.deleteMany({
+      type: 'New Comment',
+      task: taskId,
+      sender: socket.user._id,
+      seenDate: null,
+    });
+    notifications.forEach((x) =>
+      io.to(String(x.recipient)).emit('notifications-updated')
+    );
   });
 
   // @desc Copy task
