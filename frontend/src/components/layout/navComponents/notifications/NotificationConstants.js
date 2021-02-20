@@ -1,3 +1,15 @@
 export const ProjectInvitation = 'Project Invitation';
 export const TaskAssignment = 'Task Assignment';
 export const RemovedFromProject = 'Removed From Project';
+export const TaskArchived = 'Task Archived';
+export const TaskDeleted = 'Task Deleted';
+export const TaskRestored = 'Task Restored';
+export const NewToDoList = 'New To-Do List';
+export const NewToDoLists = 'New To-Do Lists Added';
+export const ToDoListDeleted = 'To-Do List Deleted';
+export const ToDoListsDeleted = 'To-Do Lists Deleted';
+export const NewComment = 'New Comment';
+export const NewComments = 'New Comments Added';
+export const TaskTitleUpdate = 'Task title Update';
+export const TaskDeadlineUpdate = 'Task deadline Update';
+export const TaskDescriptionUpdate = 'Task description Update';

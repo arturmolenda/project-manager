@@ -12,9 +12,21 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 
 import {
+  NewComment,
+  NewComments,
+  NewToDoList,
+  NewToDoLists,
   ProjectInvitation,
   RemovedFromProject,
+  TaskArchived,
   TaskAssignment,
+  TaskDeleted,
+  TaskRestored,
+  ToDoListDeleted,
+  ToDoListsDeleted,
+  TaskTitleUpdate,
+  TaskDeadlineUpdate,
+  TaskDescriptionUpdate,
 } from './NotificationConstants';
 
 import moment from 'moment';
@@ -100,6 +112,7 @@ const NotificationItem = ({
             <Typography
               variant='caption'
               className={classes.notificationCaption}
+              style={{ textTransform: 'capitalize' }}
             >
               {notification.type}
             </Typography>
@@ -126,6 +139,89 @@ const NotificationItem = ({
                     <strong>{notification.sender.username}</strong>
                     {notification.description.split(':')[0]}
                     <strong>{notification.description.split(':')[1]}</strong>
+                  </span>
+                )) ||
+                (notification.type === TaskArchived && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' archived task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === TaskDeleted && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' deleted task: '}
+                    <strong>{`"${notification.description}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === TaskRestored && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' restored task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === NewToDoList && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' added new to-do list to task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === NewToDoLists && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' added new to-do lists to task : '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === ToDoListDeleted && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' deleted to-do list from task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === ToDoListsDeleted && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' deleted to-do lists from task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === NewComment && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' commented on task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === NewComments && (
+                  <span>
+                    There are new comments on task:
+                    <strong>{` "${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === TaskTitleUpdate && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' updated title in task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === TaskDeadlineUpdate && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' updated deadline in task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
+                  </span>
+                )) ||
+                (notification.type === TaskDescriptionUpdate && (
+                  <span>
+                    <strong>{notification.sender.username}</strong>
+                    {' updated description in task: '}
+                    <strong>{`"${notification.task.title}"`}</strong>
                   </span>
                 ))}
             </Typography>

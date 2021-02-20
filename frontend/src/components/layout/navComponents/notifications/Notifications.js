@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { markNotificationsSeen } from '../../../../redux/actions/userActions';
@@ -12,6 +12,12 @@ const Notifications = () => {
   const { notifications } = useSelector((state) => state.userLogin);
   const [anchorEl, setAnchorEl] = useState();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (notifications.newNotificationsCount !== 0 && anchorEl) {
+      dispatch(markNotificationsSeen());
+    }
+  }, [dispatch, notifications, anchorEl]);
 
   const openNotificationsHandle = (e) => {
     setAnchorEl(e.currentTarget);

@@ -8,7 +8,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#90e0ff',
     backgroundImage:
       'repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.5) 35px, rgba(255,255,255,.5) 61px)',
-    minHeight: 30,
+    minHeight: 52,
     padding: '12px 12px 12px 19px',
     display: 'flex',
     '& svg': {

@@ -986,32 +986,53 @@ export const updateTaskWatch = (
     projectGetData: { lists },
   } = getState();
 
-  getTaskIndexes(
-    lists.lists,
-    taskIndex,
-    listIndex,
-    taskId,
-    (currentListIndex, currentTaskIndex) => {
-      const taskClone = deepcopy(task);
-      if (isWatching) {
-        const userIndex = taskClone.usersWatching.indexOf(userId);
-        if (userIndex > -1) {
-          taskClone.usersWatching.splice(userIndex, 1);
-          lists.lists[currentListIndex].tasks[
-            currentTaskIndex
-          ].usersWatching.splice(userIndex, 1);
+  const updateUsersWatching = (listIndex, taskIndex, lists, task) => {
+    if (isWatching) {
+      const userIndex = task.usersWatching.indexOf(userId);
+      if (userIndex > -1) {
+        task.usersWatching.splice(userIndex, 1);
+        if (listIndex) {
+          lists.lists[listIndex].tasks[taskIndex].usersWatching.splice(
+            userIndex,
+            1
+          );
+        } else {
+          lists.archivedTasks[taskIndex].usersWatching.splice(userIndex, 1);
         }
-      } else {
-        taskClone.usersWatching.push(userId);
-        lists.lists[currentListIndex].tasks[
-          currentTaskIndex
-        ].usersWatching.push(userId);
       }
-
-      dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: lists });
-      dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: taskClone });
+    } else {
+      task.usersWatching.push(userId);
+      if (listIndex) {
+        lists.lists[listIndex].tasks[taskIndex].usersWatching.push(userId);
+      } else {
+        lists.archivedTasks[taskIndex].usersWatching.push(userId);
+      }
     }
-  );
+
+    dispatch({ type: PROJECT_DATA_UPDATE_LISTS, payload: lists });
+    dispatch({ type: PROJECT_SET_TASK_SUCCESS, payload: task });
+  };
+
+  if (listIndex) {
+    getTaskIndexes(
+      lists.lists,
+      taskIndex,
+      listIndex,
+      taskId,
+      (currentListIndex, currentTaskIndex) => {
+        const taskClone = deepcopy(task);
+        updateUsersWatching(
+          currentListIndex,
+          currentTaskIndex,
+          lists,
+          taskClone
+        );
+      }
+    );
+  } else {
+    const taskClone = deepcopy(task);
+    updateUsersWatching(null, taskIndex, lists, taskClone);
+  }
 
   socket.emit('task-watch', {
     taskId,
