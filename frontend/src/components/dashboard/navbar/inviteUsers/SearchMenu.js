@@ -65,6 +65,7 @@ const SearchMenu = ({
   const { loading, users, error } = useSelector(
     (state) => state.projectFindUsers
   );
+  const { userInfo } = useSelector((state) => state.userLogin);
   const classes = useStyles();
   return (
     <Popper
@@ -103,7 +104,13 @@ const SearchMenu = ({
                       }
                     >
                       {user.profilePicture ? (
-                        <Avatar src={user.profilePicture} />
+                        <Avatar
+                          src={
+                            userInfo._id === user._id
+                              ? userInfo.profilePicture
+                              : user.profilePicture
+                          }
+                        />
                       ) : (
                         <Avatar>{user.username[0]}</Avatar>
                       )}

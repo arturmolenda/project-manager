@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+
 import { Tooltip, Avatar, makeStyles } from '@material-ui/core';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
@@ -43,7 +45,11 @@ const UserItem = ({
   zIndex,
   allUsersMenu,
 }) => {
+  const { userInfo } = useSelector((state) => state.userLogin);
   const classes = useStyles();
+  const userPicture =
+    userInfo._id === user._id ? userInfo.profilePicture : user.profilePicture;
+
   return (
     <>
       {permissions === 2 && (
@@ -61,7 +67,7 @@ const UserItem = ({
               />
               <Avatar
                 className={`${classes.avatar} ${classes.avatarBorderFix}`}
-                src={user.profilePicture}
+                src={userPicture}
               />
             </div>
           </Tooltip>
@@ -73,7 +79,7 @@ const UserItem = ({
             <div className={classes.innerContainer}>
               <Avatar
                 className={`${classes.avatar} ${classes.avatarBorderFix}`}
-                src={user.profilePicture}
+                src={userPicture}
               />
             </div>
           </Tooltip>
@@ -91,7 +97,7 @@ const UserItem = ({
               />
               <Avatar
                 className={`${classes.avatar} ${classes.avatarBorderFix}`}
-                src={user.profilePicture}
+                src={userPicture}
               />
             </div>
           </Tooltip>

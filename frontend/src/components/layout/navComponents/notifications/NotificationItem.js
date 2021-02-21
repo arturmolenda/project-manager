@@ -105,7 +105,7 @@ const NotificationItem = ({
           <Link to={`/profile/${notification.senderId}`}>
             <Avatar
               className={classes.avatar}
-              src={`http://localhost:5000/images/${notification.sender.profilePicture}`}
+              src={notification.sender.profilePicture}
             />
           </Link>
           <div className={classes.notificationMessage}>

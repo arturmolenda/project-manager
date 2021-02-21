@@ -39,6 +39,7 @@ const AddUsersMenu = ({
   const {
     project: { users: allUsers },
   } = useSelector((state) => state.projectGetData);
+  const { userInfo } = useSelector((state) => state.userLogin);
   const [users, setUsers] = useState();
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
@@ -139,7 +140,11 @@ const AddUsersMenu = ({
                   <UserItem
                     key={i}
                     selected={true}
-                    src={user.profilePicture}
+                    profilePicture={
+                      userInfo._id === user._id
+                        ? userInfo.profilePicture
+                        : user.profilePicture
+                    }
                     username={user.username}
                     clickHandle={() => unselectClick(i)}
                   />
@@ -149,7 +154,11 @@ const AddUsersMenu = ({
                   <UserItem
                     key={i}
                     selected={false}
-                    src={user.profilePicture}
+                    profilePicture={
+                      userInfo._id === user._id
+                        ? userInfo.profilePicture
+                        : user.profilePicture
+                    }
                     username={user.username}
                     clickHandle={() => selectClick(i)}
                   />
