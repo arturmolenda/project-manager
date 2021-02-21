@@ -13,6 +13,9 @@ import {
   USER_EMAIL_RESEND_SUCCESS,
   USER_EMAIL_RESEND_FAIL,
   USER_NOTIFICATIONS_UPDATE,
+  USER_PICTURE_UPDATE_REQUEST,
+  USER_PICTURE_UPDATE_SUCCESS,
+  USER_PICTURE_UPDATE_FAIL,
 } from '../constants/userConstants';
 import {
   SOCKET_CONNECT_RESET,
@@ -221,4 +224,40 @@ export const markNotificationsSeen = () => async (dispatch, getState) => {
   notifications.newNotificationsCount = 0;
   dispatch({ type: USER_NOTIFICATIONS_UPDATE, payload: notifications });
   await axios.put(`/api/users/markNotifications`, {}, config);
+};
+
+export const updateProfilePicture = (formData) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    dispatch({ type: USER_PICTURE_UPDATE_REQUEST });
+
+    const config = {
+      headers: {
+        'Content-type': 'multipart/form-data',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    const { data } = await axios.post(`/api/images/upload`, formData, config);
+    if (data.image) {
+      const newImg = new Image();
+      newImg.src = data.image;
+      newImg.onload = () => {
+        console.log('image loaded');
+        dispatch({ type: USER_PICTURE_UPDATE_SUCCESS, payload: data.image });
+      };
+    }
+  } catch (error) {
+    dispatch({
+      type: USER_PICTURE_UPDATE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
 };

@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AdminInnerMenu = ({
   user,
+  profilePicture,
   permissions,
   projectOwner,
   projectId,
@@ -91,7 +92,7 @@ const AdminInnerMenu = ({
         )}
         <div className={classes.userDetailsContainer}>
           <div className={classes.userContainer}>
-            <Avatar src={user.profilePicture} className={classes.menuAvatar} />
+            <Avatar src={profilePicture} className={classes.menuAvatar} />
             <div className={classes.userDetails}>
               <Typography className={classes.username} variant='subtitle1'>
                 {user.username}

@@ -10,6 +10,7 @@ import {
   userRegisterReducer,
   userEmailConfirmReducer,
   userEmailResendReducer,
+  userPictureUpdateReducer,
 } from './reducers/userReducers';
 import {
   projectCreateReducer,
@@ -27,6 +28,7 @@ const reducer = combineReducers({
   userRegister: userRegisterReducer,
   userEmailConfirm: userEmailConfirmReducer,
   userEmailResend: userEmailResendReducer,
+  userPictureUpdate: userPictureUpdateReducer,
   projectCreate: projectCreateReducer,
   projectSetCurrent: projectSetCurrentReducer,
   projectGetData: projectGetDataReducer,

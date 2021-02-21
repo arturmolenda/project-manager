@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CommentItem = ({
   comment,
+  profilePicture,
   openDeleteMenu,
   editCommentHandle,
   userId,
@@ -51,7 +52,7 @@ const CommentItem = ({
 
   return (
     <div className={classes.commentContainer}>
-      <Avatar className={classes.avatar} src={comment.user.profilePicture} />
+      <Avatar className={classes.avatar} src={profilePicture} />
       <div style={{ width: '100%' }}>
         <div>
           <Typography className={classes.username} variant='caption'>

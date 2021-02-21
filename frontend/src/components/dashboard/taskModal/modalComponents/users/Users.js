@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import { makeStyles, Tooltip, Typography, Avatar } from '@material-ui/core';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 
@@ -29,6 +31,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Users = ({ selectedUsers, projectId, taskId }) => {
+  const { userInfo } = useSelector((state) => state.userLogin);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   return (
@@ -48,7 +51,11 @@ const Users = ({ selectedUsers, projectId, taskId }) => {
                 <Avatar
                   className={classes.avatar}
                   alt={user.username}
-                  src={user.profilePicture}
+                  src={
+                    userInfo._id === user._id
+                      ? userInfo.profilePicture
+                      : user.profilePicture
+                  }
                 />
               </Tooltip>
             ))}

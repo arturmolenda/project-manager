@@ -89,6 +89,11 @@ const Comments = ({ comments, projectId, taskId }) => {
               key={comment._id}
               commentIndex={index}
               comment={comment}
+              profilePicture={
+                userInfo._id === comment.user._id
+                  ? userInfo.profilePicture
+                  : comment.user.profilePicture
+              }
               openDeleteMenu={openDeleteMenu}
               editCommentHandle={editCommentHandle}
               userId={userInfo._id}

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+
 import { makeStyles, Avatar } from '@material-ui/core';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 
@@ -20,11 +22,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 const TaskUsers = ({ users }) => {
+  const { userInfo } = useSelector((state) => state.userLogin);
   const classes = useStyles();
   return (
     <AvatarGroup max={4} className={classes.avatarsContainer}>
       {users.map((user) => (
-        <Avatar key={user._id} src={user.profilePicture} />
+        <Avatar
+          key={user._id}
+          src={
+            userInfo._id === user._id
+              ? userInfo.profilePicture
+              : user.profilePicture
+          }
+        />
       ))}
     </AvatarGroup>
   );

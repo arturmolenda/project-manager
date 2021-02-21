@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 
 const NormalInnerMenu = ({
   handleClose,
+  profilePicture,
   user,
   permissions,
   projectId,
@@ -96,7 +97,7 @@ const NormalInnerMenu = ({
         )}
 
         <div className={classes.userDetailsContainer}>
-          <Avatar src={user.profilePicture} className={classes.menuAvatar} />
+          <Avatar src={profilePicture} className={classes.menuAvatar} />
           <div className={classes.userDetails}>
             <Typography variant='subtitle1'>{user.username}</Typography>
             <Typography variant='caption'>{user.email}</Typography>

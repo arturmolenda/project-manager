@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+import { useSelector } from 'react-redux';
+
 import { Menu } from '@material-ui/core';
-import { useEffect } from 'react';
-import { useState } from 'react';
 import AdminInnerMenu from './innerMenus/AdminInnerMenu';
 import UsersGroupInnerMenu from './innerMenus/UsersGroupInnerMenu';
 import NormalInnerMenu from './innerMenus/NormalInnerMenu';
@@ -14,6 +15,7 @@ const GroupMenu = ({
   projectId,
   creatorId,
 }) => {
+  const { userInfo } = useSelector((state) => state.userLogin);
   const [administrators, setAdministrators] = useState([]);
   const [normalUsers, setNormalUsers] = useState([]);
   const [invitedUsers, setInvitedUsers] = useState([]);
@@ -59,6 +61,11 @@ const GroupMenu = ({
         {user ? (
           userPermissions === 2 ? (
             <AdminInnerMenu
+              profilePicture={
+                userInfo._id === user.user._id
+                  ? userInfo.profilePicture
+                  : user.user.profilePicture
+              }
               user={user.user}
               permissions={user.permissions}
               projectOwner={user.user._id === creatorId}
@@ -68,6 +75,11 @@ const GroupMenu = ({
             />
           ) : (
             <NormalInnerMenu
+              profilePicture={
+                userInfo._id === user.user._id
+                  ? userInfo.profilePicture
+                  : user.user.profilePicture
+              }
               user={user.user}
               permissions={user.permissions}
               projectId={projectId}
