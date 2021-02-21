@@ -1,14 +1,13 @@
-import React from 'react';
-
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import Avatar from '@material-ui/core/Avatar';
+import React, { useState } from 'react';
 
 import { useSelector } from 'react-redux';
-import Notifications from './notifications/Notifications';
 
-const useStyles = makeStyles((theme) => ({
+import { makeStyles, Typography, MenuItem, Avatar } from '@material-ui/core';
+
+import Notifications from './notifications/Notifications';
+import UserModal from './UserModal';
+
+const useStyles = makeStyles(() => ({
   userNav: {
     display: 'flex',
     margin: '10px 0',
@@ -22,8 +21,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UserNav = ({ navExpanded, mobile }) => {
-  const classes = useStyles();
   const { userInfo } = useSelector((state) => state.userLogin);
+  const [open, setOpen] = useState(false);
+  const classes = useStyles();
+
   return (
     <>
       {userInfo && (
@@ -35,7 +36,7 @@ const UserNav = ({ navExpanded, mobile }) => {
           }}
         >
           {navExpanded && (
-            <MenuItem style={{ paddingLeft: 5 }}>
+            <MenuItem style={{ paddingLeft: 5 }} onClick={() => setOpen(true)}>
               <Avatar
                 style={{ marginRight: 10 }}
                 alt={userInfo.username}
@@ -49,6 +50,11 @@ const UserNav = ({ navExpanded, mobile }) => {
           <Notifications />
         </div>
       )}
+      <UserModal
+        open={open}
+        closeHandle={() => setOpen(false)}
+        user={userInfo}
+      />
     </>
   );
 };
