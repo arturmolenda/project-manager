@@ -2,6 +2,7 @@ import Project from '../models/project.js';
 import Notification from '../models/notification.js';
 import User from '../models/user.js';
 import Task from '../models/task.js';
+import Message from '../models/message.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
 import { populateLists, taskPopulation } from '../utils/utilFunctions.js';
@@ -253,5 +254,30 @@ export const socketProjectController = (io, socket) => {
       }
       io.to(userId).emit('notifications-updated');
     }
+  });
+
+  // @desc Send message in group chat
+  socket.on('send-message', async (data, callback) => {
+    const { projectId, message, profilePicture, username } = data;
+    const messageId = new mongoose.Types.ObjectId();
+    io.to(projectId).emit('new-message', {
+      _id: messageId,
+      message,
+      user: {
+        _id: socket.user._id,
+        username,
+        profilePicture,
+      },
+      projectId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    callback();
+    await Message.create({
+      _id: messageId,
+      message,
+      user: socket.user._id,
+      projectId,
+    });
   });
 };
