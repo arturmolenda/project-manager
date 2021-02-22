@@ -3,6 +3,7 @@ import List from '../models/list.js';
 import Label from '../models/label.js';
 import Task from '../models/task.js';
 import User from '../models/user.js';
+import Message from '../models/message.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import initialLabels from '../utils/labelsData.js';
@@ -89,6 +90,10 @@ const getProjectData = asyncHandler(async (req, res) => {
   });
   const labels = await Label.findOne({ projectId });
   const lists = await populateLists(projectId);
+  const messages = await Message.find({ projectId }).populate({
+    path: 'user',
+    select: 'username profilePicture',
+  });
 
   const userPermissions = project.users.find((user) =>
     req.user._id.equals(user.user._id)
@@ -98,6 +103,7 @@ const getProjectData = asyncHandler(async (req, res) => {
     project: { ...project._doc, permissions: userPermissions.permissions },
     labels,
     lists,
+    messages,
   });
 });
 
