@@ -8,6 +8,7 @@ import NavTitle from './NavTitle';
 import ArchivedTasks from './archivedTasks/ArchivedTasks';
 import InviteUsers from './inviteUsers/InviteUsers';
 import Users from './users/Users';
+import Chat from './groupChat/Chat';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -57,6 +58,7 @@ const Navbar = () => {
         </div>
 
         <div className={classes.navIcons}>
+          <Chat />
           <ArchivedTasks />
         </div>
       </div>
