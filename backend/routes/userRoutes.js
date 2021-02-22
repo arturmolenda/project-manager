@@ -9,6 +9,7 @@ import {
   markNotifications,
   getNotifications,
   discardNotification,
+  updateProjectColorTheme,
 } from '../controllers/userController.js';
 import { protect, permissionsOne } from '../middleware/authMiddleware.js';
 const router = express.Router();
@@ -19,6 +20,7 @@ router.post('/confirm', confirmEmail);
 router.post('/resend', resendEmail);
 router.post('/find/:projectId', protect, permissionsOne, findUsers);
 router.put('/markNotifications', protect, markNotifications);
+router.put('/projectColorTheme', protect, updateProjectColorTheme);
 router.get('/notifications', protect, getNotifications);
 router.get('/', protect, getUserData);
 router.delete('/:notificationId', protect, discardNotification);
