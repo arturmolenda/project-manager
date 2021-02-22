@@ -12,6 +12,7 @@ import {
   PROJECT_FIND_USERS_REQUEST,
   PROJECT_FIND_USERS_SUCCESS,
   PROJECT_SET_CURRENT,
+  PROJECT_SET_MESSAGES,
   PROJECT_SET_TASK_FAIL,
   PROJECT_SET_TASK_REQUEST,
   PROJECT_SET_TASK_SUCCESS,
@@ -93,9 +94,15 @@ export const getProjectData = (projectId, prevProjectId) => async (
     if (prevProjectId) socket.emit('disconnect-board', { room: prevProjectId });
     socket.emit('join-board', { room: projectId });
 
-    const { data } = await axios.get(`/api/projects/${projectId}`, config);
+    const {
+      data: { project, labels, lists, messages },
+    } = await axios.get(`/api/projects/${projectId}`, config);
 
-    dispatch({ type: PROJECT_DATA_SUCCESS, payload: data });
+    dispatch({
+      type: PROJECT_DATA_SUCCESS,
+      payload: { project, labels, lists },
+    });
+    dispatch({ type: PROJECT_SET_MESSAGES, payload: messages });
   } catch (error) {
     dispatch({
       type: PROJECT_DATA_FAIL,
@@ -1038,4 +1045,27 @@ export const updateTaskWatch = (
     taskId,
     isWatching,
   });
+};
+
+export const sendMessage = (message, callback) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+    projectGetData: {
+      project: { _id: projectId },
+    },
+    userLogin: {
+      userInfo: { username, profilePicture },
+    },
+  } = getState();
+  console.log('here');
+  socket.emit(
+    'send-message',
+    {
+      projectId,
+      message,
+      username,
+      profilePicture,
+    },
+    callback
+  );
 };

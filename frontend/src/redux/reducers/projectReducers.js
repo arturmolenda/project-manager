@@ -30,6 +30,8 @@ import {
   PROJECT_SET_TASK_RESET,
   PROJECT_DATA_UPDATE_LABELS,
   PROJECT_TODO_VISIBILITY_UPDATE,
+  PROJECT_SET_MESSAGES,
+  PROJECT_UPDATE_MESSAGES,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -218,6 +220,17 @@ export const projectToDoVisibilityReducer = (
     case PROJECT_TODO_VISIBILITY_UPDATE: {
       return { listIds: action.payload };
     }
+    default:
+      return state;
+  }
+};
+
+export const projectMessagesReducer = (state = { messages: [] }, action) => {
+  switch (action.type) {
+    case PROJECT_SET_MESSAGES:
+      return { messages: action.payload };
+    case PROJECT_UPDATE_MESSAGES:
+      return { messages: [...state.messages, action.payload] };
     default:
       return state;
   }

@@ -16,6 +16,7 @@ import {
   USER_PICTURE_UPDATE_REQUEST,
   USER_PICTURE_UPDATE_SUCCESS,
   USER_PICTURE_UPDATE_FAIL,
+  USER_DATA_UPDATE,
 } from '../constants/userConstants';
 import {
   SOCKET_CONNECT_RESET,
@@ -260,4 +261,27 @@ export const updateProfilePicture = (formData) => async (
           : error.message,
     });
   }
+};
+
+export const updateColorTheme = (color, projectId) => (dispatch, getState) => {
+  const {
+    userLogin: { userInfo },
+  } = getState();
+
+  if (userInfo.projectsThemes[projectId]) {
+    userInfo.projectsThemes[projectId].mainColor = color;
+  } else
+    userInfo.projectsThemes = {
+      ...userInfo.projectsThemes,
+      [projectId]: { mainColor: color },
+    };
+  dispatch({ type: USER_DATA_UPDATE, payload: userInfo });
+
+  const config = {
+    headers: {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
+  axios.put('/api/users/projectColorTheme', { projectId, color }, config);
 };

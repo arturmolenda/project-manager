@@ -64,6 +64,7 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       password,
       emailCode: emailSecretCode,
+      projectsThemes: {},
     });
     await EmailSecret.create({
       email,
@@ -299,6 +300,19 @@ const markNotifications = asyncHandler(async (req, res) => {
   res.status(200);
 });
 
+// @desc    Update user's project color theme
+// @route   PUT /api/users/projectColorTheme
+// @access  Private
+const updateProjectColorTheme = asyncHandler(async (req, res) => {
+  const { projectId, color } = req.body;
+  const user = await User.findById(req.user._id);
+  if (user.projectsThemes[projectId]) {
+    user.projectsThemes[projectId].mainColor = color;
+  } else user.projectsThemes[projectId] = { mainColor: color };
+  await user.updateOne(user);
+  res.status(200);
+});
+
 export {
   authUser,
   registerUser,
@@ -309,4 +323,5 @@ export {
   markNotifications,
   getNotifications,
   discardNotification,
+  updateProjectColorTheme,
 };

@@ -11,6 +11,7 @@ import {
   PROJECT_DATA_UPDATE_LABELS,
   PROJECT_DATA_UPDATE_LISTS,
   PROJECT_DATA_USERS_UPDATE,
+  PROJECT_UPDATE_MESSAGES,
   PROJECT_SET_TASK_SUCCESS,
 } from '../../redux/constants/projectConstants';
 
@@ -109,6 +110,9 @@ const Board = () => {
           payload: { ...task, deleted: true },
         });
     });
+    socket.on('new-message', (data) => {
+      dispatch({ type: PROJECT_UPDATE_MESSAGES, payload: data });
+    });
     return () => {
       socket.off('new-task');
       socket.off('lists-update');
@@ -122,6 +126,7 @@ const Board = () => {
       socket.off('tasks-updated');
       socket.off('labels-updated');
       socket.off('task-deleted');
+      socket.off('new-comment');
     };
   }, [dispatch, socket, task]);
 

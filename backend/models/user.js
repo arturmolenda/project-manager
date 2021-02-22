@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema(
     password: { type: String, required: true, minlength: 6 },
     emailConfirmed: { type: Boolean, required: true, default: false },
     emailCode: { type: mongoose.Types.ObjectId, required: true },
+    projectsThemes: { type: Object, required: false },
     projectsJoined: [
       { type: mongoose.Types.ObjectId, required: false, ref: 'Project' },
     ],
