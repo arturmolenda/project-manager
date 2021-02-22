@@ -20,6 +20,7 @@ import {
   projectFindUsersReducer,
   projectSetTaskReducer,
   projectToDoVisibilityReducer,
+  projectMessagesReducer,
 } from './reducers/projectReducers';
 import { socketConnectionReducer } from './reducers/socketReducers';
 
@@ -36,6 +37,7 @@ const reducer = combineReducers({
   projectFindUsers: projectFindUsersReducer,
   projectSetTask: projectSetTaskReducer,
   projectToDoVisibility: projectToDoVisibilityReducer,
+  projectMessages: projectMessagesReducer,
   socketConnection: socketConnectionReducer,
 });
 
