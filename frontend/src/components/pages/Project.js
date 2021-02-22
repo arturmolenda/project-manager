@@ -9,6 +9,8 @@ import {
   PROJECT_SET_TASK_RESET,
 } from '../../redux/constants/projectConstants';
 
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+
 import Board from '../dashboard/Board';
 import Loader from '../Loader';
 import TaskModal from '../dashboard/taskModal/TaskModal';
@@ -28,6 +30,20 @@ const Project = () => {
   const { task } = useSelector((state) => state.projectSetTask);
   const { id, taskId } = useParams();
   const history = useHistory();
+
+  const mainColor =
+    (userInfo.projectsThemes[id] && userInfo.projectsThemes[id].mainColor) ||
+    '#00bcd4';
+  const theme = createMuiTheme({
+    palette: {
+      primary: {
+        main: mainColor,
+      },
+      secondary: {
+        main: '#ff3d00',
+      },
+    },
+  });
 
   // Set currentProject on initial mount
   useEffect(() => {
@@ -104,7 +120,7 @@ const Project = () => {
   }, [dispatch, id, taskId, task]);
 
   return (
-    <>
+    <MuiThemeProvider theme={theme}>
       <div
         id='project-background'
         ref={backgroundRef}
@@ -134,7 +150,7 @@ const Project = () => {
           </>
         )
       )}
-    </>
+    </MuiThemeProvider>
   );
 };
 
