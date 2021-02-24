@@ -45,7 +45,7 @@ const UsersGroup = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-  console.log(users);
+
   return (
     <>
       <div className={classes.avatarGroup}>

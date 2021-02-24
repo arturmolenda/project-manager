@@ -56,6 +56,7 @@ export const createProject = (title, callback) => async (
 
     const userInfoClone = Object.assign({}, userInfo);
     userInfoClone.projectsCreated.push(data.project);
+    userInfoClone.projectsThemes[data.project._id] = { background };
     // Update user's projects and set current project
     dispatch({ type: USER_DATA_UPDATE, payload: userInfoClone });
     dispatch({ type: PROJECT_SET_CURRENT, payload: data.project });
@@ -1057,7 +1058,7 @@ export const sendMessage = (message, callback) => (dispatch, getState) => {
       userInfo: { username, profilePicture },
     },
   } = getState();
-  console.log('here');
+
   socket.emit(
     'send-message',
     {

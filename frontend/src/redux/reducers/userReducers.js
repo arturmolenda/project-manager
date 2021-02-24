@@ -19,6 +19,9 @@ import {
   USER_PICTURE_UPDATE_REQUEST,
   USER_PICTURE_UPDATE_SUCCESS,
   USER_PICTURE_UPDATE_FAIL,
+  USER_PROJECT_BG_UPDATE_REQUEST,
+  USER_PROJECT_BG_UPDATE_SUCCESS,
+  USER_PROJECT_BG_UPDATE_FAIL,
 } from '../constants/userConstants';
 import deepcopy from 'deepcopy';
 
@@ -126,6 +129,19 @@ export const userPictureUpdateReducer = (state = {}, action) => {
     case USER_PICTURE_UPDATE_SUCCESS:
       return { loading: false, success: true };
     case USER_PICTURE_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const userProjectBgUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_PROJECT_BG_UPDATE_REQUEST:
+      return { loading: true };
+    case USER_PROJECT_BG_UPDATE_SUCCESS:
+      return { loading: false, success: true };
+    case USER_PROJECT_BG_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     default:
       return state;

@@ -43,18 +43,22 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage });
 
+// @desc    function to delete image
+export const deleteImage = async (filename) => {
+  const image = await gfs.find({ filename: filename }).toArray();
+  if (image.length > 0) await gfs.delete(image[0]._id);
+};
+
+// @desc    Upload user profile image
+// @route   POST /api/images/upload
+// @access  Private
 router.post(
   '/upload',
   protect,
   upload.single('img'),
   async (req, res, next) => {
     try {
-      // If user changes image more than once delete previous picture
-      const userImage = await gfs
-        .find({ filename: req.file.filename })
-        .toArray();
-
-      if (userImage.length > 1) await gfs.delete(userImage[0]._id);
+      await deleteImage(req.file.filename);
 
       const profilePicture = `${process.env.SERVER_URL}/api/images/${req.file.filename}`;
       await User.updateOne({ _id: req.user.id }, { $set: { profilePicture } });
@@ -68,6 +72,37 @@ router.post(
   }
 );
 
+// @desc    Upload background image for project
+// @route   POST /api/images/upload/projectBgUpload/:projectId
+// @access  Private
+router.post(
+  '/upload/projectBgUpload/:projectId',
+  protect,
+  upload.single('img'),
+  async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      const projectBg = user.projectsThemes[req.params.projectId].background;
+      // if first letter is equal to "l" then it's not a image but linear bg color
+      if (projectBg && !projectBg.startsWith('linear')) {
+        const prevBgId = projectBg.split('images/')[1];
+        await deleteImage(prevBgId);
+      }
+      const newImageLink = `${process.env.SERVER_URL}/api/images/${req.file.filename}`;
+      user.projectsThemes[req.params.projectId].background = newImageLink;
+      await user.updateOne(user);
+      res.status(201).send({
+        image: newImageLink,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+// @desc    Get image
+// @route   GET /api/images/:filename
+// @access  Public
 router.get('/:filename', async (req, res) => {
   await gfs.find({ filename: req.params.filename }).toArray((err, files) => {
     if (!files || files.length === 0) {

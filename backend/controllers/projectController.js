@@ -18,9 +18,6 @@ const createProject = asyncHandler(async (req, res) => {
     title,
     creatorId: req.user._id,
     joinId: new mongoose.Types.ObjectId(),
-    background: {
-      color: background,
-    },
     users: [
       {
         user: req.user._id,
@@ -69,10 +66,17 @@ const createProject = asyncHandler(async (req, res) => {
     labelIds: labelIds,
     projectId: createdProject._id,
   });
-
   await User.findOneAndUpdate(
     { _id: req.user._id },
-    { $push: { projectsCreated: createdProject._id } }
+    {
+      $push: { projectsCreated: createdProject._id },
+      $set: {
+        [`projectsThemes.${createdProject._id}`]: {
+          background,
+          mainColor: '#00bcd4',
+        },
+      },
+    }
   );
   await createdProject.save();
   await createdLists.save();

@@ -51,10 +51,7 @@ const Confirm = () => {
   } = useSelector((state) => state.userEmailResend);
   const { userInfo } = useSelector((state) => state.userLogin);
 
-  useEffect(() => {
-    console.log(id);
-    if (id) dispatch(confirmEmail(id));
-  }, [dispatch, id]);
+  useEffect(() => id && dispatch(confirmEmail(id)), [dispatch, id]);
 
   return (
     <div className={classes.container}>
