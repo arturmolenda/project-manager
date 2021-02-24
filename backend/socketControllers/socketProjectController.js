@@ -6,6 +6,7 @@ import Message from '../models/message.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
 import { populateLists, taskPopulation } from '../utils/utilFunctions.js';
+import { deleteImage } from '../images.js';
 
 export const socketProjectController = (io, socket) => {
   // @desc Update project title
@@ -85,7 +86,7 @@ export const socketProjectController = (io, socket) => {
 
   // @desc Adds user to project by invitation either by notification or by join link
   socket.on('project-join', async (data, callback) => {
-    const { projectId, joinId } = data;
+    const { projectId, joinId, background } = data;
     let joinSuccess = false;
     const project = await Project.findById(projectId);
     const user = await User.findById(socket.user.id);
@@ -121,8 +122,9 @@ export const socketProjectController = (io, socket) => {
     }
     if (joinSuccess) {
       user.projectsJoined.push(projectId);
+      user.projectsThemes[projectId] = { mainColor: '#00bcd4', background };
       await project.save();
-      await user.save();
+      await user.updateOne(user);
       const updatedUser = await User.findOne({ _id: user._id })
         .select('-password')
         .populate('projectsCreated')
@@ -234,10 +236,18 @@ export const socketProjectController = (io, socket) => {
       }
       projectData.users.splice(userIndex, 1);
       io.to(projectId).emit('project-users-updated', projectData.users);
-      await User.updateOne(
+      const user = await User.findOneAndUpdate(
         { _id: userId },
-        { $pull: { projectsJoined: projectId } }
+        {
+          $pull: { projectsJoined: projectId },
+          $unset: { [`projectsThemes.${projectId}`]: '' },
+        }
       );
+
+      // if user did set project background then delete it from db
+      const background = user.projectsThemes[projectId].background;
+      if (!background.startsWith('linear'))
+        await deleteImage(background.split('images/')[1]);
 
       // remove all notifications regarding this project and send notification about removal
       await Notification.deleteMany({ recipient: userId, project: projectId });
