@@ -333,3 +333,35 @@ export const uploadProjectBgImage = (formData, projectId) => async (
     });
   }
 };
+
+export const updateProjectBgColor = (background, projectId) => (
+  dispatch,
+  getState
+) => {
+  const {
+    userLogin: { userInfo },
+  } = getState();
+  document.getElementById(
+    'project-background'
+  ).style.backgroundImage = background;
+  if (userInfo.projectsThemes[projectId]) {
+    userInfo.projectsThemes[projectId].background = background;
+  } else
+    userInfo.projectsThemes = {
+      ...userInfo.projectsThemes,
+      [projectId]: { background: background },
+    };
+  dispatch({ type: USER_DATA_UPDATE, payload: userInfo });
+
+  const config = {
+    headers: {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
+  axios.put(
+    '/api/users/projectBgColorTheme',
+    { projectId, background },
+    config
+  );
+};
