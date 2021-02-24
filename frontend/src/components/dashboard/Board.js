@@ -59,7 +59,6 @@ const Board = () => {
       }
     });
     socket.on('list-added', (data) => {
-      console.log(data);
       dispatch({ type: PROJECT_DATA_ADD_LIST, payload: data });
     });
     socket.on('list-title-updated', (data) => {
@@ -126,7 +125,7 @@ const Board = () => {
       socket.off('tasks-updated');
       socket.off('labels-updated');
       socket.off('task-deleted');
-      socket.off('new-comment');
+      socket.off('new-message');
     };
   }, [dispatch, socket, task]);
 

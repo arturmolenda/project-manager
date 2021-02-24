@@ -9,6 +9,7 @@ const UserMenu = ({
   anchorEl,
   handleClose,
   userPermissions,
+  profilePicture,
   user,
   permissions,
   projectOwner,
@@ -31,6 +32,7 @@ const UserMenu = ({
     {userPermissions === 2 && (
       <AdminInnerMenu
         user={user}
+        profilePicture={profilePicture}
         permissions={permissions}
         projectOwner={projectOwner}
         projectId={projectId}
@@ -41,6 +43,7 @@ const UserMenu = ({
       <NormalInnerMenu
         handleClose={handleClose}
         user={user}
+        profilePicture={profilePicture}
         permissions={permissions}
         projectId={projectId}
       />

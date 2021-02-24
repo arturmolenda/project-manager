@@ -71,6 +71,11 @@ const Users = () => {
           userPermissions={userPermissions}
           anchorEl={anchorEl}
           handleClose={handleClose}
+          profilePicture={
+            userInfo._id === user.user._id
+              ? userInfo.profilePicture
+              : user.user.profilePicture
+          }
           user={user.user}
           permissions={user.permissions}
           projectOwner={user.user._id === creatorId}
