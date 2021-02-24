@@ -305,11 +305,22 @@ const markNotifications = asyncHandler(async (req, res) => {
 // @access  Private
 const updateProjectColorTheme = asyncHandler(async (req, res) => {
   const { projectId, color } = req.body;
-  const user = await User.findById(req.user._id);
-  if (user.projectsThemes[projectId]) {
-    user.projectsThemes[projectId].mainColor = color;
-  } else user.projectsThemes[projectId] = { mainColor: color };
-  await user.updateOne(user);
+  await User.updateOne(
+    { _id: req.user._id },
+    { $set: { [`projectsThemes.${projectId}.mainColor`]: color } }
+  );
+  res.status(200);
+});
+
+// @desc    Update user's project background color
+// @route   PUT /api/users/projectBgColorTheme
+// @access  Private
+const updateProjectBackgroundColor = asyncHandler(async (req, res) => {
+  const { projectId, background } = req.body;
+  await User.updateOne(
+    { _id: req.user._id },
+    { $set: { [`projectsThemes.${projectId}.background`]: background } }
+  );
   res.status(200);
 });
 
@@ -324,4 +335,5 @@ export {
   getNotifications,
   discardNotification,
   updateProjectColorTheme,
+  updateProjectBackgroundColor,
 };
