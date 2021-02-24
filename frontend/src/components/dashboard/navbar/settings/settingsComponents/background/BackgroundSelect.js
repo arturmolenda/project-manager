@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadProjectBgImage } from '../../../../../../redux/actions/userActions';
+import {
+  updateProjectBgColor,
+  uploadProjectBgImage,
+} from '../../../../../../redux/actions/userActions';
 
 import { Typography, makeStyles, Button } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -104,9 +107,7 @@ const BackgroundSelect = ({ backgroundTheme, open, projectId }) => {
 
   const saveHandle = () => {
     if (background && !formData) {
-      document.getElementById(
-        'project-background'
-      ).style.backgroundImage = background;
+      dispatch(updateProjectBgColor(background, projectId));
     } else {
       dispatch(uploadProjectBgImage(formData, projectId));
     }
