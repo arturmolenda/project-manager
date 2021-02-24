@@ -24,8 +24,9 @@ const useStyles = makeStyles(() => ({
 const Boards = () => {
   const classes = useStyles();
   const {
-    userInfo: { projectsJoined, projectsCreated },
+    userInfo: { projectsJoined, projectsCreated, projectsThemes },
   } = useSelector((state) => state.userLogin);
+
   return (
     <Container style={{ marginTop: '8vh' }}>
       <Grid container spacing={1}>
@@ -36,8 +37,14 @@ const Boards = () => {
           </div>
         </Grid>
         {projectsCreated &&
-          projectsCreated.map((project, index) => {
-            return <BoardItem key={index} project={project} index={index} />;
+          projectsCreated.map((project) => {
+            return (
+              <BoardItem
+                key={project._id}
+                project={project}
+                projectsThemes={projectsThemes}
+              />
+            );
           })}
         <NewProjectBoard />
 
@@ -49,8 +56,14 @@ const Boards = () => {
                 <Typography variant='h6'>Joined Projects</Typography>
               </div>
             </Grid>
-            {projectsJoined.map((project, index) => {
-              return <BoardItem key={index} project={project} index={index} />;
+            {projectsJoined.map((project) => {
+              return (
+                <BoardItem
+                  key={project._id}
+                  project={project}
+                  projectsThemes={projectsThemes}
+                />
+              );
             })}
           </>
         )}

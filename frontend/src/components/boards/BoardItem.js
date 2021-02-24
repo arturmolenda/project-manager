@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { makeStyles, Typography, Grid } from '@material-ui/core';
@@ -52,64 +52,62 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const BoardItem = ({ project }) => {
+const BoardItem = ({ project, projectsThemes }) => {
   const classes = useStyles();
 
-  const { color, size, position, repeat, image } = project.background;
+  const background = projectsThemes[project._id].background;
+  const color = background.startsWith('linear') && background;
   let imgLoaded;
-  if (!color && image) {
-    imgLoaded = LazyImage(image);
+  if (!color && background) {
+    imgLoaded = LazyImage(background);
   }
 
   return (
-    <Fragment>
-      <Grid item lg={3} md={4} sm={6} xs={6}>
-        <Link to={`/project/${project._id}`} className={classes.link}>
+    <Grid item lg={3} md={4} sm={6} xs={6}>
+      <Link to={`/project/${project._id}`} className={classes.link}>
+        <div
+          className={classes.container}
+          style={{
+            backgroundImage: color && color,
+          }}
+        >
+          {!color && background && (
+            <>
+              {imgLoaded ? (
+                <div
+                  style={{
+                    backgroundImage: `url(${imgLoaded})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    height: '100%',
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                />
+              ) : (
+                <Skeleton variant='rect' className={classes.skeleton} />
+              )}
+            </>
+          )}
+          <Typography variant='subtitle2' className={classes.text}>
+            {project.title.length < 90
+              ? project.title
+              : `${project.title.substring(0, 90)}...`}
+          </Typography>
           <div
-            className={classes.container}
+            className={`${classes.textContrastKeeper} contrast-div`}
             style={{
-              backgroundImage: color && color,
+              backgroundColor:
+                !color && background
+                  ? imgLoaded
+                    ? 'rgba(0, 0, 0, 0.2)'
+                    : 'initial'
+                  : 'rgba(0, 0, 0, 0.2)',
             }}
-          >
-            {!color && image && (
-              <Fragment>
-                {imgLoaded ? (
-                  <div
-                    style={{
-                      backgroundImage: `url(${imgLoaded})`,
-                      backgroundSize: size,
-                      backgroundPosition: position,
-                      backgroundRepeat: repeat,
-                      height: '100%',
-                      width: '100%',
-                      borderRadius: 5,
-                    }}
-                  />
-                ) : (
-                  <Skeleton variant='rect' className={classes.skeleton} />
-                )}
-              </Fragment>
-            )}
-            <Typography variant='subtitle2' className={classes.text}>
-              {project.title.length < 90
-                ? project.title
-                : `${project.title.substring(0, 90)}...`}
-            </Typography>
-            <div
-              className={`${classes.textContrastKeeper} contrast-div`}
-              style={{
-                backgroundColor:
-                  !color && image
-                    ? imgLoaded
-                      ? 'rgba(0, 0, 0, 0.2)'
-                      : 'initial'
-                    : 'rgba(0, 0, 0, 0.2)',
-              }}
-            />
-          </div>
-        </Link>
-      </Grid>
-    </Fragment>
+          />
+        </div>
+      </Link>
+    </Grid>
   );
 };
 

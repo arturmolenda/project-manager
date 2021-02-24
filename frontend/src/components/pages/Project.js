@@ -18,7 +18,7 @@ import TaskModal from '../dashboard/taskModal/TaskModal';
 const isObjectId = /^[0-9a-fA-F]{24}$/;
 
 const Project = () => {
-  const [projectLoading, setProjectLoading] = useState(false);
+  const [projectLoading, setProjectLoading] = useState(true);
   const [background, setBackground] = useState(false);
   const backgroundRef = useRef();
   const dispatch = useDispatch();
@@ -92,26 +92,22 @@ const Project = () => {
 
   // Set main loading and check if project bg is a image
   useEffect(() => {
-    if (project && id && project._id === id) {
-      if (project.background.image) {
+    if (project && project._id === id) {
+      const projectBackground = userInfo.projectsThemes[id].background;
+      if (projectBackground && projectBackground.startsWith('linear')) {
+        setBackground(projectBackground);
+        setProjectLoading(false);
+      } else if (projectBackground && !projectBackground.startsWith('linear')) {
         const imageLoader = new Image();
-        imageLoader.src = project.background.image;
+        imageLoader.src = projectBackground;
         imageLoader.onload = () => {
           setProjectLoading(false);
-          setBackground(`url(${project.background.image})`);
-          backgroundRef.current.style.backgroundSize = project.background.size;
-          backgroundRef.current.style.backgroundPosition =
-            project.background.position;
-          backgroundRef.current.style.backgroundRepeat =
-            project.background.repeat;
+          setBackground(`url(${projectBackground})`);
         };
         imageLoader.onerror = () => setProjectLoading(false);
-      } else if (project.background.color) {
-        setBackground(project.background.color);
-        setProjectLoading(false);
       }
     } else if (error) setProjectLoading(false);
-  }, [id, project, error]);
+  }, [id, project, userInfo, error]);
 
   // Get or reset task used in modal
   useEffect(() => {
@@ -131,6 +127,8 @@ const Project = () => {
           width: '100%',
           height: '100%',
           zIndex: -1,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           backgroundImage: !loading && !projectLoading && background,
         }}
       />
