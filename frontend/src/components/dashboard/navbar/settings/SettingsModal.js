@@ -7,6 +7,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import ColorSelect from './settingsComponents/ColorSelect';
 import DeleteProject from './settingsComponents/DeleteProject';
+import Background from './settingsComponents/Background';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -52,6 +53,11 @@ const SettingsModal = ({ open, handleClose }) => {
         <ColorSelect
           colorTheme={projectTheme && projectTheme.mainColor}
           projectId={project._id}
+        />
+        <Background
+          backgroundTheme={projectTheme && projectTheme.background}
+          projectId={project._id}
+          open={open}
         />
         {userInfo._id === project.creatorId && (
           <DeleteProject creatorId={project.creatorId} />
