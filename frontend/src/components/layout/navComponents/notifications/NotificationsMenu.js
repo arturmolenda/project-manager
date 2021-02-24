@@ -4,14 +4,12 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { discardNotification } from '../../../../redux/actions/userActions';
 
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+import { makeStyles, Typography, MenuItem, Menu } from '@material-ui/core';
 import LocalFloristIcon from '@material-ui/icons/LocalFlorist';
 
 import NotificationItem from './NotificationItem';
 import { ProjectInvitation } from './NotificationConstants';
+import { BACKGROUND_COLORS } from '../../../../util/colorsContants';
 
 const useStyles = makeStyles((theme) => ({
   menuContainer: {
@@ -81,9 +79,11 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
 
   const actionHandle = (notification) => {
     if (notification.type === ProjectInvitation) {
+      const background =
+        BACKGROUND_COLORS[Math.floor(Math.random() * Math.floor(5))];
       socket.emit(
         'project-join',
-        { projectId: notification.project._id },
+        { projectId: notification.project._id, background },
         () => {
           closeHandle();
           history.push(`/project/${notification.project._id}`);
