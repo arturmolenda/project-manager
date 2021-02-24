@@ -17,6 +17,9 @@ import {
   USER_PICTURE_UPDATE_SUCCESS,
   USER_PICTURE_UPDATE_FAIL,
   USER_DATA_UPDATE,
+  USER_PROJECT_BG_UPDATE_FAIL,
+  USER_PROJECT_BG_UPDATE_SUCCESS,
+  USER_PROJECT_BG_UPDATE_REQUEST,
 } from '../constants/userConstants';
 import {
   SOCKET_CONNECT_RESET,
@@ -248,7 +251,6 @@ export const updateProfilePicture = (formData) => async (
       const newImg = new Image();
       newImg.src = data.image;
       newImg.onload = () => {
-        console.log('image loaded');
         dispatch({ type: USER_PICTURE_UPDATE_SUCCESS, payload: data.image });
       };
     }
@@ -284,4 +286,50 @@ export const updateColorTheme = (color, projectId) => (dispatch, getState) => {
     },
   };
   axios.put('/api/users/projectColorTheme', { projectId, color }, config);
+};
+
+export const uploadProjectBgImage = (formData, projectId) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    const {
+      userLogin: { userInfo },
+    } = getState();
+    dispatch({ type: USER_PROJECT_BG_UPDATE_REQUEST });
+
+    const config = {
+      headers: {
+        'Content-type': 'multipart/form-data',
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/images/upload/projectBgUpload/${projectId}`,
+      formData,
+      config
+    );
+
+    if (data.image) {
+      const newImg = new Image();
+      newImg.src = data.image;
+      newImg.onload = () => {
+        document.getElementById(
+          'project-background'
+        ).style.backgroundImage = `url(${data.image})`;
+        dispatch({ type: USER_PROJECT_BG_UPDATE_SUCCESS });
+        userInfo.projectsThemes[projectId].background = data.image;
+        dispatch({ type: USER_DATA_UPDATE, payload: userInfo });
+      };
+    }
+  } catch (error) {
+    dispatch({
+      type: USER_PROJECT_BG_UPDATE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
 };
