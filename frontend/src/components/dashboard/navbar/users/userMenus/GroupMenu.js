@@ -33,7 +33,6 @@ const GroupMenu = ({
   };
 
   const handleUserClick = (user) => {
-    console.log('click', user);
     setUser(user);
   };
 

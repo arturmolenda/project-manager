@@ -71,7 +71,6 @@ const Messages = ({ open, userId }) => {
   let lastMessage;
 
   const updateScroll = () => {
-    console.log('update scroll', containerRef.current);
     if (containerRef.current)
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
   };

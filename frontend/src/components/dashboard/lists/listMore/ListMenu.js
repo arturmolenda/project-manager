@@ -117,10 +117,11 @@ const ListMenu = ({ anchorEl, handleClose, listId, listIndex }) => {
         {!deleteMenu.open && !transferMenuOpen && (
           <div>
             <MenuHeader handleClose={closeHandle} title={'List Actions'} />
-            <MenuItem className={classes.menuItem} style={{ marginTop: 5 }}>
-              Watch
-            </MenuItem>
-            <MenuItem className={classes.menuItem} onClick={addTaskHandle}>
+            <MenuItem
+              className={classes.menuItem}
+              style={{ marginTop: 5 }}
+              onClick={addTaskHandle}
+            >
               Add new task
             </MenuItem>
             <MenuItem

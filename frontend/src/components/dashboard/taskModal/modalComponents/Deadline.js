@@ -71,7 +71,6 @@ const Deadline = ({ task }) => {
   }, [task.deadline]);
 
   const deadlineHandle = (date) => {
-    console.log(date);
     if (date !== null) {
       const diff = moment(new Date()).diff(moment(date), 'hours');
       // show red color if deadline is close
