@@ -13,6 +13,7 @@ const toDoListSchema = mongoose.Schema(
     tasks: [taskSchema],
     creatorId: { type: mongoose.Types.ObjectId, required: true },
     taskId: { type: mongoose.Types.ObjectId, required: true },
+    projectId: { type: mongoose.Types.ObjectId, required: true },
   },
   { timestamps: true }
 );

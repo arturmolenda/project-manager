@@ -486,6 +486,7 @@ export const socketTaskController = (io, socket) => {
       tasksFinished: 0,
       creatorId: socket.user._id,
       taskId,
+      projectId,
     });
 
     const task = await taskPopulation(

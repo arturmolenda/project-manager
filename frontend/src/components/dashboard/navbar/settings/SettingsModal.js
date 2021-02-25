@@ -60,7 +60,7 @@ const SettingsModal = ({ open, handleClose }) => {
           open={open}
         />
         {userInfo._id === project.creatorId && (
-          <DeleteProject creatorId={project.creatorId} />
+          <DeleteProject projectId={project._id} />
         )}
       </div>
     </Dialog>
