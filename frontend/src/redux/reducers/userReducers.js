@@ -60,10 +60,17 @@ export const userLoginReducer = (state = { loading: true }, action) => {
       };
     case USER_REMOVED: {
       const stateClone = deepcopy(state.userInfo);
-      const projectIndex = stateClone.projectsJoined.findIndex(
-        (x) => x._id === action.payload
-      );
-      stateClone.projectsJoined.splice(projectIndex, 1);
+      if (action.payload.creator) {
+        const projectIndex = stateClone.projectsCreated.findIndex(
+          (x) => x._id === action.payload.projectId
+        );
+        stateClone.projectsCreated.splice(projectIndex, 1);
+      } else {
+        const projectIndex = stateClone.projectsJoined.findIndex(
+          (x) => x._id === action.payload.projectId
+        );
+        stateClone.projectsJoined.splice(projectIndex, 1);
+      }
       return { ...state, userInfo: stateClone };
     }
     case USER_PICTURE_UPDATE_SUCCESS: {
