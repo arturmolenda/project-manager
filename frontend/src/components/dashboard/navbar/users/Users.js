@@ -41,9 +41,13 @@ const Users = () => {
       } else if (user && user.user._id === userUpdated.userId)
         setAnchorEl(null);
     });
+    socket.on('project-deleted', () => {
+      history.push('/boards');
+    });
     return () => {
       socket.off('user-permissions-changed');
       socket.off('user-removed');
+      socket.off('project-deleted');
     };
   }, [dispatch, history, socket, anchorEl, userInfo, user]);
 
