@@ -2,6 +2,8 @@ import Project from '../models/project.js';
 import Notification from '../models/notification.js';
 import User from '../models/user.js';
 import Task from '../models/task.js';
+import ToDoList from '../models/toDoList.js';
+import List from '../models/list.js';
 import Message from '../models/message.js';
 import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
@@ -195,7 +197,7 @@ export const socketProjectController = (io, socket) => {
         select: 'username email profilePicture',
       });
       callback();
-      io.to(userId).emit('user-removed-from-project', projectId);
+      io.to(userId).emit('user-removed-from-project', { projectId });
       io.to(projectId).emit('user-removed', {
         userUpdated: {
           userId,
@@ -289,5 +291,57 @@ export const socketProjectController = (io, socket) => {
       user: socket.user._id,
       projectId,
     });
+  });
+
+  // @desc Delete project
+  socket.on('delete-project', async (data, callback) => {
+    const { projectId } = data;
+
+    const project = await Project.findById(projectId);
+    if (project.creatorId.equals(socket.user._id)) {
+      const promise = project.users.map(async (x) => {
+        const projectCreator = x.user.equals(project.creatorId);
+        io.to(String(x.user)).emit('user-removed-from-project', {
+          projectId,
+          creator: projectCreator,
+        });
+        const user = await User.findOneAndUpdate(
+          { _id: x.user },
+          projectCreator
+            ? {
+                $pull: { projectsCreated: projectId },
+              }
+            : { $pull: { projectsJoined: projectId } }
+        );
+        const background = user.projectsThemes?.[projectId]?.background;
+        if (background && !background.startsWith('linear')) {
+          deleteImage(background.split('images/')[1]);
+        }
+        delete user.projectsThemes[projectId];
+        await user.updateOne(user);
+        if (!projectCreator) {
+          const notification = new Notification({
+            type: 'Project Deleted',
+            description: ` deleted project: ${project.title}`,
+            project: projectId,
+            seenDate: null,
+            sender: socket.user._id,
+            recipient: x.user,
+          });
+          await notification.save();
+          io.to(String(x.user)).emit('notifications-updated');
+        }
+      });
+      Promise.all(promise).then(async () => {
+        io.to(projectId).emit('project-deleted');
+        callback();
+        await project.remove();
+        await Task.deleteMany({ projectId });
+        await List.deleteMany({ projectId });
+        await ToDoList.deleteMany({ projectId });
+        await Message.deleteMany({ projectId });
+        await Notification.deleteMany({ project: projectId });
+      });
+    }
   });
 };
