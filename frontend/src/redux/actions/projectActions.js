@@ -1070,3 +1070,17 @@ export const sendMessage = (message, callback) => (dispatch, getState) => {
     callback
   );
 };
+
+export const deleteProject = (projectId, callback) => (dispatch, getState) => {
+  const {
+    socketConnection: { socket },
+  } = getState();
+
+  socket.emit(
+    'delete-project',
+    {
+      projectId,
+    },
+    callback
+  );
+};
