@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+import { useDispatch } from 'react-redux';
+import { deleteProject } from '../../../../../redux/actions/projectActions';
+
 import {
   makeStyles,
   Button,
@@ -12,6 +15,7 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import Header from './Header';
+import Loader from '../../../../Loader';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -25,12 +29,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const DeleteProject = () => {
+const DeleteProject = ({ projectId }) => {
+  const dispatch = useDispatch(projectId);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const classes = useStyles();
 
   const deleteHandle = () => {
-    console.log('delete project');
+    setLoading(true);
+    dispatch(deleteProject(projectId, () => setLoading(false)));
   };
 
   return (
@@ -57,8 +64,14 @@ const DeleteProject = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={deleteHandle} variant='contained' color='secondary'>
+          <Button
+            onClick={deleteHandle}
+            variant='contained'
+            color='secondary'
+            disabled={loading}
+          >
             Delete
+            {loading && <Loader button />}
           </Button>
         </DialogActions>
       </Dialog>
