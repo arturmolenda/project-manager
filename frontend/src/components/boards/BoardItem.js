@@ -55,8 +55,8 @@ const useStyles = makeStyles(() => ({
 const BoardItem = ({ project, projectsThemes }) => {
   const classes = useStyles();
 
-  const background = projectsThemes[project._id].background;
-  const color = background.startsWith('linear') && background;
+  const background = projectsThemes?.[project._id]?.background;
+  const color = background?.startsWith('linear') && background;
   let imgLoaded;
   if (!color && background) {
     imgLoaded = LazyImage(background);

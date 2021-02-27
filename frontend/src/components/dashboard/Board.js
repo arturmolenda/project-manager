@@ -15,35 +15,13 @@ import {
   PROJECT_SET_TASK_SUCCESS,
 } from '../../redux/constants/projectConstants';
 
-import { makeStyles } from '@material-ui/core';
-
 import Lists from './lists/Lists';
 import Navbar from './navbar/Navbar';
-
-const useStyles = makeStyles(() => ({
-  boardContainer: {
-    height: '100vh',
-    position: 'relative',
-  },
-
-  board: {
-    height: '100vh',
-    display: 'grid',
-    flexWrap: 'nowrap',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    overflowX: 'auto',
-  },
-}));
 
 const Board = () => {
   const { socket } = useSelector((state) => state.socketConnection);
   const { task } = useSelector((state) => state.projectSetTask);
   const dispatch = useDispatch();
-  const classes = useStyles();
 
   useEffect(() => {
     socket.on('new-task', (data) => {
@@ -130,9 +108,21 @@ const Board = () => {
   }, [dispatch, socket, task]);
 
   return (
-    <div className={classes.boardContainer}>
+    <div style={{ height: '100vh', position: 'relative' }}>
       <Navbar />
-      <div className={classes.board}>
+      <div
+        style={{
+          height: '100vh',
+          display: 'grid',
+          flexWrap: 'nowrap',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          overflowX: 'auto',
+        }}
+      >
         <Lists />
       </div>
     </div>

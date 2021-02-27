@@ -2,11 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getProjectData, setTask } from '../../redux/actions/projectActions';
+import { getProjectData } from '../../redux/actions/projectActions';
 import {
   PROJECT_SET_CURRENT,
   PROJECT_SET_CURRENT_RESET,
-  PROJECT_SET_TASK_RESET,
 } from '../../redux/constants/projectConstants';
 
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
@@ -27,8 +26,7 @@ const Project = () => {
   );
   const { userInfo } = useSelector((state) => state.userLogin);
   const { socket } = useSelector((state) => state.socketConnection);
-  const { task } = useSelector((state) => state.projectSetTask);
-  const { id, taskId } = useParams();
+  const { id } = useParams();
   const history = useHistory();
 
   const mainColor =
@@ -109,12 +107,6 @@ const Project = () => {
     } else if (error) setProjectLoading(false);
   }, [id, project, userInfo, error]);
 
-  // Get or reset task used in modal
-  useEffect(() => {
-    if (id && taskId && !task) dispatch(setTask(id, taskId));
-    else if (!taskId && task) dispatch({ type: PROJECT_SET_TASK_RESET });
-  }, [dispatch, id, taskId, task]);
-
   return (
     <MuiThemeProvider theme={theme}>
       <div
@@ -139,10 +131,10 @@ const Project = () => {
       ) : (
         project && (
           <>
-            <Board taskId={taskId} />
+            <Board />
             <TaskModal
-              task={task}
               userPermissions={project.permissions}
+              projectId={project._id}
               userId={userInfo._id}
             />
           </>

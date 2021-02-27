@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core';
-
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 
 import NavTitle from './NavTitle';
