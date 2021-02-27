@@ -1,18 +1,14 @@
-import React from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
 
-import { makeStyles, Modal } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTask } from '../../../redux/actions/projectActions';
+import { PROJECT_SET_TASK_RESET } from '../../../redux/constants/projectConstants';
+
+import { LinearProgress, makeStyles, Modal } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
-import TaskHeader from './modalComponents/TaskHeader';
-import TaskDescription from './modalComponents/TaskDescription';
-import SideContent from './modalComponents/SideContent';
-import Deadline from './modalComponents/Deadline';
-import Users from './modalComponents/users/Users';
-import Labels from './modalComponents/Labels';
-import ToDoList from './modalComponents/toDoLists/ToDoList';
-import Comments from './modalComponents/comments/Comments';
-import ArchivedHeader from './modalComponents/ArchivedHeader';
+import ModalContainer from './ModalContainer';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -53,11 +49,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TaskModal = ({ task, userPermissions, userId }) => {
+const TaskModal = ({ projectId, userPermissions, userId }) => {
+  const dispatch = useDispatch();
+  const { task } = useSelector((state) => state.projectSetTask);
+  const [loading, setLoading] = useState(true);
   const history = useHistory();
+  const { taskId } = useParams();
   const classes = useStyles();
+  let timeout;
+  useEffect(() => {
+    if (taskId && !task) dispatch(setTask(projectId, taskId));
+    else if (!taskId && task) dispatch({ type: PROJECT_SET_TASK_RESET });
+    else if (taskId && task) timeout = setTimeout(() => setLoading(false), 1);
+  }, [dispatch, history, taskId, task, projectId]);
 
-  const closeHandle = () => history.push(`/project/${task.projectId}`);
+  const closeHandle = () => {
+    history.push(`/project/${task.projectId}`);
+    dispatch({ type: PROJECT_SET_TASK_RESET });
+    setLoading(true);
+    clearTimeout(timeout);
+  };
 
   const keyPressHandle = (e) => {
     if (document.activeElement.id === 'task-modal' && e.key === 'Escape')
@@ -72,49 +83,17 @@ const TaskModal = ({ task, userPermissions, userId }) => {
       onKeyDown={keyPressHandle}
     >
       <div className={classes.container} id='task-modal'>
-        {task && task.archived && <ArchivedHeader />}
-
-        <div style={{ padding: '25px 10px 20px 20px' }}>
-          {task && (
-            <>
-              {task.deleted && <Redirect to={`/project/${task.projectId}`} />}
-              <TaskHeader task={task} initialDescription={task.description} />
-              <div className={classes.innerContainer}>
-                <div style={{ width: '100%' }}>
-                  <Labels labels={task.labels} />
-                  <Users
-                    selectedUsers={task.users}
-                    projectId={task.projectId}
-                    taskId={task._id}
-                  />
-                  <TaskDescription
-                    userPermissions={userPermissions}
-                    task={task}
-                  />
-                  <Deadline task={task} />
-                  {task.toDoLists.lists.map((list, index) => (
-                    <ToDoList
-                      key={list._id}
-                      projectId={task.projectId}
-                      taskId={task._id}
-                      index={index}
-                      list={list}
-                      userId={userId}
-                    />
-                  ))}
-                  <Comments
-                    comments={task.comments}
-                    projectId={task.projectId}
-                    taskId={task._id}
-                  />
-                </div>
-                <SideContent task={task} />
-              </div>
-            </>
-          )}
-
-          <CloseIcon className={classes.closeIcon} onClick={closeHandle} />
-        </div>
+        {task && task.deleted && <Redirect to={`/project/${task.projectId}`} />}
+        {loading ? (
+          <LinearProgress />
+        ) : (
+          <ModalContainer
+            task={task}
+            userPermissions={userPermissions}
+            userId={userId}
+          />
+        )}
+        <CloseIcon className={classes.closeIcon} onClick={closeHandle} />
       </div>
     </Modal>
   );
