@@ -47,6 +47,7 @@ const App = () => {
   const { loading, userInfo } = useSelector((state) => state.userLogin);
   const { socket } = useSelector((state) => state.socketConnection);
   const dispatch = useDispatch({});
+
   useEffect(() => {
     if (userInfo && Object.keys(userInfo).length === 1)
       dispatch(getUserData(userInfo.token));
@@ -71,7 +72,7 @@ const App = () => {
       <CssBaseline />
       <Router>
         <Layout>
-          {loading ? (
+          {loading && userInfo && userInfo.token ? (
             <>
               <LinearProgress
                 style={{

@@ -88,7 +88,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (userInfo) history.push('/boards');
-  }, [dispatch, history, userInfo]);
+  }, [history, userInfo]);
 
   const validate = () => {
     let returnVal = true;
