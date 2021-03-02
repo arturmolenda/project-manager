@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
+import { sendMessage } from '../../../../redux/actions/projectActions';
 
-import {
-  makeStyles,
-  Tooltip,
-  Typography,
-  Paper,
-  TextField,
-} from '@material-ui/core';
+import { makeStyles, Typography, Paper, TextField } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 import Messages from './Messages';
-import { sendMessage } from '../../../../redux/actions/projectActions';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
     position: 'fixed',
     maxHeight: 450,
@@ -61,18 +55,14 @@ const ChatContainer = ({ closeChat, open }) => {
   };
 
   return (
-    <Paper elevation={3} className={classes.container}>
+    <Paper
+      elevation={3}
+      className={classes.container}
+      style={{ display: open ? 'initial' : 'none' }}
+    >
       <div className={classes.cardHeader}>
-        <Typography variant='body1' color='primary'>
-          Group Chat
-        </Typography>
-        <Tooltip title='Close' placement='top' arrow>
-          <CloseIcon
-            color='primary'
-            style={{ cursor: 'pointer' }}
-            onClick={closeChat}
-          />
-        </Tooltip>
+        <Typography variant='body1'>Group Chat</Typography>
+        <CloseIcon style={{ cursor: 'pointer' }} onClick={closeChat} />
       </div>
       <div className={classes.cardBody}>
         <Messages userId={userInfo._id} open={open} />

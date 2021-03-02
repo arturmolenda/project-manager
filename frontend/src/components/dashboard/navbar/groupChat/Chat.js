@@ -11,9 +11,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     padding: 5,
     cursor: 'pointer',
-    color: '#6b7082',
+    color: '#fff',
+    transition: '.2s ease',
     '&:hover': {
-      color: theme.palette.primary.main,
+      background: '#ffffff21',
+      borderRadius: 3,
     },
   },
   chatOpen: {
@@ -32,7 +34,7 @@ const Chat = () => {
   const classes = useStyles();
 
   const openHandle = () => {
-    setOpen(true);
+    setOpen((prevState) => !prevState);
     setNewMessage(false);
     setTimeout(() => {
       const element = document.getElementById('messages-container');
@@ -42,14 +44,18 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on('new-message', () => {
+      console.log('new message', open);
       if (!open) setNewMessage(true);
     });
+    return () => {
+      socket.off('new-message');
+    };
   }, [socket, open]);
 
   return (
     <>
-      <div onClick={openHandle} className={classes.icon}>
-        <Tooltip title='Chat'>
+      <Tooltip title='Chat'>
+        <div onClick={openHandle} className={classes.icon}>
           <Badge
             color='secondary'
             variant='dot'
@@ -57,11 +63,9 @@ const Chat = () => {
           >
             <ChatIcon />
           </Badge>
-        </Tooltip>
-      </div>
-      <div className={open ? classes.chatOpen : classes.chatClosed}>
-        <ChatContainer closeChat={() => setOpen(false)} open={open} />
-      </div>
+        </div>
+      </Tooltip>
+      <ChatContainer closeChat={() => setOpen(false)} open={open} />
     </>
   );
 };
