@@ -16,6 +16,7 @@ const UserMenu = ({
   projectId,
 }) => (
   <Menu
+    disableScrollLock={true}
     anchorEl={anchorEl}
     open={Boolean(anchorEl)}
     onClose={handleClose}

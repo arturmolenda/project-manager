@@ -9,9 +9,11 @@ const useStyles = makeStyles((theme) => ({
     padding: 5,
     marginBottom: 2,
     cursor: 'pointer',
-    color: '#6b7082',
+    color: '#fff',
+    transition: '.2s ease',
     '&:hover': {
-      color: theme.palette.primary.main,
+      background: '#ffffff21',
+      borderRadius: 3,
     },
   },
 }));
@@ -21,17 +23,17 @@ const ArchivedTasks = () => {
   const classes = useStyles();
 
   return (
-    <div>
-      <div
-        className={classes.icon}
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-      >
-        <Tooltip title='Archived Tasks'>
+    <>
+      <Tooltip title='Archived Tasks'>
+        <div
+          className={classes.icon}
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+        >
           <RestoreFromTrashIcon />
-        </Tooltip>
-      </div>
+        </div>
+      </Tooltip>
       <ArchivedMenu anchorEl={anchorEl} handleClose={() => setAnchorEl(null)} />
-    </div>
+    </>
   );
 };
 

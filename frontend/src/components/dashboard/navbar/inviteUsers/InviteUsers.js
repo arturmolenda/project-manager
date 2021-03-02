@@ -1,36 +1,22 @@
 import React, { useState } from 'react';
 
-import { makeStyles, Tooltip } from '@material-ui/core';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 import AddUserMenu from './AddUserMenu';
+import NavItem from '../../../layout/navComponents/NavItem';
 
-const useStyles = makeStyles((theme) => ({
-  icon: {
-    display: 'flex',
-    padding: 5,
-    marginBottom: 1,
-    cursor: 'pointer',
-    color: '#6b7082',
-    '&:hover': {
-      color: theme.palette.primary.main,
-    },
-  },
-}));
-const InviteUsers = () => {
+const InviteUsers = ({ navExpanded, mobile }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const classes = useStyles();
 
   return (
     <>
-      <div
-        className={classes.icon}
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-      >
-        <Tooltip title='Invite Users'>
-          <PersonAddIcon />
-        </Tooltip>
-      </div>
+      <NavItem
+        action={(e) => setAnchorEl(e.currentTarget)}
+        navExpanded={navExpanded}
+        mobile={mobile}
+        title={'Invite Users'}
+        Icon={PersonAddIcon}
+      />
       <AddUserMenu handleClose={() => setAnchorEl(null)} anchorEl={anchorEl} />
     </>
   );

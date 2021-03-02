@@ -113,7 +113,7 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
         Notifications
       </Typography>
       <div className={classes.menuContainer}>
-        {notifications.items.length > 0 ? (
+        {notifications && notifications.items.length > 0 ? (
           notifications.items.map((notification, index) => (
             <NotificationItem
               key={index}

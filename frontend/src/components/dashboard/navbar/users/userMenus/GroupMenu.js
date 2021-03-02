@@ -42,6 +42,7 @@ const GroupMenu = ({
 
   return (
     <Menu
+      disableScrollLock={true}
       anchorEl={anchorEl}
       keepMounted
       open={Boolean(anchorEl)}

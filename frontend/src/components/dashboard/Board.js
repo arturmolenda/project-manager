@@ -108,19 +108,20 @@ const Board = () => {
   }, [dispatch, socket, task]);
 
   return (
-    <div style={{ height: '100vh', position: 'relative' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        height: '100vh',
+      }}
+    >
       <Navbar />
       <div
         style={{
-          height: '100vh',
-          display: 'grid',
-          flexWrap: 'nowrap',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
+          height: '100%',
           overflowX: 'auto',
+          display: 'grid',
         }}
       >
         <Lists />

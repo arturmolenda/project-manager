@@ -10,7 +10,7 @@ import UserModal from './UserModal';
 const useStyles = makeStyles(() => ({
   userNav: {
     display: 'flex',
-    margin: '10px 0',
+    margin: '10px 0 2px',
     height: 52,
   },
 

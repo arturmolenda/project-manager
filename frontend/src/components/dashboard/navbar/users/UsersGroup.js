@@ -42,31 +42,39 @@ const UsersGroup = ({
   projectId,
   userPermissions,
   creatorId,
+  maxUsers = 6,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-
   return (
     <>
-      <div className={classes.avatarGroup}>
-        {users.slice(0, 3).map((user, index) => (
-          <UserItem
-            key={user.user._id}
-            permissions={user.permissions}
-            user={user.user}
-            handleUserClick={(e) => handleUserClick(e.currentTarget, user)}
-            zIndex={index === 0 ? 3 : index === 1 ? 2 : 1}
-          />
-        ))}
-      </div>
-      {users.length >= 4 && (
-        <div
-          className={classes.membersRemaining}
-          onClick={(e) => setAnchorEl(e.currentTarget)}
-        >
-          <p>+{users.length - 3}</p>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '16px 0 8px -3px',
+        }}
+      >
+        <div className={classes.avatarGroup}>
+          {users.slice(0, maxUsers).map((user, index) => (
+            <UserItem
+              key={user.user._id}
+              permissions={user.permissions}
+              user={user.user}
+              handleUserClick={(e) => handleUserClick(e.currentTarget, user)}
+              zIndex={users.length - index}
+            />
+          ))}
         </div>
-      )}
+        {(users.length >= 7 || maxUsers === 0) && (
+          <div
+            className={classes.membersRemaining}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+          >
+            <p>+{users.length - maxUsers}</p>
+          </div>
+        )}
+      </div>
       <GroupMenu
         anchorEl={anchorEl}
         handleClose={() => setAnchorEl(null)}

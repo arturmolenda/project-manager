@@ -98,6 +98,7 @@ const ArchivedMenu = ({ anchorEl, handleClose }) => {
   return (
     <>
       <Popover
+        disableScrollLock={true}
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}

@@ -116,6 +116,7 @@ const AddUserModal = ({ anchorEl, handleClose }) => {
   return (
     <>
       <Popover
+        disableScrollLock={true}
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}

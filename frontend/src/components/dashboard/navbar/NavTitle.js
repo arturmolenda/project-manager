@@ -10,6 +10,7 @@ import AutosizeInput from 'react-input-autosize';
 const useStyles = makeStyles((theme) => ({
   input: {
     '& input': {
+      maxWidth: '100%',
       fontSize: '1.2rem',
       color: theme.palette.primary.main,
       backgroundColor: '#fff !important',
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
   },
   inputDisabled: {
     '& input': {
+      maxWidth: '100%',
+      overflowX: 'hidden',
+      textOverflow: 'ellipsis',
       margin: 0,
       padding: '2px 3px',
       background: 'transparent',
@@ -77,17 +81,22 @@ const NavTitle = () => {
   };
 
   return (
-    <AutosizeInput
-      ref={inputRef}
+    <div
       className={titleOpen ? classes.input : classes.inputDisabled}
-      value={projectTitle}
-      onChange={(e) => setProjectTitle(e.target.value)}
-      onKeyDown={keyPressHandle}
-      spellCheck={false}
-      onBlur={closeHandle}
-      disabled={project.permissions !== 2}
-      onClick={() => !titleOpen && openTitleInputHandle()}
-    />
+      style={{  position: 'absolute', left: 50, right: 20 }}
+    >
+      <AutosizeInput
+        ref={inputRef}
+        style={{ maxWidth: '100%' }}
+        value={projectTitle}
+        onChange={(e) => setProjectTitle(e.target.value)}
+        onKeyDown={keyPressHandle}
+        spellCheck={false}
+        onBlur={closeHandle}
+        disabled={project.permissions !== 2}
+        onClick={() => !titleOpen && openTitleInputHandle()}
+      />
+    </div>
   );
 };
 
