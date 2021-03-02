@@ -124,8 +124,10 @@ const Project = () => {
           backgroundImage: !loading && !projectLoading && background,
         }}
       />
-      {projectLoading || loading ? (
-        <Loader />
+      {Boolean(projectLoading || loading) ? (
+        <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+          <Loader />
+        </div>
       ) : error ? (
         <Redirect to='/boards' />
       ) : (
