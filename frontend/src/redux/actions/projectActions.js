@@ -11,6 +11,7 @@ import {
   PROJECT_FIND_USERS_FAIL,
   PROJECT_FIND_USERS_REQUEST,
   PROJECT_FIND_USERS_SUCCESS,
+  PROJECT_RESET_NEW_MESSAGE,
   PROJECT_SET_CURRENT,
   PROJECT_SET_MESSAGES,
   PROJECT_SET_TASK_FAIL,
@@ -1058,7 +1059,7 @@ export const sendMessage = (message, callback) => (dispatch, getState) => {
       userInfo: { username, profilePicture },
     },
   } = getState();
-
+  dispatch({ type: PROJECT_RESET_NEW_MESSAGE });
   socket.emit(
     'send-message',
     {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { PROJECT_RESET_NEW_MESSAGE } from '../../../../redux/constants/projectConstants';
 
 import { makeStyles, Tooltip, Badge } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -28,29 +29,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Chat = () => {
-  const { socket } = useSelector((state) => state.socketConnection);
+  const dispatch = useDispatch();
+  const { newMessage } = useSelector((state) => state.projectMessages);
   const [open, setOpen] = useState(false);
-  const [newMessage, setNewMessage] = useState(false);
   const classes = useStyles();
+
+  useEffect(() => {
+    if (open && newMessage) dispatch({ type: PROJECT_RESET_NEW_MESSAGE });
+  }, [dispatch, open, newMessage]);
 
   const openHandle = () => {
     setOpen((prevState) => !prevState);
-    setNewMessage(false);
+    dispatch({ type: PROJECT_RESET_NEW_MESSAGE });
     setTimeout(() => {
       const element = document.getElementById('messages-container');
       element.scrollTop = element.scrollHeight;
     }, 1);
   };
-
-  useEffect(() => {
-    socket.on('new-message', () => {
-      console.log('new message', open);
-      if (!open) setNewMessage(true);
-    });
-    return () => {
-      socket.off('new-message');
-    };
-  }, [socket, open]);
 
   return (
     <>

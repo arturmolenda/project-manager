@@ -13,6 +13,7 @@ import {
   PROJECT_DATA_USERS_UPDATE,
   PROJECT_UPDATE_MESSAGES,
   PROJECT_SET_TASK_SUCCESS,
+  PROJECT_SET_NEW_MESSAGE,
 } from '../../redux/constants/projectConstants';
 
 import Lists from './lists/Lists';
@@ -88,6 +89,7 @@ const Board = () => {
         });
     });
     socket.on('new-message', (data) => {
+      dispatch({ type: PROJECT_SET_NEW_MESSAGE });
       dispatch({ type: PROJECT_UPDATE_MESSAGES, payload: data });
     });
     return () => {
