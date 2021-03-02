@@ -4,11 +4,6 @@ import { makeStyles } from '@material-ui/core';
 import DeveloperBoardIcon from '@material-ui/icons/DeveloperBoard';
 
 import NavTitle from './NavTitle';
-import ArchivedTasks from './archivedTasks/ArchivedTasks';
-import InviteUsers from './inviteUsers/InviteUsers';
-import Users from './users/Users';
-import Chat from './groupChat/Chat';
-import Settings from './settings/Settings';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -31,7 +26,6 @@ const useStyles = makeStyles(() => ({
   },
   boardIcon: {
     fontSize: 40,
-    margin: 'auto 10px auto 0px',
   },
   navIcons: {
     display: 'flex',
@@ -45,34 +39,20 @@ const Navbar = () => {
   const classes = useStyles();
 
   return (
-    <>
+    <div>
       <div className={classes.backgroundNav} />
-      <div className={classes.container} style={{ position: 'fixed' }}>
-        <div style={{ display: 'flex' }}>
-          <div style={{ display: 'flex' }}>
-            <DeveloperBoardIcon color='primary' className={classes.boardIcon} />
-            <NavTitle />
-          </div>
-          <Users />
-          <InviteUsers />
-        </div>
-
-        <div className={classes.navIcons}>
-          <Chat />
-          <ArchivedTasks />
-          <Settings />
-        </div>
-      </div>
-
       <div
         className={classes.container}
-        style={{ visibility: 'hidden', marginBottom: 40 }}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+        }}
       >
-        <div style={{ display: 'flex' }}>
-          <DeveloperBoardIcon color='primary' className={classes.boardIcon} />
-        </div>
+        <DeveloperBoardIcon color='primary' className={classes.boardIcon} />
+        <NavTitle />
       </div>
-    </>
+    </div>
   );
 };
 
