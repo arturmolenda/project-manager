@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,11 +18,24 @@ import { Alert } from '@material-ui/lab';
 import Loader from '../../Loader';
 
 const NewProjectModal = ({ open, handleClose }) => {
-  const [title, setTitle] = useState('');
-  const [titleError, setTitleError] = useState('');
-  const history = useHistory();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.projectCreate);
+  const [title, setTitle] = useState('');
+  const [titleError, setTitleError] = useState('');
+  const inputRef = useRef();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (open) inputRef?.current?.focus();
+    else {
+      setTitle('');
+      setTitleError('');
+    }
+  }, [open]);
+
+  const keyDownHandle = (e) => {
+    if (e.key === 'Enter') createProjectHandle();
+  };
 
   const createProjectHandle = () => {
     if (title === '') setTitleError('Cannot be empty');
@@ -53,12 +66,15 @@ const NewProjectModal = ({ open, handleClose }) => {
         <DialogTitle>Create New Project</DialogTitle>
         <DialogContent>
           <TextField
+            inputRef={inputRef}
             name='title'
             type='text'
             label='Title'
             variant='outlined'
             value={title}
+            disabled={loading}
             onChange={changeHandle}
+            onKeyDown={keyDownHandle}
             style={{ marginBottom: 10 }}
             fullWidth
             error={Boolean(titleError)}
