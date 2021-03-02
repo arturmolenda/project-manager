@@ -14,14 +14,18 @@ const Notifications = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (notifications.newNotificationsCount !== 0 && anchorEl) {
+    if (
+      notifications &&
+      notifications.newNotificationsCount !== 0 &&
+      anchorEl
+    ) {
       dispatch(markNotificationsSeen());
     }
   }, [dispatch, notifications, anchorEl]);
 
   const openNotificationsHandle = (e) => {
     setAnchorEl(e.currentTarget);
-    if (notifications.newNotificationsCount !== 0) {
+    if (notifications && notifications.newNotificationsCount !== 0) {
       dispatch(markNotificationsSeen());
     }
   };
@@ -30,7 +34,7 @@ const Notifications = () => {
     <>
       <IconButton color='inherit' onClick={openNotificationsHandle}>
         <Badge
-          badgeContent={notifications.newNotificationsCount}
+          badgeContent={notifications && notifications.newNotificationsCount}
           color='secondary'
         >
           <NotificationsIcon />
