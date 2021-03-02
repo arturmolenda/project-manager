@@ -5,15 +5,17 @@ import SettingsIcon from '@material-ui/icons/Settings';
 
 import SettingsModal from './SettingsModal.js';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   icon: {
     display: 'flex',
-    marginBottom: 3,
     padding: 5,
+    marginBottom: 3,
     cursor: 'pointer',
-    color: '#6b7082',
+    color: '#fff',
+    transition: '.2s ease',
     '&:hover': {
-      color: theme.palette.primary.main,
+      background: '#ffffff21',
+      borderRadius: 3,
     },
   },
 }));
@@ -23,11 +25,11 @@ const Settings = (props) => {
   const classes = useStyles();
   return (
     <>
-      <div className={classes.icon} onClick={() => setOpen(true)}>
-        <Tooltip title='Settings'>
+      <Tooltip title='Settings'>
+        <div className={classes.icon} onClick={() => setOpen(true)}>
           <SettingsIcon />
-        </Tooltip>
-      </div>
+        </div>
+      </Tooltip>
       <SettingsModal
         open={open}
         handleClose={() => setOpen(false)}

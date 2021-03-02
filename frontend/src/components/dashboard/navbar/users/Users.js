@@ -7,7 +7,7 @@ import { PROJECT_DATA_PERMISSIONS_UPDATE } from '../../../../redux/constants/pro
 import UserMenu from './userMenus/UserMenu';
 import UsersGroup from './UsersGroup';
 
-const Users = () => {
+const Users = ({ maxUsers }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const {
@@ -69,6 +69,7 @@ const Users = () => {
         projectId={projectId}
         creatorId={creatorId}
         userPermissions={userPermissions}
+        maxUsers={maxUsers}
       />
       {users && user !== null && (
         <UserMenu
