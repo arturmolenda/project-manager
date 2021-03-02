@@ -24,7 +24,7 @@ const Lists = () => {
       style={{
         maxWidth: '100%',
         display: 'flex',
-        marginTop: '10vh',
+        marginTop: '2vh',
         overflowX: 'auto',
         padding: '0 4px',
       }}
