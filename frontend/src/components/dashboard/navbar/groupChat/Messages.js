@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '70%',
   },
   message: {
-    backgroundColor: '#f1f0f0',
+    backgroundColor: '#dfdfdf',
     padding: '6px 10px',
     borderRadius: '15px',
     color: '#000',
