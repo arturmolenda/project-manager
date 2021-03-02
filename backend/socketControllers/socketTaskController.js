@@ -499,8 +499,8 @@ export const socketTaskController = (io, socket) => {
 
     const newLists = await populateLists(projectId);
 
-    callback();
     io.to(projectId).emit('task-updated', { newLists, task });
+    callback();
 
     // Send notifications
     task.usersWatching.forEach(async (userId) => {
