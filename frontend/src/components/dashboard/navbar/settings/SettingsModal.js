@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
   container: {
     padding: 10,
     backgroundColor: '#e6e6e6',
+    overflowY: 'auto',
   },
   header: {
     display: 'flex',
