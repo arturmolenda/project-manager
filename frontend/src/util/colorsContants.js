@@ -13,8 +13,9 @@ export const LABEL_COLORS = [
 export const THEME_COLORS = [
   '#00bcd4',
   '#000',
-  '#FFEA6B',
-  '#00a8d5',
+  '#16c79a',
+  '#025955',
+  '#03506f',
   '#52a5a8',
   '#830a0c',
   '#5b3475',
