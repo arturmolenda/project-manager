@@ -11,17 +11,16 @@ import Header from './Header';
 
 const useStyles = makeStyles(() => ({
   container: {
-    display: 'flex',
-    marginTop: 10,
-    marginLeft: 5,
+    margin: '0 40px',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
   heading: {
-    display: 'flex',
-    alignItems: 'center',
     padding: 10,
     backgroundColor: '#cacaca',
     color: '#6f6f6f',
     '& h6': {
+      textAlign: 'center',
       fontWeight: 600,
     },
   },
@@ -29,7 +28,8 @@ const useStyles = makeStyles(() => ({
     height: 'auto',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
     backgroundColor: '#fff',
     padding: 5,
   },
@@ -39,7 +39,10 @@ const useStyles = makeStyles(() => ({
     height: 30,
     width: 30,
     cursor: 'pointer',
-    border: '1px solid transparent',
+    transition: '.1s ease',
+    '&:hover': {
+      transform: 'scale(1.2)',
+    },
   },
 }));
 
@@ -61,7 +64,7 @@ const ColorSelect = ({ colorTheme, projectId }) => {
       <Header icon={FormatColorTextIcon} title='Color Theme' />
       <div className={classes.container}>
         <div className={classes.heading}>
-          <Typography variant='subtitle2'>Choose a Color</Typography>
+          <Typography variant='subtitle2'>Select a Color</Typography>
         </div>
         <div className={classes.colors}>
           {THEME_COLORS.map((color, index) => (
@@ -70,8 +73,7 @@ const ColorSelect = ({ colorTheme, projectId }) => {
               className={classes.color}
               style={{
                 backgroundColor: color,
-                border: primaryColor === color && '1px solid black',
-                transform: primaryColor === color && 'scale(1.1)',
+                transform: primaryColor === color && 'scale(1.2)',
               }}
               onClick={() => clickHandle(color)}
             />
