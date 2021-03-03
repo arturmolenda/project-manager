@@ -31,6 +31,7 @@ const NavItem = ({ link, title, action, Icon, navExpanded, mobile }) => {
   return link ? (
     <NavLink
       to={link}
+      onClick={action && action}
       className={`${classes.navLink} ${
         !navExpanded && mobile && classes.hiddenMenu
       }`}

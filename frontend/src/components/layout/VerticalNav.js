@@ -100,6 +100,7 @@ const VerticalNav = () => {
           <NavLinks
             navExpanded={mobile ? prepareToHide : navExpanded}
             mobile={mobile}
+            closeNav={() => mobile && navExpanded && expandHandle()}
           />
           {!loading && (
             <div

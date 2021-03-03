@@ -16,7 +16,7 @@ import ProjectSelect from './projectSelect/ProjectSelect';
 import ProjectItems from './ProjectItems';
 import NavItem from './NavItem';
 
-const NavLinks = ({ navExpanded, mobile }) => {
+const NavLinks = ({ navExpanded, mobile, closeNav }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { loading, userInfo } = useSelector((state) => state.userLogin);
   const dispatch = useDispatch();
@@ -32,6 +32,7 @@ const NavLinks = ({ navExpanded, mobile }) => {
           <ProjectSelect navExpanded={navExpanded} mobile={mobile} />
           <NavItem
             link={'/boards'}
+            action={closeNav}
             navExpanded={navExpanded}
             mobile={mobile}
             title={'Boards'}
@@ -45,7 +46,10 @@ const NavLinks = ({ navExpanded, mobile }) => {
             Icon={CreateNewFolderIcon}
           />
           <NavItem
-            action={() => dispatch(logout())}
+            action={() => {
+              dispatch(logout());
+              closeNav && closeNav();
+            }}
             navExpanded={navExpanded}
             mobile={mobile}
             title={'Sign Out'}
@@ -54,13 +58,17 @@ const NavLinks = ({ navExpanded, mobile }) => {
 
           <NewProjectModal
             open={modalOpen}
-            handleClose={() => setModalOpen(false)}
+            handleClose={() => {
+              setModalOpen(false);
+              mobile && closeNav();
+            }}
           />
         </>
       ) : (
         <>
           <NavItem
             link={'/'}
+            action={closeNav}
             navExpanded={navExpanded}
             mobile={mobile}
             title={'Home'}
@@ -68,6 +76,7 @@ const NavLinks = ({ navExpanded, mobile }) => {
           />
           <NavItem
             link={'/signin'}
+            action={closeNav}
             navExpanded={navExpanded}
             mobile={mobile}
             title={'Sign In'}
@@ -75,6 +84,7 @@ const NavLinks = ({ navExpanded, mobile }) => {
           />
           <NavItem
             link={'/register'}
+            action={closeNav}
             navExpanded={navExpanded}
             mobile={mobile}
             title={'Register'}
