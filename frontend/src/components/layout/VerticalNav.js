@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { useSelector } from 'react-redux';
 
-import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
+import { makeStyles, IconButton } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 import NavLinks from './navComponents/NavLinks';
@@ -11,12 +10,15 @@ import NavLinks from './navComponents/NavLinks';
 const useStyles = makeStyles(() => ({
   verticalNavbar: {
     display: 'flex',
+    position: 'fixed',
+    top: 0,
     flexDirection: 'column',
     justifyContent: 'baseline',
     height: '100vh',
     width: '15rem',
     backgroundColor: '#4e73df',
-    backgroundImage: 'linear-gradient(180deg,#4e73df 10%,#224abe)',
+    backgroundImage:
+      'linear-gradient(0deg, rgb(0, 23, 67) 0%, rgb(20, 116, 172) 100%)',
     backgroundSize: 'cover',
     zIndex: 12,
     color: '#fff',
@@ -33,7 +35,6 @@ const useStyles = makeStyles(() => ({
     transition: 'all .2s',
     marginTop: 10,
   },
-
   arrowButton: {
     width: 48,
     color: '#fff',
@@ -42,10 +43,17 @@ const useStyles = makeStyles(() => ({
   arrowIcon: {
     transition: '.2s ease',
   },
+  mobileBackdrop: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'rgba(0,0,0,0.20)',
+    zIndex: 111,
+  },
 }));
 
 const VerticalNav = () => {
   const [navExpanded, setNavExpanded] = useState(true);
+  const [prepareToHide, setPrepareToHide] = useState(true);
   const [mobile, setMobile] = useState(false);
   const { loading } = useSelector((state) => state.userLogin);
   const navbarRef = useRef();
@@ -54,6 +62,7 @@ const VerticalNav = () => {
   const handleWindowSizeChange = () => {
     if (window.innerWidth <= 768) {
       setNavExpanded(false);
+      setPrepareToHide(false);
       setMobile(true);
     } else if (window.innerWidth > 768) setMobile(false);
   };
@@ -64,6 +73,7 @@ const VerticalNav = () => {
   }, []);
 
   const expandHandle = () => {
+    setPrepareToHide((prev) => !prev);
     if (!mobile) {
       setNavExpanded((prev) => !prev);
     } else if (navExpanded && mobile) {
@@ -76,55 +86,62 @@ const VerticalNav = () => {
       setNavExpanded(true);
     }
   };
+
   return (
-    <div style={{ background: 'transparent' }}>
-      <div
-        ref={navbarRef}
-        className={classes.verticalNavbar}
-        style={{
-          top: 0,
-          width: navExpanded ? '13.5rem' : mobile ? 48 : 56,
-          position: 'fixed',
-          background: navExpanded
-            ? 'linear-gradient(0deg, rgb(0, 23, 67) 0%, rgb(20, 116, 172) 100%)'
-            : mobile
-            ? 'none'
-            : 'linear-gradient(0deg, rgb(0, 23, 67) 0%, rgb(20, 116, 172) 100%)',
-        }}
-      >
-        <NavLinks navExpanded={navExpanded} mobile={mobile} />
-        {!loading && (
+    <>
+      <div style={{ background: 'transparent', zIndex: 112 }}>
+        <div
+          ref={navbarRef}
+          className={classes.verticalNavbar}
+          style={{
+            width: navExpanded ? '13.5rem' : mobile ? 0 : 56,
+          }}
+        >
+          <NavLinks
+            navExpanded={mobile ? prepareToHide : navExpanded}
+            mobile={mobile}
+          />
+          {!loading && (
+            <div
+              className={classes.buttonContainer}
+              style={{ marginLeft: !navExpanded && mobile && 5 }}
+            >
+              <IconButton
+                className={classes.arrowButton}
+                onClick={expandHandle}
+              >
+                <ArrowForwardIosIcon
+                  className={classes.arrowIcon}
+                  color={!navExpanded && mobile ? 'primary' : 'inherit'}
+                  style={{
+                    color: navExpanded && '#fff',
+                    transform: navExpanded ? 'rotate(-180deg)' : 'rotate(0deg)',
+                  }}
+                />
+              </IconButton>
+            </div>
+          )}
+        </div>
+        {/* Fix to use position: fixed and keep navbar's space */}
+        {!mobile && (
           <div
-            className={classes.buttonContainer}
-            style={{ marginLeft: !navExpanded && mobile && -35 }}
+            style={{
+              width: navExpanded ? '13.5rem' : mobile ? 48 : 56,
+              visibility: 'hidden',
+              transition: '.2s ease',
+            }}
           >
-            <IconButton className={classes.arrowButton} onClick={expandHandle}>
-              <ArrowForwardIosIcon
-                className={classes.arrowIcon}
-                color={!navExpanded && mobile ? 'primary' : 'inherit'}
-                style={{
-                  color: navExpanded && '#fff',
-                  transform: navExpanded ? 'rotate(-180deg)' : 'rotate(0deg)',
-                }}
-              />
-            </IconButton>
+            <NavLinks navExpanded={navExpanded} mobile={mobile} />
           </div>
         )}
       </div>
-
-      {/* Fix to use position: fixed and keep navbar's space */}
-      {!mobile && (
+      {mobile && navExpanded && (
         <div
-          style={{
-            width: navExpanded ? '13.5rem' : mobile ? 48 : 56,
-            visibility: 'hidden',
-            transition: '.2s ease',
-          }}
-        >
-          <NavLinks navExpanded={navExpanded} mobile={mobile} />
-        </div>
+          className={classes.mobileBackdrop}
+          onClick={navExpanded && mobile && expandHandle}
+        />
       )}
-    </div>
+    </>
   );
 };
 
