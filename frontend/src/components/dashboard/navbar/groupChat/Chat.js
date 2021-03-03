@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = () => {
+const Chat = ({ visibility }) => {
   const dispatch = useDispatch();
   const { newMessage } = useSelector((state) => state.projectMessages);
   const [open, setOpen] = useState(false);
@@ -49,7 +49,7 @@ const Chat = () => {
 
   return (
     <>
-      <Tooltip title='Chat'>
+      <Tooltip title='Chat' style={{ visibility }}>
         <div onClick={openHandle} className={classes.icon}>
           <Badge
             color='secondary'

@@ -10,12 +10,13 @@ import Users from '../../dashboard/navbar/users/Users';
 
 const ProjectItems = ({ navExpanded, mobile }) => {
   const { loading, project } = useSelector((state) => state.projectGetData);
+  const visibility = !navExpanded && mobile ? 'hidden' : 'visible';
   return (
     <>
       {!loading && project && Object.keys(project).length > 0 && (
-        <div style={{ visibility: !navExpanded && mobile && 'hidden' }}>
+        <>
           <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-            <Chat />
+            <Chat visibility={visibility} />
             {navExpanded && (
               <>
                 <ArchivedTasks />
@@ -23,9 +24,11 @@ const ProjectItems = ({ navExpanded, mobile }) => {
               </>
             )}
           </div>
-          <Users maxUsers={navExpanded ? 6 : 0} />
-          <InviteUsers navExpanded={navExpanded} mobile={mobile} />
-        </div>
+          <div style={{ visibility }}>
+            <Users maxUsers={navExpanded ? 6 : 0} />
+            <InviteUsers navExpanded={navExpanded} mobile={mobile} />
+          </div>
+        </>
       )}
     </>
   );
