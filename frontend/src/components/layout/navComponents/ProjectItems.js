@@ -22,7 +22,7 @@ const ProjectItems = ({ navExpanded, mobile }) => {
               minHeight: 37,
             }}
           >
-            <Chat hide={hide} />
+            <Chat hide={hide} mobile={mobile} />
             {navExpanded && (
               <>
                 <ArchivedTasks />

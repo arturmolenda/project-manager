@@ -9,6 +9,7 @@ import {
   Paper,
   InputAdornment,
   Input,
+  Modal,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SendIcon from '@material-ui/icons/Send';
@@ -24,6 +25,15 @@ const useStyles = makeStyles(() => ({
     right: 0,
     bottom: 10,
     margin: '0 10px 10px 0',
+  },
+  mobileContainer: {
+    background: '#fff',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    outline: 'none',
+    borderRadius: 0,
   },
   cardHeader: {
     backgroundColor: '#f8f9fc',
@@ -69,7 +79,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ChatContainer = ({ closeChat, open }) => {
+const ChatContainer = ({ closeChat, open, mobile }) => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.userLogin);
   const classes = useStyles();
@@ -83,19 +93,17 @@ const ChatContainer = ({ closeChat, open }) => {
     if (e.key === 'Enter' && message !== '') sendMessageAction();
   };
 
-  return (
+  const chatBody = (
     <Paper
       elevation={3}
-      className={classes.container}
-      style={{ display: open ? 'initial' : 'none' }}
+      className={mobile ? classes.mobileContainer : classes.container}
+      style={{ display: !mobile && (open ? 'initial' : 'none') }}
     >
       <div className={classes.cardHeader}>
         <Typography variant='body1'>Group Chat</Typography>
         <CloseIcon style={{ cursor: 'pointer' }} onClick={closeChat} />
       </div>
-      <div className={classes.cardBody}>
-        <Messages userId={userInfo._id} open={open} />
-      </div>
+      <Messages userId={userInfo._id} open={open} mobile={mobile} />
       <Input
         placeholder='Message'
         value={message}
@@ -113,6 +121,18 @@ const ChatContainer = ({ closeChat, open }) => {
         }
       />
     </Paper>
+  );
+
+  return (
+    <>
+      {mobile ? (
+        <Modal open={open} disableScrollLock onClose={closeChat}>
+          {chatBody}
+        </Modal>
+      ) : (
+        chatBody
+      )}
+    </>
   );
 };
 
