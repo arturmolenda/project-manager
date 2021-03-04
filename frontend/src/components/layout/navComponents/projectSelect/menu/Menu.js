@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import {
   Typography,
   makeStyles,
-  MenuItem,
   Popper,
   ClickAwayListener,
   Paper,
@@ -13,16 +12,19 @@ import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 
 import ProjectMenuItem from './ProjectMenuItem';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   section: {
-    background: '#edeff7',
+    background: theme.palette.primary.main,
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
     padding: '5px 5px 5px 10px',
     borderBottom: '1px solid #ccc',
     borderTop: '1px solid #ccc',
     '& h6': {
       fontSize: 14,
+      color: '#fff',
       fontWeight: 600,
-      color: '#000',
     },
   },
   container: {
@@ -67,9 +69,9 @@ const Menu = ({ anchorEl, setAnchorEl }) => {
             <>
               {projectsCreated.length !== 0 && (
                 <>
-                  <MenuItem disabled className={classes.section}>
+                  <div className={classes.section}>
                     <Typography variant='h6'>Owned Projects</Typography>
-                  </MenuItem>
+                  </div>
                   {projectsCreated.map((project) => (
                     <div key={project._id}>
                       <ProjectMenuItem
@@ -82,9 +84,9 @@ const Menu = ({ anchorEl, setAnchorEl }) => {
               )}
               {projectsJoined.length !== 0 && (
                 <>
-                  <MenuItem disabled className={classes.section}>
+                  <div className={classes.section}>
                     <Typography variant='h6'>Joined Projects</Typography>
-                  </MenuItem>
+                  </div>
                   {projectsJoined.map((project) => (
                     <div key={project._id}>
                       <ProjectMenuItem

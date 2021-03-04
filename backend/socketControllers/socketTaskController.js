@@ -499,8 +499,8 @@ export const socketTaskController = (io, socket) => {
 
     const newLists = await populateLists(projectId);
 
-    callback();
     io.to(projectId).emit('task-updated', { newLists, task });
+    callback();
 
     // Send notifications
     task.usersWatching.forEach(async (userId) => {
@@ -864,28 +864,57 @@ export const socketTaskController = (io, socket) => {
   // @desc Copy task
   socket.on('copy-task', async (data, callback) => {
     const { projectId, taskId, newListId } = data;
+    const task = await Task.findById(taskId).populate('toDoLists.lists');
+    let newToDoLists = [];
+    if (task.toDoLists.lists.length > 0) {
+      newToDoLists = task.toDoLists.lists.map(async (list) => {
+        const toDoTasks = list.tasks.map(({ finished, title }) => {
+          return {
+            _id: mongoose.Types.ObjectId(),
+            finished,
+            title,
+          };
+        });
+        return await Promise.all(toDoTasks).then(async () => {
+          return await ToDoList.create({
+            _id: mongoose.Types.ObjectId(),
+            title: list.title,
+            tasksFinished: list.tasksFinished,
+            creatorId: list.creatorId,
+            taskId: list.taskId,
+            projectId: list.projectId,
+            tasks: toDoTasks,
+          });
+        });
+      });
+    }
+    Promise.all(newToDoLists).then(async (copiedToDoLists) => {
+      const newTask = {
+        ...task._doc,
+        toDoLists: {
+          ...task._doc.toDoLists,
+          lists: copiedToDoLists,
+        },
+        _id: mongoose.Types.ObjectId(),
+        comments: [],
+        users: [],
+        author: socket.user.username,
+        creatorId: socket.user._id,
+        archived: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-    const task = {
-      ...(await Task.findById(taskId))._doc,
-      _id: mongoose.Types.ObjectId(),
-      comments: [],
-      users: [],
-      author: socket.user.username,
-      creatorId: socket.user._id,
-      archived: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      await Task.create(newTask);
+      await List.updateOne(
+        { projectId, 'lists._id': newListId },
+        { $push: { 'lists.$.tasks': newTask._id } }
+      );
+      const newLists = await populateLists(projectId);
 
-    await Task.create(task);
-    await List.updateOne(
-      { projectId, 'lists._id': newListId },
-      { $push: { 'lists.$.tasks': task._id } }
-    );
-    const newLists = await populateLists(projectId);
-
-    callback();
-    io.to(projectId).emit('lists-update', { newLists });
+      io.to(projectId).emit('lists-update', { newLists });
+      callback();
+    });
   });
 
   // @desc Copy task

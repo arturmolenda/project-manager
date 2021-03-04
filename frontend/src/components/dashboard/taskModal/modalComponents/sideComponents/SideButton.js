@@ -44,13 +44,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideButton = ({ icon, text, secondary, clickHandle, styleProps }) => {
+const SideButton = ({
+  icon,
+  text,
+  secondary,
+  clickHandle,
+  styleProps,
+  disabled,
+}) => {
   const classes = useStyles();
   return (
     <Button
       startIcon={icon}
       className={secondary ? classes.secondaryBtn : classes.btn}
       onClick={clickHandle}
+      disabled={disabled}
       style={{ ...styleProps }}
     >
       {text}

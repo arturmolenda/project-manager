@@ -47,8 +47,7 @@ const Home = () => {
         <>
           <h2>Welcome back!</h2>
           <h6 style={{ maxWidth: 500 }}>
-            There is no time to waste exploring, head back to your boards
-            screen, now!
+            There is no time to waste, get back to your projects!
           </h6>
           <Link
             to='/boards'

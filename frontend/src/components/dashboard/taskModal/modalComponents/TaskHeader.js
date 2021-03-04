@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TaskHeader = ({ task }) => {
+const TaskHeader = ({ task, disabled }) => {
   const classes = useStyles();
   return (
     <div className={classes.textContainer}>
@@ -50,6 +50,7 @@ const TaskHeader = ({ task }) => {
           currentTitle={task.title}
           projectId={task.projectId}
           taskId={task._id}
+          disabled={disabled}
         />
       </div>
 

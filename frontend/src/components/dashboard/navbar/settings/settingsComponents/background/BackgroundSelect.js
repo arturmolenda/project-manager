@@ -15,10 +15,9 @@ import Loader from '../../../../../Loader';
 
 const useStyles = makeStyles(() => ({
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
     margin: '0 40px',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
   heading: {
     display: 'flex',

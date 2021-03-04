@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ToDoTitleUpdate = ({ currentTitle, updateHandle }) => {
+const ToDoTitleUpdate = ({ currentTitle, updateHandle, disabled }) => {
   const [title, setTitle] = useState('');
   const [open, setOpen] = useState(false);
   const titleRef = useRef();
@@ -57,6 +57,7 @@ const ToDoTitleUpdate = ({ currentTitle, updateHandle }) => {
       onFocus={focusHandle}
       onKeyDown={keyPressHandle}
       onChange={(e) => setTitle(e.target.value)}
+      disabled={disabled}
     />
   );
 };

@@ -3,7 +3,7 @@ import SideButton from '../SideButton';
 import LabelIcon from '@material-ui/icons/Label';
 import LabelMenu from './LabelMenu';
 
-const Label = ({ task, listIndex, taskIndex }) => {
+const Label = ({ task, disabled, listIndex, taskIndex }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   return (
     <>
@@ -11,6 +11,7 @@ const Label = ({ task, listIndex, taskIndex }) => {
         icon={<LabelIcon />}
         text='Label'
         clickHandle={(e) => setAnchorEl(e.currentTarget)}
+        disabled={disabled}
       />
       <LabelMenu
         task={task}

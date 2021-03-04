@@ -32,6 +32,8 @@ import {
   PROJECT_TODO_VISIBILITY_UPDATE,
   PROJECT_SET_MESSAGES,
   PROJECT_UPDATE_MESSAGES,
+  PROJECT_SET_NEW_MESSAGE,
+  PROJECT_RESET_NEW_MESSAGE,
 } from '../constants/projectConstants';
 import deepcopy from 'deepcopy';
 
@@ -230,7 +232,11 @@ export const projectMessagesReducer = (state = { messages: [] }, action) => {
     case PROJECT_SET_MESSAGES:
       return { messages: action.payload };
     case PROJECT_UPDATE_MESSAGES:
-      return { messages: [...state.messages, action.payload] };
+      return { ...state, messages: [...state.messages, action.payload] };
+    case PROJECT_SET_NEW_MESSAGE:
+      return { ...state, newMessage: true };
+    case PROJECT_RESET_NEW_MESSAGE:
+      return { ...state, newMessage: false };
     default:
       return state;
   }

@@ -55,6 +55,7 @@ const ToDoInput = ({
   taskIndex,
   updateTaskTitleHandle,
   addTaskHandle,
+  disabled,
 }) => {
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -107,7 +108,7 @@ const ToDoInput = ({
       }}
     >
       {!taskId && !open && (
-        <Button color='primary' onClick={focusInput}>
+        <Button color='primary' onClick={focusInput} disabled={disabled}>
           Add task
         </Button>
       )}
@@ -125,21 +126,25 @@ const ToDoInput = ({
                   ? classes.finishedText
                   : ''
               }
-              style={{ fontSize: 14, cursor: !open && taskId && 'pointer' }}
+              style={{
+                fontSize: 14,
+                cursor: !open && taskId && !disabled && 'pointer',
+              }}
               fullWidth
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               variant='outlined'
-              onFocus={focusInput}
-              onClick={() => setOpen(true)}
+              onFocus={!disabled && focusInput}
+              onClick={() => !disabled && setOpen(true)}
               inputProps={{
                 spellCheck: false,
-                style: { cursor: !open && taskId && 'pointer' },
+                style: { cursor: !open && taskId && !disabled && 'pointer' },
               }}
               onBlur={() => setFocused(false)}
               multiline
               onKeyDown={keyPressHandle}
               placeholder={!taskId ? 'Add task' : ''}
+              disabled={disabled}
             />
           )}
           {open && (

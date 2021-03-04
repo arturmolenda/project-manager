@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Comments = ({ comments, projectId, taskId }) => {
+const Comments = ({ comments, projectId, taskId, disabled }) => {
   const { userInfo } = useSelector((state) => state.userLogin);
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -80,7 +80,7 @@ const Comments = ({ comments, projectId, taskId }) => {
       </div>
       <div className={classes.userInputContainer}>
         <Avatar className={classes.avatar} src={userInfo.profilePicture} />
-        <CommentInput addCommentHandle={addCommentHandle} />
+        <CommentInput addCommentHandle={addCommentHandle} disabled={disabled} />
       </div>
       <div className={classes.commentsContainer}>
         {comments &&

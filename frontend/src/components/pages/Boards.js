@@ -28,7 +28,7 @@ const Boards = () => {
   } = useSelector((state) => state.userLogin);
 
   return (
-    <Container style={{ marginTop: '8vh' }}>
+    <Container style={{ margin: '8vh auto 2.5vh auto' }}>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <div className={classes.header}>

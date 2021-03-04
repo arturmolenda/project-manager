@@ -3,8 +3,15 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { sendMessage } from '../../../../redux/actions/projectActions';
 
-import { makeStyles, Typography, Paper, TextField } from '@material-ui/core';
+import {
+  makeStyles,
+  Typography,
+  Paper,
+  InputAdornment,
+  Input,
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import SendIcon from '@material-ui/icons/Send';
 
 import Messages from './Messages';
 
@@ -36,9 +43,28 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  descriptionTextArea: {
+  messageTextfield: {
+    height: 50,
+    '&:hover:before': {
+      borderBottomColor: 'transparent !important',
+    },
     '& input': {
-      padding: 12,
+      background: '#e4e4e4',
+      padding: '7px 15px',
+      borderRadius: 16,
+      margin: '0 7px',
+      transition: '.1s ease',
+      '&:focus, &:hover': {
+        background: '#d8d8d8',
+      },
+    },
+  },
+  sendBtn: {
+    color: '#535353',
+    cursor: 'pointer',
+    margin: '4px 10px 0 0',
+    '&:hover': {
+      color: '#000',
     },
   },
 }));
@@ -49,9 +75,12 @@ const ChatContainer = ({ closeChat, open }) => {
   const classes = useStyles();
   const [message, setMessage] = useState('');
 
+  const sendMessageAction = () => {
+    if (message !== '') dispatch(sendMessage(message, () => setMessage('')));
+  };
+
   const keyDownHandle = (e) => {
-    if (e.key === 'Enter' && message !== '')
-      dispatch(sendMessage(message, () => setMessage('')));
+    if (e.key === 'Enter' && message !== '') sendMessageAction();
   };
 
   return (
@@ -67,15 +96,21 @@ const ChatContainer = ({ closeChat, open }) => {
       <div className={classes.cardBody}>
         <Messages userId={userInfo._id} open={open} />
       </div>
-      <TextField
+      <Input
         placeholder='Message'
-        variant='filled'
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className={classes.descriptionTextArea}
+        className={classes.messageTextfield}
         fullWidth
         onKeyDown={keyDownHandle}
         inputProps={{ spellCheck: 'false' }}
+        endAdornment={
+          <InputAdornment position='end'>
+            <div className={classes.sendBtn} onClick={sendMessageAction}>
+              <SendIcon />
+            </div>
+          </InputAdornment>
+        }
       />
     </Paper>
   );

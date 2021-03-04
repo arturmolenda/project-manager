@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ToDoList = ({ index, projectId, taskId, list }) => {
+const ToDoList = ({ index, projectId, taskId, list, disabled }) => {
   const { listIds } = useSelector((state) => state.projectToDoVisibility);
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -128,6 +128,7 @@ const ToDoList = ({ index, projectId, taskId, list }) => {
             <ToDoTitleUpdate
               currentTitle={list.title}
               updateHandle={updateTitleHandle}
+              disabled={disabled}
             />
           </div>
           <MoreVertIcon
@@ -149,10 +150,11 @@ const ToDoList = ({ index, projectId, taskId, list }) => {
               updateTaskCheckHandle={updateTaskCheckHandle}
               deleteTaskHandle={deleteTaskHandle}
               updateTaskTitleHandle={updateTaskTitleHandle}
+              disabled={disabled}
             />
           )
         )}
-        <ToDoInput addTaskHandle={addTaskHandle} />
+        <ToDoInput addTaskHandle={addTaskHandle} disabled={disabled} />
       </div>
 
       <ToDoMenu
@@ -162,6 +164,7 @@ const ToDoList = ({ index, projectId, taskId, list }) => {
         anchorEl={anchorEl}
         closeHandle={() => setAnchorEl(null)}
         deleteListHandle={deleteListHandle}
+        disabled={disabled}
       />
     </>
   );

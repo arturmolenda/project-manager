@@ -5,7 +5,7 @@ import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import SideButton from '../SideButton';
 import ToDoMenu from './ToDoMenu';
 
-const ToDoList = ({ task }) => {
+const ToDoList = ({ task, disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   return (
     <>
@@ -13,6 +13,7 @@ const ToDoList = ({ task }) => {
         icon={<PlaylistAddCheckIcon />}
         text='To-Do List'
         clickHandle={(e) => setAnchorEl(e.currentTarget)}
+        disabled={disabled}
       />
       <ToDoMenu
         taskId={task._id}

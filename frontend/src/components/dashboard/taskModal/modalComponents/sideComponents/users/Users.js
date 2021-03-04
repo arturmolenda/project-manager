@@ -4,7 +4,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import SideButton from '../SideButton';
 import AddUsersMenu from './AddUsersMenu';
 
-const Users = ({ task }) => {
+const Users = ({ task, disabled }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   return (
     <>
@@ -12,6 +12,7 @@ const Users = ({ task }) => {
         icon={<PeopleIcon />}
         text='Users'
         clickHandle={(e) => setAnchorEl(e.currentTarget)}
+        disabled={disabled}
       />
       <AddUsersMenu
         anchorEl={anchorEl}

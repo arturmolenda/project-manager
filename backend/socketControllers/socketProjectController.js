@@ -176,6 +176,28 @@ export const socketProjectController = (io, socket) => {
         },
       });
       io.to(projectId).emit('project-users-updated', projectData.users);
+
+      if (!socket.user._id.equals(userId)) {
+        const notificationExists = await Notification.findOneAndDelete({
+          type: 'Permissions Updated',
+          recipient: userId,
+          seenDate: null,
+        });
+        // if notification exists then user permissions were changed more than once and it comes back to original permissions
+        // so there is no need to send additional notification
+        if (!notificationExists) {
+          const notification = new Notification({
+            type: 'Permissions Updated',
+            description: newPermissions,
+            project: projectId,
+            seenDate: null,
+            sender: socket.user._id,
+            recipient: userId,
+          });
+          await notification.save();
+        }
+        io.to(String(userId)).emit('notifications-updated');
+      }
     }
   });
 
@@ -236,33 +258,36 @@ export const socketProjectController = (io, socket) => {
           io.to(projectId).emit('tasks-updated', { tasks: updatedTasks });
         });
       }
-      projectData.users.splice(userIndex, 1);
+      const [deletedUser] = projectData.users.splice(userIndex, 1);
       io.to(projectId).emit('project-users-updated', projectData.users);
-      const user = await User.findOneAndUpdate(
-        { _id: userId },
-        {
-          $pull: { projectsJoined: projectId },
-          $unset: { [`projectsThemes.${projectId}`]: '' },
-        }
-      );
 
-      // if user did set project background then delete it from db
-      const background = user.projectsThemes[projectId].background;
-      if (!background.startsWith('linear'))
-        await deleteImage(background.split('images/')[1]);
-
-      // remove all notifications regarding this project and send notification about removal
       await Notification.deleteMany({ recipient: userId, project: projectId });
-      if (!socket.user._id.equals(userId)) {
-        const removeNotification = new Notification({
-          type: 'Removed From Project',
-          description: ` removed you from project: ${projectData.title}`,
-          project: projectId,
-          seenDate: null,
-          sender: socket.user._id,
-          recipient: userId,
-        });
-        await removeNotification.save();
+      if (deletedUser !== -1 && deletedUser.permissions > 0) {
+        const user = await User.findOneAndUpdate(
+          { _id: userId },
+          {
+            $pull: { projectsJoined: projectId },
+            $unset: { [`projectsThemes.${projectId}`]: '' },
+          }
+        );
+
+        // if user did set project background then delete it from db
+        const background = user?.projectsThemes[projectId]?.background;
+        if (background && !background.startsWith('linear'))
+          await deleteImage(background.split('images/')[1]);
+
+        // remove all notifications regarding this project and send notification about removal
+        if (!socket.user._id.equals(userId)) {
+          const removeNotification = new Notification({
+            type: 'Removed From Project',
+            description: ` removed you from project: ${projectData.title}`,
+            project: projectId,
+            seenDate: null,
+            sender: socket.user._id,
+            recipient: userId,
+          });
+          await removeNotification.save();
+        }
       }
       io.to(userId).emit('notifications-updated');
     }

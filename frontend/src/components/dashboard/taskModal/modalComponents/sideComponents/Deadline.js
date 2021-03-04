@@ -9,7 +9,7 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 
 import SideButton from './SideButton';
 
-const Deadline = ({ task }) => {
+const Deadline = ({ task, disabled }) => {
   const dispatch = useDispatch();
 
   const openPickerHandle = () => document.getElementById('date-picker').click();
@@ -24,6 +24,7 @@ const Deadline = ({ task }) => {
         icon={<ScheduleIcon />}
         text='Deadline'
         clickHandle={openPickerHandle}
+        disabled={disabled}
       />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <div style={{ display: 'none' }}>

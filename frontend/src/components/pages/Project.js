@@ -4,6 +4,7 @@ import { Redirect, useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProjectData } from '../../redux/actions/projectActions';
 import {
+  PROJECT_DATA_RESET,
   PROJECT_SET_CURRENT,
   PROJECT_SET_CURRENT_RESET,
 } from '../../redux/constants/projectConstants';
@@ -81,6 +82,7 @@ const Project = () => {
     document.addEventListener('touchend', cleanClasses, false);
     return () => {
       dispatch({ type: PROJECT_SET_CURRENT_RESET });
+      dispatch({ type: PROJECT_DATA_RESET });
       setProjectLoading(true);
       socket.emit('disconnect-board', { room: id });
       document.removeEventListener('touchend', cleanClasses, false);
@@ -124,8 +126,10 @@ const Project = () => {
           backgroundImage: !loading && !projectLoading && background,
         }}
       />
-      {projectLoading || loading ? (
-        <Loader />
+      {Boolean(projectLoading || loading) ? (
+        <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+          <Loader />
+        </div>
       ) : error ? (
         <Redirect to='/boards' />
       ) : (

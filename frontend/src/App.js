@@ -34,6 +34,7 @@ import Confirm from './components/pages/Confirm';
 import Boards from './components/pages/Boards';
 import Project from './components/pages/Project';
 import ProjectJoinPage from './components/pages/ProjectJoinPage';
+import NotFoundPage from './components/pages/NotFoundPage';
 
 const theme = createMuiTheme(themeFile);
 
@@ -119,6 +120,10 @@ const App = () => {
                 >
                   <ProjectJoinPage />
                 </PrivateRoute>
+                <Route exact path='*'>
+                  <ParticlesBackground />
+                  <NotFoundPage />
+                </Route>
               </Switch>
             </>
           )}

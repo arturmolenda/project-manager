@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -8,6 +8,7 @@ import {
   Avatar,
   MenuItem,
   Button,
+  Tooltip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -27,6 +28,8 @@ import {
   TaskTitleUpdate,
   TaskDeadlineUpdate,
   TaskDescriptionUpdate,
+  ProjectDeleted,
+  PermissionsUpdated,
 } from './NotificationConstants';
 
 import moment from 'moment';
@@ -52,6 +55,7 @@ const useStyles = makeStyles(() => ({
     fontSize: '0.71rem',
   },
   notificationDescription: {
+    maxWidth: 371,
     textOverflow: 'ellipsis',
     overflow: 'hidden',
   },
@@ -94,6 +98,133 @@ const NotificationItem = ({
   index,
 }) => {
   const classes = useStyles();
+  const descriptionRef = useRef();
+  const elementOverflowed =
+    descriptionRef.current &&
+    descriptionRef.current.scrollWidth > descriptionRef.current.clientWidth;
+
+  const description =
+    (notification.type === ProjectInvitation && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' invited you to join project: '}
+        <strong>{`"${notification.project.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskAssignment && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' assigned you to task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === RemovedFromProject && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {notification.description.split(':')[0]}
+        <strong>{notification.description.split(':')[1]}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskArchived && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' archived task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskDeleted && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' deleted task: '}
+        <strong>{`"${notification.description}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskRestored && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' restored task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === NewToDoList && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' added new to-do list to task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === NewToDoLists && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' added new to-do lists to task : '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === ToDoListDeleted && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' deleted to-do list from task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === ToDoListsDeleted && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' deleted to-do lists from task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === NewComment && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' commented on task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === NewComments && (
+      <span>
+        There are new comments on task:
+        <strong>{` "${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskTitleUpdate && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' updated title in task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskDeadlineUpdate && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' updated deadline in task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === TaskDescriptionUpdate && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' updated description in task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
+    (notification.type === ProjectDeleted && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' has just'}
+        {notification.description.split(':')[0]}
+        <strong>{notification.description.split(':')[1]}</strong>
+      </span>
+    )) ||
+    (notification.type === PermissionsUpdated && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {notification.description === '1'
+          ? ' took your administrator permissions in project:'
+          : ' set your permissions to administrator in project:'}
+        <strong>{` "${notification.project.title}"`}</strong>
+      </span>
+    ));
   return (
     <div style={{ position: 'relative' }}>
       <MenuItem
@@ -116,115 +247,15 @@ const NotificationItem = ({
             >
               {notification.type}
             </Typography>
-            <Typography
-              variant='body2'
-              className={classes.notificationDescription}
-            >
-              {(notification.type === ProjectInvitation && (
-                <span>
-                  <strong>{notification.sender.username}</strong>
-                  {' invited you to join project: '}
-                  <strong>{`"${notification.project.title}"`}</strong>
-                </span>
-              )) ||
-                (notification.type === TaskAssignment && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' assigned you to task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === RemovedFromProject && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {notification.description.split(':')[0]}
-                    <strong>{notification.description.split(':')[1]}</strong>
-                  </span>
-                )) ||
-                (notification.type === TaskArchived && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' archived task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === TaskDeleted && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' deleted task: '}
-                    <strong>{`"${notification.description}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === TaskRestored && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' restored task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === NewToDoList && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' added new to-do list to task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === NewToDoLists && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' added new to-do lists to task : '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === ToDoListDeleted && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' deleted to-do list from task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === ToDoListsDeleted && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' deleted to-do lists from task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === NewComment && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' commented on task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === NewComments && (
-                  <span>
-                    There are new comments on task:
-                    <strong>{` "${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === TaskTitleUpdate && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' updated title in task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === TaskDeadlineUpdate && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' updated deadline in task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                )) ||
-                (notification.type === TaskDescriptionUpdate && (
-                  <span>
-                    <strong>{notification.sender.username}</strong>
-                    {' updated description in task: '}
-                    <strong>{`"${notification.task.title}"`}</strong>
-                  </span>
-                ))}
-            </Typography>
+            <Tooltip title={elementOverflowed ? description : ''}>
+              <Typography
+                variant='body2'
+                className={classes.notificationDescription}
+                ref={descriptionRef}
+              >
+                {description}
+              </Typography>
+            </Tooltip>
             <Typography
               variant='caption'
               className={classes.notificationCaption}
