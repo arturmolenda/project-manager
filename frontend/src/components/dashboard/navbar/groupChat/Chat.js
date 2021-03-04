@@ -7,7 +7,7 @@ import { makeStyles, Tooltip, Badge } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Chat';
 import ChatContainer from './ChatContainer';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   icon: {
     display: 'flex',
     padding: 5,
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = ({ hide }) => {
+const Chat = ({ mobile, hide }) => {
   const dispatch = useDispatch();
   const { newMessage } = useSelector((state) => state.projectMessages);
   const [open, setOpen] = useState(false);
@@ -60,7 +60,11 @@ const Chat = ({ hide }) => {
           </Badge>
         </div>
       </Tooltip>
-      <ChatContainer closeChat={() => setOpen(false)} open={open} />
+      <ChatContainer
+        closeChat={() => setOpen(false)}
+        open={open}
+        mobile={mobile}
+      />
     </>
   );
 };

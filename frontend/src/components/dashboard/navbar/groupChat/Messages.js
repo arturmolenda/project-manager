@@ -7,9 +7,9 @@ import { makeStyles, Typography, Avatar, Tooltip } from '@material-ui/core';
 import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
-  scrollBottom: {
+  scrollBottom: (props) => ({
     width: '100%',
-    height: 350,
+    height: !props.mobile && 350,
     overflowY: 'auto',
     '&:last-child': {
       paddingBottom: 5,
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     '&:first-child': {
       paddingTop: 5,
     },
-  },
+  }),
   avatar: {
     width: theme.spacing(4),
     height: theme.spacing(4),
@@ -64,10 +64,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Messages = ({ open, userId }) => {
+const Messages = ({ open, userId, mobile }) => {
   const { messages } = useSelector((state) => state.projectMessages);
   const containerRef = useRef();
-  const classes = useStyles();
+  const classes = useStyles({mobile});
   let lastMessage;
 
   const updateScroll = () => {
