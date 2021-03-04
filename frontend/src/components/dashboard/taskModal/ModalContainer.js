@@ -33,7 +33,11 @@ const ModalContainer = ({ task, userPermissions, userId }) => {
       <div style={{ padding: '25px 10px 20px 20px' }}>
         {task && (
           <>
-            <TaskHeader task={task} initialDescription={task.description} />
+            <TaskHeader
+              task={task}
+              initialDescription={task.description}
+              disabled={task.archived}
+            />
             <div className={classes.innerContainer}>
               <div style={{ width: '100%' }}>
                 <Labels labels={task.labels} />
@@ -41,12 +45,14 @@ const ModalContainer = ({ task, userPermissions, userId }) => {
                   selectedUsers={task.users}
                   projectId={task.projectId}
                   taskId={task._id}
+                  disabled={task.archived}
                 />
                 <TaskDescription
                   userPermissions={userPermissions}
                   task={task}
+                  disabled={task.archived}
                 />
-                <Deadline task={task} />
+                <Deadline task={task} disabled={task.archived} />
                 {task.toDoLists.lists.map((list, index) => (
                   <ToDoList
                     key={list._id}
@@ -55,12 +61,14 @@ const ModalContainer = ({ task, userPermissions, userId }) => {
                     index={index}
                     list={list}
                     userId={userId}
+                    disabled={task.archived}
                   />
                 ))}
                 <Comments
                   comments={task.comments}
                   projectId={task.projectId}
                   taskId={task._id}
+                  disabled={task.archived}
                 />
               </div>
               <SideContent task={task} />

@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Users = ({ selectedUsers, projectId, taskId }) => {
+const Users = ({ selectedUsers, projectId, taskId, disabled }) => {
   const { userInfo } = useSelector((state) => state.userLogin);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
@@ -67,6 +67,7 @@ const Users = ({ selectedUsers, projectId, taskId }) => {
           projectId={projectId}
           taskId={taskId}
           handleClose={() => setAnchorEl(null)}
+          disabled={disabled}
         />
       </div>
     )

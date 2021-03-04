@@ -40,6 +40,7 @@ const CommentInput = ({
   addCommentHandle,
   initialComment,
   editCloseHandle,
+  disabled,
 }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [comment, setComment] = useState('');
@@ -97,6 +98,7 @@ const CommentInput = ({
         fullWidth
         onFocus={openCommentHandle}
         InputProps={{ spellCheck: 'false' }}
+        disabled={disabled}
       />
       {(commentOpen || initialComment) && (
         <div className={classes.actions}>

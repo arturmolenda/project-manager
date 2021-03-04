@@ -78,10 +78,15 @@ const SideContent = React.memo(
           ADD TO TASK
         </Typography>
         <div className={classes.buttonsContainer} style={{ marginBottom: 20 }}>
-          <Users task={task} />
-          <Label task={task} taskIndex={taskIndex} listIndex={listIndex} />
-          <ToDoList task={task} />
-          <Deadline task={task} />
+          <Users task={task} disabled={task.archived} />
+          <Label
+            task={task}
+            disabled={task.archived}
+            taskIndex={taskIndex}
+            listIndex={listIndex}
+          />
+          <ToDoList task={task} disabled={task.archived} />
+          <Deadline task={task} disabled={task.archived} />
         </div>
         <Typography variant='caption' className={classes.caption}>
           ACTIONS

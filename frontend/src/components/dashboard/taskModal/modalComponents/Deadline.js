@@ -22,13 +22,13 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 15,
     },
   },
-  datePicker: {
+  datePicker: (props) => ({
     position: 'relative',
     width: 110,
     '& input': {
-      cursor: 'pointer',
+      cursor: !props.disabled && 'pointer',
     },
-  },
+  }),
   primary: {
     '& .MuiInputLabel-formControl': {
       color: theme.palette.primary.main,
@@ -55,11 +55,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Deadline = ({ task }) => {
+const Deadline = ({ task, disabled }) => {
   const dispatch = useDispatch();
   const [deadlineClose, setDeadlineClose] = useState(false);
   const [loading, setLoading] = useState(false);
-  const classes = useStyles();
+  const classes = useStyles({ disabled });
 
   useEffect(() => {
     if (task.deadline !== null) {
@@ -92,7 +92,7 @@ const Deadline = ({ task }) => {
           <div className={classes.datePicker}>
             <DatePicker
               clearable
-              disabled={loading}
+              disabled={loading || disabled}
               className={
                 loading
                   ? classes.pickerDisabled

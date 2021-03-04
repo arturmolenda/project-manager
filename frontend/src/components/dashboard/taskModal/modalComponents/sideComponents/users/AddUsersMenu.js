@@ -34,6 +34,7 @@ const AddUsersMenu = ({
   selectedUsers: selected = [],
   projectId,
   taskId,
+  disabled,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -181,7 +182,7 @@ const AddUsersMenu = ({
             variant='contained'
             onClick={saveUsers}
             size='small'
-            disabled={loading}
+            disabled={loading || disabled}
           >
             Save
             {loading && <Loader button />}

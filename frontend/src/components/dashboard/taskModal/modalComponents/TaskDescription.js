@@ -58,7 +58,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const TaskDescription = ({ task, userPermissions }) => {
+const TaskDescription = ({ task, userPermissions, disabled }) => {
   const dispatch = useDispatch();
   const [descriptionEditOpen, setDescriptionEditOpen] = useState(false);
   const [description, setDescription] = useState('');
@@ -120,7 +120,7 @@ const TaskDescription = ({ task, userPermissions }) => {
               'redo',
             ],
           }}
-          disabled={userPermissions < 1 || loading}
+          disabled={loading || disabled}
           data={task.description}
           onChange={(event, editor) => setDescription(editor.getData())}
           onFocus={(event, editor) => setDescriptionEditOpen(true)}

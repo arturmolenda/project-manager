@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Redirect, useHistory, useParams } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,21 +53,23 @@ const TaskModal = ({ projectId, userPermissions, userId }) => {
   const dispatch = useDispatch();
   const { task } = useSelector((state) => state.projectSetTask);
   const [loading, setLoading] = useState(true);
+  const timeout = useRef();
   const history = useHistory();
   const { taskId } = useParams();
   const classes = useStyles();
-  let timeout;
+
   useEffect(() => {
     if (taskId && !task) dispatch(setTask(projectId, taskId));
     else if (!taskId && task) dispatch({ type: PROJECT_SET_TASK_RESET });
-    else if (taskId && task) timeout = setTimeout(() => setLoading(false), 1);
+    else if (taskId && task)
+      timeout.current = setTimeout(() => setLoading(false), 1);
   }, [dispatch, history, taskId, task, projectId]);
 
   const closeHandle = () => {
     history.push(`/project/${task.projectId}`);
     dispatch({ type: PROJECT_SET_TASK_RESET });
     setLoading(true);
-    clearTimeout(timeout);
+    clearTimeout(timeout.current);
   };
 
   const keyPressHandle = (e) => {

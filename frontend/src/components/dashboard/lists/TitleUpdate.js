@@ -33,7 +33,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TitleUpdate = ({ currentTitle, listIndex, projectId, taskId }) => {
+const TitleUpdate = ({
+  currentTitle,
+  listIndex,
+  projectId,
+  taskId,
+  disabled,
+}) => {
   const dispatch = useDispatch();
   const { socket } = useSelector((state) => state.socketConnection);
   const [title, setTitle] = useState(currentTitle);
@@ -107,7 +113,7 @@ const TitleUpdate = ({ currentTitle, listIndex, projectId, taskId }) => {
           onFocus={focusHandle}
           onKeyDown={keyPressHandle}
           onChange={(e) => setTitle(e.target.value)}
-          disabled={loading}
+          disabled={loading || disabled}
         />
         {loading && <Loader button />}
       </div>

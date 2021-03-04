@@ -12,6 +12,7 @@ const ToDoMenu = ({
   tasksHidden,
   anchorEl,
   closeHandle,
+  disabled,
 }) => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const handleClose = () => {
@@ -63,7 +64,9 @@ const ToDoMenu = ({
                     : `Show Finished Tasks (${tasksFinished})`
                   : 'Hide Finished Tasks'}
               </MenuItem>
-              <MenuItem onClick={() => setDeleteOpen(true)}>Delete</MenuItem>
+              <MenuItem onClick={() => setDeleteOpen(true)} disabled={disabled}>
+                Delete
+              </MenuItem>
             </div>
           </>
         )}

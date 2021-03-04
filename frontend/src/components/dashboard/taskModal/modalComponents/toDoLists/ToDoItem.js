@@ -46,6 +46,7 @@ const TaskItem = ({
   updateTaskCheckHandle,
   deleteTaskHandle,
   updateTaskTitleHandle,
+  disabled,
 }) => {
   const [checked, setChecked] = useState(false);
   const classes = useStyles();
@@ -62,6 +63,7 @@ const TaskItem = ({
       <Checkbox
         onClick={updateHandle}
         checked={checked}
+        disabled={disabled}
         disableRipple
         color='primary'
         style={{ padding: 0, marginTop: 3 }}
@@ -73,10 +75,12 @@ const TaskItem = ({
           initialTitle={task.title}
           taskFinished={task.finished}
           updateTaskTitleHandle={updateTaskTitleHandle}
+          disabled={disabled}
         />
         <DeleteIcon
           className={classes.deleteIcon}
           onClick={() => deleteTaskHandle(task._id, taskIndex, task.finished)}
+          style={{ display: disabled && 'none' }}
         />
       </div>
     </div>
