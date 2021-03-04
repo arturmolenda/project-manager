@@ -13,3 +13,5 @@ export const NewComments = 'New Comments Added';
 export const TaskTitleUpdate = 'Task title Update';
 export const TaskDeadlineUpdate = 'Task deadline Update';
 export const TaskDescriptionUpdate = 'Task description Update';
+export const ProjectDeleted = 'Project Deleted';
+export const PermissionsUpdated = 'Permissions Updated';

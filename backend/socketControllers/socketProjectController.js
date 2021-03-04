@@ -176,6 +176,28 @@ export const socketProjectController = (io, socket) => {
         },
       });
       io.to(projectId).emit('project-users-updated', projectData.users);
+
+      if (!socket.user._id.equals(userId)) {
+        const notificationExists = await Notification.findOneAndDelete({
+          type: 'Permissions Updated',
+          recipient: userId,
+          seenDate: null,
+        });
+        // if notification exists then user permissions were changed more than once and it comes back to original permissions
+        // so there is no need to send additional notification
+        if (!notificationExists) {
+          const notification = new Notification({
+            type: 'Permissions Updated',
+            description: newPermissions,
+            project: projectId,
+            seenDate: null,
+            sender: socket.user._id,
+            recipient: userId,
+          });
+          await notification.save();
+        }
+        io.to(String(userId)).emit('notifications-updated');
+      }
     }
   });
 
