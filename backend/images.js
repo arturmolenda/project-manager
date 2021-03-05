@@ -58,10 +58,14 @@ router.post(
   upload.single('img'),
   async (req, res, next) => {
     try {
-      await deleteImage(req.file.filename);
-
       const profilePicture = `${process.env.SERVER_URL}/api/images/${req.file.filename}`;
-      await User.updateOne({ _id: req.user.id }, { $set: { profilePicture } });
+      const user = await User.findOneAndUpdate(
+        { _id: req.user.id },
+        { $set: { profilePicture } }
+      );
+      if (user.profilePicture !== null) {
+        await deleteImage(user.profilePicture.split('images/')[1]);
+      }
 
       res.status(201).send({
         image: `${profilePicture}?v=${new Date().getTime()}`,
@@ -104,7 +108,9 @@ router.post(
 // @route   GET /api/images/:filename
 // @access  Public
 router.get('/:filename', async (req, res) => {
+  console.log('here');
   await gfs.find({ filename: req.params.filename }).toArray((err, files) => {
+    console.log('here');
     if (!files || files.length === 0) {
       return res.status(404).json({
         err: 'no files exist',
