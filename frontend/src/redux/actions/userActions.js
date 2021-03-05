@@ -42,7 +42,7 @@ export const login = (email, password) => async (dispatch) => {
     );
 
     // connect to socket server
-    const socket = io.connect('http://localhost:5000', {
+    const socket = io.connect(window && window.location.origin, {
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
         authorization: `Bearer ${data.userInfo.token}`,
@@ -164,7 +164,7 @@ export const getUserData = (token) => async (dispatch) => {
     const { data } = await axios.get('/api/users', config);
 
     // connect to socket server
-    const socket = io.connect('http://localhost:5000', {
+    const socket = io.connect(window && window.location.origin, {
       transports: ['websocket', 'polling', 'flashsocket'],
       auth: {
         authorization: `Bearer ${data.userInfo.token}`,
