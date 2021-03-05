@@ -34,6 +34,11 @@ const InviteLink = () => {
       ? socket.emit('project-disable-join-link', { projectId: project._id })
       : socket.emit('project-create-join-link', { projectId: project._id });
   };
+
+  const joinLink = `${window && window.location.origin}/invite/${project._id}/${
+    project.joinId
+  }`;
+
   return (
     <div>
       <div className={classes.spaceBetween}>
@@ -60,9 +65,7 @@ const InviteLink = () => {
           <TextField
             variant='outlined'
             onFocus={(e) => e.currentTarget.select()}
-            value={`${window && window.location.origin}/${project._id}/${
-              project.joinId
-            }`}
+            value={joinLink}
             margin='dense'
             fullWidth
             InputProps={{
@@ -73,13 +76,7 @@ const InviteLink = () => {
             color='primary'
             variant='contained'
             style={{ marginLeft: 10, marginTop: 2 }}
-            onClick={() =>
-              navigator.clipboard.writeText(
-                `${window && window.location.origin}/${project._id}/${
-                  project.joinId
-                }`
-              )
-            }
+            onClick={() => navigator.clipboard.writeText(joinLink)}
           >
             Copy
           </Button>
