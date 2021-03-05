@@ -9,6 +9,7 @@ import generateToken from '../utils/generateToken.js';
 import mongoose from 'mongoose';
 import { populateLists, taskPopulation } from '../utils/utilFunctions.js';
 import { deleteImage } from '../images.js';
+import { levelTwoAuth } from '../middleware/socketMiddleware.js';
 
 export const socketProjectController = (io, socket) => {
   // @desc Update project title
@@ -321,7 +322,7 @@ export const socketProjectController = (io, socket) => {
   // @desc Delete project
   socket.on('delete-project', async (data, callback) => {
     const { projectId } = data;
-
+    await levelTwoAuth({ projectId }, socket);
     const project = await Project.findById(projectId);
     if (project.creatorId.equals(socket.user._id)) {
       const promise = project.users.map(async (x) => {
