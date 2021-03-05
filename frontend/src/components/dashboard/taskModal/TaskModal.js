@@ -9,6 +9,7 @@ import { LinearProgress, makeStyles, Modal } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 import ModalContainer from './ModalContainer';
+import Helmet from '../../Helmet';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -85,6 +86,7 @@ const TaskModal = ({ projectId, userPermissions, userId }) => {
       onKeyDown={keyPressHandle}
     >
       <div className={classes.container} id='task-modal'>
+        <Helmet title={task && task.title} />
         {task && task.deleted && <Redirect to={`/project/${task.projectId}`} />}
         {loading ? (
           <LinearProgress />

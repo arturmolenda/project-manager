@@ -8,6 +8,7 @@ import { Button, makeStyles } from '@material-ui/core';
 import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
 import InfoIcon from '@material-ui/icons/Info';
 import Loader from '../Loader';
+import Helmet from '../Helmet';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -55,6 +56,7 @@ const Confirm = () => {
 
   return (
     <div className={classes.container}>
+      <Helmet title='Confirm Email' />
       {loading ? (
         <Loader />
       ) : resendSuccess ? (

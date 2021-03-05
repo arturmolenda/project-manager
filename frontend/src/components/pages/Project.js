@@ -14,6 +14,7 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import Board from '../dashboard/Board';
 import Loader from '../Loader';
 import TaskModal from '../dashboard/taskModal/TaskModal';
+import Helmet from '../Helmet';
 
 const isObjectId = /^[0-9a-fA-F]{24}$/;
 
@@ -135,6 +136,7 @@ const Project = () => {
       ) : (
         project && (
           <>
+            <Helmet title={project.title} />
             <Board />
             <TaskModal
               userPermissions={project.permissions}

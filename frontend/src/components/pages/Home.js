@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { Button, makeStyles } from '@material-ui/core';
+import Helmet from '../Helmet';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -43,6 +44,7 @@ const Home = () => {
   const { userInfo } = useSelector((state) => state.userLogin);
   return (
     <div className={classes.container}>
+      <Helmet title={userInfo ? 'Welcome Back!' : 'Welcome!'} />
       {userInfo ? (
         <>
           <h2>Welcome back!</h2>

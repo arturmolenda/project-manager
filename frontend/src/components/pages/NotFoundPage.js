@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { Button, makeStyles } from '@material-ui/core';
+import Helmet from '../Helmet';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,6 +34,7 @@ const NotFoundPage = () => {
   const classes = useStyles();
   return (
     <div className={classes.container}>
+      <Helmet title={'Page not found'} />
       <h2>404...</h2>
       <h6 style={{ maxWidth: 500 }}>
         {' '}

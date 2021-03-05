@@ -17,6 +17,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import AuthFormPanel from '../AuthFormPanel';
 import Loader from '../Loader';
+import Helmet from '../Helmet';
 
 const useStyles = makeStyles(() => ({
   loading: {
@@ -168,6 +169,7 @@ const Register = () => {
 
   return (
     <div className={classes.container}>
+      <Helmet title={'Register'} />
       <Grid
         container
         justify='center'
