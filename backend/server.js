@@ -2,7 +2,6 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import connectDb from './config/db.js';
-import morgan from 'morgan';
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
@@ -30,8 +29,10 @@ app.use('/api/images', images);
 
 const __dirname = path.resolve();
 
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
-else if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'development') {
+  import morgan from 'morgan';
+  app.use(morgan('dev'));
+} else if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/frontend/build')));
   app.get('*', (req, res) =>
     res.sendFile(path.resolve(__dirname, 'frontend/build/index.html'))
