@@ -60,7 +60,9 @@ const InviteLink = () => {
           <TextField
             variant='outlined'
             onFocus={(e) => e.currentTarget.select()}
-            value={`http://localhost:3000/invite/${project._id}/${project.joinId}`}
+            value={`${window && window.location.origin}/${project._id}/${
+              project.joinId
+            }`}
             margin='dense'
             fullWidth
             InputProps={{
@@ -73,7 +75,9 @@ const InviteLink = () => {
             style={{ marginLeft: 10, marginTop: 2 }}
             onClick={() =>
               navigator.clipboard.writeText(
-                `http://localhost:3000/invite/${project._id}/${project.joinId}`
+                `${window && window.location.origin}/${project._id}/${
+                  project.joinId
+                }`
               )
             }
           >
