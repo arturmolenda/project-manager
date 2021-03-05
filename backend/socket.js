@@ -1,12 +1,6 @@
-import User from './models/user.js';
-import Task from './models/task.js';
-import Project from './models/project.js';
-import List from './models/list.js';
-import mongoose from 'mongoose';
 import {
   authorizeSocketConnection,
   levelOneAuth,
-  levelTwoAuth,
 } from './middleware/socketMiddleware.js';
 import { socketTaskController } from './socketControllers/socketTaskController.js';
 import { socketListController } from './socketControllers/socketListController.js';

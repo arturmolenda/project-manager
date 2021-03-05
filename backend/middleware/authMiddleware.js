@@ -41,21 +41,5 @@ const permissionsOne = asyncHandler(async (req, res, next) => {
     throw new Error('Not authorized');
   }
 });
-const permissionsTwo = asyncHandler(async (req, res, next) => {
-  const isAuthorized = await Project.findOne({
-    _id: req.params.projectId,
-    users: {
-      $elemMatch: {
-        user: req.user._id,
-        permissions: 2,
-      },
-    },
-  });
-  if (isAuthorized.users.length !== 0) next();
-  else {
-    res.status(401);
-    throw new Error('Not authorized');
-  }
-});
 
-export { protect, permissionsOne, permissionsTwo };
+export { protect, permissionsOne };
