@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import AuthFormPanel from '../AuthFormPanel';
 import Loader from '../Loader';
+import Helmet from '../Helmet';
 
 const useStyles = makeStyles(() => ({
   gridContainer: {
@@ -126,6 +127,7 @@ const SignIn = () => {
 
   return (
     <div>
+      <Helmet title={'Login'} />
       <Grid
         container
         justify='center'

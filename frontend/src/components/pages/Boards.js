@@ -8,6 +8,7 @@ import PersonIcon from '@material-ui/icons/Person';
 
 import BoardItem from '../boards/BoardItem';
 import NewProjectBoard from '../boards/NewProjectBoard';
+import Helmet from '../Helmet';
 
 const useStyles = makeStyles(() => ({
   header: {
@@ -29,6 +30,7 @@ const Boards = () => {
 
   return (
     <Container style={{ margin: '8vh auto 2.5vh auto' }}>
+      <Helmet title='Boards' />
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <div className={classes.header}>
