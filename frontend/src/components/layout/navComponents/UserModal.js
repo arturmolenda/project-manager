@@ -15,9 +15,9 @@ import { Alert } from '@material-ui/lab';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import CloseIcon from '@material-ui/icons/Close';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   container: {
-    width: 450,
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -30,6 +30,10 @@ const useStyles = makeStyles(() => ({
     height: 450,
     boxShadow:
       '0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%)',
+    [theme.breakpoints.down('xs')]: {
+      width: '90vw',
+      height: '90vw',
+    },
   },
   uploadIcon: {
     position: 'absolute',
@@ -142,7 +146,7 @@ const UserModal = ({ open, closeHandle, user }) => {
             {user.email}
           </Typography>
           {error && (
-            <Alert variant='error'>
+            <Alert severity='error'>
               Something went wrong, try again later!
             </Alert>
           )}
