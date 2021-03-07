@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 10,
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
-      height: '100%',
     },
   },
 }));
