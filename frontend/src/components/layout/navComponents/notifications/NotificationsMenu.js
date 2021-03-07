@@ -89,10 +89,13 @@ const NotificationsMenu = ({ anchorEl, handleClose }) => {
           history.push(`/project/${notification.project._id}`);
         }
       );
-    } else
+    } else if (notification.task) {
       history.push(
         `/project/${notification.project._id}/${notification.task._id}`
       );
+    } else if (!notification.task && notification.project) {
+      history.push(`/project/${notification.project._id}`);
+    }
     closeHandle();
   };
 
