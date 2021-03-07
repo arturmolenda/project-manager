@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     fontSize: '3.5em',
     padding: 10,
+    textAlign: 'center',
     '& h1,h2,h6': {
       margin: 0,
     },
@@ -21,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
       color: '#a4a4a4',
       fontWeight: 100,
       fontSize: '1.2rem',
-      textAlign: 'center',
     },
     '& h1,h2': {
       color: '#fff',
