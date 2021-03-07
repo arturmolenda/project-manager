@@ -27,18 +27,20 @@ const Labels = ({ labels: taskLabels }) => {
   const classes = useStyles();
 
   return (
-    taskLabels && (
-      <div>
-        <Typography className={classes.caption} variant='body1'>
-          Labels
-        </Typography>
-        <div className={classes.container}>
-          {taskLabels.map((labelId) => (
-            <LabelItem key={labelId} label={labels[labelId]} />
-          ))}
+    <>
+      {taskLabels && taskLabels.length > 0 && (
+        <div>
+          <Typography className={classes.caption} variant='body1'>
+            Labels
+          </Typography>
+          <div className={classes.container}>
+            {taskLabels.map((labelId) => (
+              <LabelItem key={labelId} label={labels[labelId]} />
+            ))}
+          </div>
         </div>
-      </div>
-    )
+      )}
+    </>
   );
 };
 
