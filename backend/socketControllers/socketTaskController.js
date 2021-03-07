@@ -708,6 +708,7 @@ export const socketTaskController = (io, socket) => {
       { _id: toDoListId },
       {
         $inc: { tasksFinished: completed ? -1 : 0 },
+        $pull: { tasks: { _id: toDoTaskId } },
       }
     );
 
