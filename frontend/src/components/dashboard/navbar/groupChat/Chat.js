@@ -41,10 +41,6 @@ const Chat = ({ mobile, hide }) => {
   const openHandle = () => {
     setOpen((prevState) => !prevState);
     dispatch({ type: PROJECT_RESET_NEW_MESSAGE });
-    setTimeout(() => {
-      const element = document.getElementById('messages-container');
-      element.scrollTop = element.scrollHeight;
-    }, 1);
   };
 
   return (

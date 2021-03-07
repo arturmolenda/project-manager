@@ -9,7 +9,7 @@ import moment from 'moment';
 const useStyles = makeStyles((theme) => ({
   scrollBottom: (props) => ({
     width: '100%',
-    height: !props.mobile && 350,
+    height: props.mobile ? '100%' : 350,
     overflowY: 'auto',
     '&:last-child': {
       paddingBottom: 5,
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 const Messages = ({ open, userId, mobile }) => {
   const { messages } = useSelector((state) => state.projectMessages);
   const containerRef = useRef();
-  const classes = useStyles({mobile});
+  const classes = useStyles({ mobile });
   let lastMessage;
 
   const updateScroll = () => {
@@ -82,11 +82,7 @@ const Messages = ({ open, userId, mobile }) => {
   }, [messages, open]);
 
   return (
-    <div
-      id='messages-container'
-      ref={containerRef}
-      className={classes.scrollBottom}
-    >
+    <div ref={containerRef} className={classes.scrollBottom}>
       {messages.map((message, i) => {
         if (message.user._id === userId) {
           lastMessage = message;
