@@ -30,6 +30,7 @@ import {
   TaskDescriptionUpdate,
   ProjectDeleted,
   PermissionsUpdated,
+  TaskLabelsUpdate,
 } from './NotificationConstants';
 
 import moment from 'moment';
@@ -208,6 +209,13 @@ const NotificationItem = ({
         <strong>{`"${notification.task.title}"`}</strong>
       </span>
     )) ||
+    (notification.type === TaskLabelsUpdate && (
+      <span>
+        <strong>{notification.sender.username}</strong>
+        {' updated labels in task: '}
+        <strong>{`"${notification.task.title}"`}</strong>
+      </span>
+    )) ||
     (notification.type === ProjectDeleted && (
       <span>
         <strong>{notification.sender.username}</strong>
@@ -276,7 +284,9 @@ const NotificationItem = ({
           >
             Discard
           </Button>
-          {notification.type !== RemovedFromProject && (
+          {![RemovedFromProject, ProjectDeleted, TaskDeleted].includes(
+            notification.type
+          ) && (
             <Button
               variant='outlined'
               color='primary'
