@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# Project-Manager
+Project management web app. Built using [React JS](https://reactjs.org/) with [Redux](https://redux.js.org/) and [Material-UI](https://material-ui.com/) on frontend and for backend: [Node JS](https://nodejs.org/) with [Express](https://expressjs.com/), [MongoDB](http://mongodb.com/) for database and real-time functionality thanks to [Socket.IO](https://socket.io/).
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## [live demo](https://project-manager1.herokuapp.com/)
+(You don't have to confirm password on email in order to log in)
 
-## Available Scripts
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Features
+   - Fully responsive 
+   - Authorization with email confirmation
+   - Notification system
+   - Real time communications between users
+   - Upload profile picture
+   - Create and join projects
+   		- ### Project
+          - Add Lists
+          - Add Tasks
+          - Drag Lists and tasks to change their position
+          - Update Task, List and Project title by clicking on it
+          - Invite users either by typing their username/email or by invite link
+          - Update user's permissions or kick them from project
+          - Group chat
+          - Archived Tasks menu with option to retrieve or delete them
+          - Settings menu with option to change project's theme, background (with option to upload your own image) and option to delete project available only for project creator
+          - #### List options:
+            - Add new task
+            - Transfer tasks to other list
+            - Archive tasks inside
+            - Delete List and archive tasks inside
+          - #### Task modal:
+            - Add rich text description
+            - Assign users to task (user's will later receive notifications about this task)
+            - Apply, update and crete labels
+            - #### Add mini to-do lists:
+              - Add, edit and delete to-do tasks
+              - Mark them as finished
+              - Hide finished to-do tasks
+            - Add deadline
+            - Copy task
+            - Watch task to receive notifications
+            - Transfer to different list
+            - Archive and delete task
+            - Add, edit and delete comments 
