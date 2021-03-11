@@ -5,7 +5,7 @@ import EmailSecret from '../models/emailSecret.js';
 import generateToken from '../utils/generateToken.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
-import transporter from '../utils/sendEmail.js';
+import sendEmail from '../utils/sendEmail.js';
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -77,13 +77,7 @@ const registerUser = asyncHandler(async (req, res) => {
       text: 'Welcome to the Project Manager!',
       html: `<h1>Thank you for registering!</h1></br><p>To finish registration just click this link</p><span><a href='${process.env.URL}/confirm/${emailSecretCode}'> ${process.env.URL}/confirm/${emailSecretCode}</a></span>`,
     };
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
+    await sendEmail(mailOptions);
     res.status(200).json({
       message:
         'Confirmation email has been send to you. You can now sign in with your newly created account',
@@ -149,13 +143,7 @@ const resendEmail = asyncHandler(async (req, res) => {
         text: 'Welcome to the Project Manager!',
         html: `<h1>Thank you for registering!</h1></br><p>To finish registration just click this link</p><span><a href='${process.env.URL}/confirm/${newSecretCode}'> ${process.env.URL}/confirm/${newSecretCode}</a></span>`,
       };
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
+      await sendEmail(mailOptions);
     } catch (err) {
       console.log(err);
       throw new Error('Sending email failed');
