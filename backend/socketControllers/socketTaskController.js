@@ -465,16 +465,18 @@ export const socketTaskController = (io, socket) => {
   socket.on('label-edit', async (data) => {
     const { projectId, title, color, labelId } = data;
 
-    const newLabels = await Label.findOneAndUpdate(
+    const updatedLabels = await Label.findOneAndUpdate(
       { projectId },
       {
-        $set: { [`labels.${[labelId]}.title`]: title },
-        $set: { [`labels.${[labelId]}.color`]: color },
+        $set: {
+          [`labels.${[labelId]}.title`]: title,
+          [`labels.${[labelId]}.color`]: color,
+        },
       },
       { returnOriginal: false }
     );
 
-    socket.to(projectId).emit('labels-updated', { newLabels });
+    socket.to(projectId).emit('labels-updated', { updatedLabels });
   });
 
   // @desc Add To Do List to task
