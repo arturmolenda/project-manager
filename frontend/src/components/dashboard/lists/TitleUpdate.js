@@ -56,7 +56,7 @@ const TitleUpdate = ({
       e.preventDefault();
       if (title === currentTitle) titleRef.current.blur();
       else if (title !== currentTitle && title.trim() !== '') {
-        if (listIndex) {
+        if (!isNaN(listIndex)) {
           socket.emit(
             'list-title-update',
             {
