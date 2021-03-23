@@ -3,7 +3,7 @@
 Project management web app. Built using [React JS](https://reactjs.org/) with [Redux](https://redux.js.org/) and [Material-UI](https://material-ui.com/) on frontend and for backend: [Node JS](https://nodejs.org/) with [Express](https://expressjs.com/), [MongoDB](http://mongodb.com/) for database and real-time functionality thanks to [Socket.IO](https://socket.io/).
 
 ## [live demo](https://project-manager1.herokuapp.com/)
-(You don't have to confirm password on email in order to log in)
+(You don't have to confirm email in order to log in)
 
 
 # Features
