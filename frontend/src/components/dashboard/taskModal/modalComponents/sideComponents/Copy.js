@@ -20,7 +20,10 @@ const Copy = ({ task }) => {
 
   const transferHandle = (listIndex, listId, callback) => {
     setLoading(listId);
-    dispatch(copyTask(task.projectId, task._id, listId, closeHandle));
+    dispatch(copyTask(task.projectId, task._id, listId, () => {
+      closeHandle();
+      setLoading(null);
+    }));
   };
 
   return (
